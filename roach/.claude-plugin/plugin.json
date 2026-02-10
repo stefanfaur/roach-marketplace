@@ -1,0 +1,10 @@
+{
+  "name": "roach",
+  "description": "Unified workflow plugin combining research-first methodology with skills-first enforcement for Claude Code",
+  "version": "1.0.0",
+  "author": {
+    "name": "Stefan Faur"
+  },
+  "license": "MIT",
+  "keywords": ["workflow", "skills", "research", "planning", "handoffs", "context-engineering"]
+}

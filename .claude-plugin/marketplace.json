@@ -1,0 +1,36 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "roach-marketplace",
+  "version": "1.0.0",
+  "description": "roach and its companion plugins",
+  "owner": {
+    "name": "Stefan Faur"
+  },
+  "plugins": [
+    {
+      "name": "roach",
+      "description": "Research-first methodology with skills-first enforcement for Claude Code",
+      "version": "1.0.0",
+      "source": "./roach",
+      "category": "productivity"
+    },
+    {
+      "name": "frontend-design",
+      "description": "Create distinctive, production-grade frontend interfaces with high design quality",
+      "version": "1.0.0",
+      "author": {
+        "name": "Prithvi Rajasekaran & Alexander Bricken",
+        "email": "prithvi@anthropic.com"
+      },
+      "source": "./frontend-design",
+      "category": "development"
+    },
+    {
+      "name": "agent-browser",
+      "description": "Browser automation skill and agent with workflow persistence for agent-browser CLI",
+      "version": "1.0.0",
+      "source": "./agent-browser",
+      "category": "productivity"
+    }
+  ]
+}
