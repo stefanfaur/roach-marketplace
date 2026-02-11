@@ -14,6 +14,8 @@ The browser-agent:
 - Saves successful workflows after completion (builds institutional knowledge for the project)
 - Runs in an isolated context window (keeps your main conversation clean)
 
+The browser orchestrator also maintains `thoughts/shared/browser/GENERAL.md`, which holds only cross-cutting info such as auth URLs and required fields, credential source references (env/vault), session-reuse guidance (state files), shared setup defaults (UA/viewport/base URL), and brief safety notes. Keep it concise and free of secrets.
+
 ## How to Delegate
 
 ```

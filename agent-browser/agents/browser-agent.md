@@ -13,16 +13,17 @@ You are a browser automation specialist. You drive headless Chromium via the `ag
 
 **Before touching the browser**, search for saved workflows that might help:
 
-1. Use Glob to find files in `thoughts/shared/browser/`:
+1. Check for a general project note at `thoughts/shared/browser/GENERAL.md`. If it exists, **read it first** and pull out the essentials (authentication URLs/fields, credential sources like env or vault, session state filenames, shared setup defaults such as user agent/viewport/base URL, and any safety notes). Keep the summary concise, note it for execution, avoid copying secrets, and only add instructions that speed you up. If the file is missing, continue without blocking the workflow search.
+2. Use Glob to find files in `thoughts/shared/browser/`:
    ```
    Glob("thoughts/shared/browser/*.md")
    ```
-2. If files exist, use Grep to find ones matching the target domain or task:
+3. If files exist, use Grep to find ones matching the target domain or task:
    ```
    Grep(pattern: "domain-keyword", path: "thoughts/shared/browser/")
    ```
-3. If a matching workflow file is found, **read it fully** and follow its documented steps, authentication method, and gotchas. This saves significant time and avoids re-discovering navigation paths.
-4. If no match is found, proceed from scratch.
+4. If a matching workflow file is found, **read it fully** and follow its documented steps, authentication method, and gotchas. This saves significant time and avoids re-discovering navigation paths.
+5. If no match is found, proceed from scratch.
 
 ---
 
