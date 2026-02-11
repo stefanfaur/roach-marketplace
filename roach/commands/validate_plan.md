@@ -6,27 +6,32 @@ description: Validate implementation against plan, verify success criteria, iden
 
 You are tasked with validating that an implementation plan was correctly executed, verifying all success criteria and identifying any deviations or issues.
 
+## Arguments
+
+This command REQUIRES:
+- A plan path (or enough context to locate one)
+- Explicit file paths to validate as arguments
+
+If no file paths are provided, respond with:
+
+```
+I need explicit file paths to validate against the plan. Please provide them:
+/validate_plan thoughts/shared/plans/domain/plan.md file1.java file2.java
+```
+
+If the user specifies that changes are already committed, use `git log` and `git diff` scoped to the specified commit range instead of reading files directly.
+
 ## Initial Setup
 
 When invoked:
-1. **Determine context** - Are you in an existing conversation or starting fresh?
-   - If existing: Review what was implemented in this session
-   - If fresh: Need to discover what was done through git and codebase analysis
-
-2. **Locate the plan**:
+1. **Locate the plan**:
    - If plan path provided, use it
-   - Otherwise, search recent commits for plan references or ask user
+   - Otherwise, ask the user for the plan path
    - Plans are organized by domain under `thoughts/shared/plans/<domain>/`
 
-3. **Gather implementation evidence**:
-   ```bash
-   # Check recent commits
-   git log --oneline -n 20
-   git diff HEAD~N..HEAD  # Where N covers implementation commits
+2. **Read the plan** completely to understand what was supposed to be implemented
 
-   # Run comprehensive checks
-   cd $(git rev-parse --show-toplevel) && make check test
-   ```
+3. **Read the provided files** - inspect each file's current on-disk state using the Read tool (not git)
 
 ## Validation Process
 
@@ -158,9 +163,7 @@ Always verify:
 
 Recommended workflow:
 1. `/implement_plan` - Execute the implementation
-2. `/commit` - Create atomic commits for changes
-3. `/validate_plan` - Verify implementation correctness
-
-The validation works best after commits are made, as it can analyze the git history to understand what was implemented.
+2. `/validate_plan` - Verify implementation correctness (provide changed files)
+3. `/commit` - Create atomic commits for verified changes
 
 Remember: Good validation catches issues before they reach production. Be constructive but thorough in identifying gaps or improvements.

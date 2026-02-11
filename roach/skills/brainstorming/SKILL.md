@@ -38,7 +38,6 @@ Start by understanding the current project context, then ask questions one at a 
 - Determine the domain from the task context (e.g., accrual, KPI, project-management, etc.). If unclear, ask the user.
 - Write the validated design to `thoughts/shared/plans/<domain>/YYYY-MM-DD-<topic>-design.md`
 - Use elements-of-style:writing-clearly-and-concisely skill if available
-- Commit the design document to git
 
 **Implementation (if continuing):**
 - Ask: "Ready to set up for implementation?"

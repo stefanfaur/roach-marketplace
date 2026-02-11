@@ -35,8 +35,9 @@ Create or append intermediary documentation notes. These accumulate context acro
    - If not, create it with the header below
 
 4. **Gather what's documentable** by reviewing:
-   - Recent git changes: run `git diff --stat` and `git log --oneline -10`
+   - The conversation context (what was discussed and implemented in this session)
    - The current plan (if referenced or findable in `thoughts/shared/plans/<domain>/`)
+   - Any files the user mentions or references
    - What the user tells you
    - Do NOT spawn subagents. This should be fast.
 
@@ -89,7 +90,7 @@ Produce polished documentation by synthesizing all available context, then copye
    - Intermediary notes: `thoughts/shared/docs/<domain>/<feature>-notes.md`
    - Implementation plan: find in `thoughts/shared/plans/<domain>/`
    - Research docs: find in `thoughts/shared/research/<domain>/` if relevant
-   - Code changes: run `git log --oneline` and `git diff` for the feature
+   - Source files referenced in the plan or notes (read them directly)
    - Any existing documentation the user points to
 
 2. **Determine output location** by asking the user via AskUserQuestion:

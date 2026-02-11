@@ -65,7 +65,9 @@ You MUST complete each phase before proceeding to the next.
 
 3. **Check Recent Changes**
    - What changed that could cause this?
-   - Git diff, recent commits
+   - Only diff files relevant to the bug: `git diff -- <specific files under investigation>`
+   - Do NOT run blanket `git diff` - the staging area contains unrelated changes from other IDE changelists
+   - If recent commits are relevant, scope to specific files: `git log --oneline -n 10 -- <files>`
    - New dependencies, config changes
    - Environmental differences
 
