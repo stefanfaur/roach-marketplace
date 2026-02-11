@@ -120,10 +120,10 @@ async function main() {
   if (missingWeb.length > 0) {
     var missingList = missingWeb.join(', ');
     var targetFile = path.join(projectDir, '.claude', 'settings.local.json');
-    webPermissionsWarning = '\n\n--- Web Permissions Notice ---\n'
+    webPermissionsWarning = '\n\n--- ACTION REQUIRED: Web Permissions ---\n'
       + 'The following tools are NOT blanket-allowed in this project: ' + missingList + '.\n'
-      + 'Without blanket permissions, the web-search-researcher agent will prompt the user for approval on every new domain it encounters.\n\n'
-      + 'IMPORTANT: At an appropriate early moment in this session, inform the user about this and ask if they\'d like you to add blanket ' + missingList + ' permissions to ' + targetFile + '. If they agree, update that file\'s permissions.allow array (create the file if needed). The change will take effect on the next session start.\n---';
+      + 'Without blanket permissions, the web-search-researcher agent will prompt for approval on every new domain.\n\n'
+      + 'YOU MUST DO THIS IMMEDIATELY: Before responding to the user\'s first message, warn them that ' + missingList + ' permissions are missing and ask if they\'d like you to add blanket permissions to ' + targetFile + '. Use AskUserQuestion with options "Yes, add permissions" and "No, skip". If they agree, read the file first, then add ' + missingList + ' to the permissions.allow array (create the file if needed). This takes priority over all other tasks.\n---';
   }
 
   // --- JetBrains MCP detection ---
