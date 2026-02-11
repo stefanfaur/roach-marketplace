@@ -15,6 +15,7 @@ The agent-browser plugin wraps [Vercel's agent-browser CLI](https://github.com/v
 | **roach** | Research-first methodology with skills-first enforcement |
 | **frontend-design** | Distinctive, production-grade frontend interface generation (by Anthropic) |
 | **agent-browser** | Browser automation agent with workflow persistence (requires `agent-browser` CLI) |
+| **prepush** | Git pre-push hook with configurable quality checks and AI-powered code review |
 
 ## Installation
 
@@ -50,7 +51,7 @@ gh repo view stefanfaur/roach-marketplace --json name
 
 ### Enable plugins
 
-After adding the marketplace, enable `roach`, `frontend-design`, and `agent-browser` from the plugin list.
+After adding the marketplace, enable the plugins you want from the list: `roach`, `frontend-design`, `agent-browser`, `prepush`.
 
 ### Install required CLI tools
 
@@ -181,6 +182,41 @@ The key difference from raw browser tools: `snapshot -i` returns only interactiv
 The plugin adds workflow persistence on top. Before touching the browser, the agent checks `thoughts/shared/browser/` for saved workflows matching the domain and task. After a successful run, it saves the workflow with steps, auth notes, and gotchas. Future runs of the same task reuse the saved workflow instead of rediscovering everything. Session state (`state save/load`) persists authentication so login flows only need to be solved once.
 
 All browser interaction runs in an isolated subagent to keep the main context window clean.
+
+### prepush
+
+Installs and manages a git `pre-push` hook with configurable quality checks and optional AI code review. No agents, no skills — just a `SessionStart` hook that handles setup and a git hook that runs on push.
+
+**First session flow**: The startup hook auto-detects your project's tech stack (JS/TS, Python, Go, Rust, Ruby, Makefile targets) and reads `CLAUDE.md` for project conventions. It asks whether you want to set up pre-push checks, with options to customize what the AI review focuses on (security, performance, test coverage, etc.). When you say yes, it creates three files:
+
+- `.claude/prepush.json` — configuration (which tools to run, review mode, focus areas)
+- `.claude/commands/prepush_review.md` — project-specific AI review slash command
+- `.git/hooks/pre-push` — the git hook script
+
+**On push**: The hook runs your configured quality tools sequentially (lint, test, typecheck, etc.). If any fail, the push is blocked. If AI review is enabled, it proceeds in one of two modes:
+
+- **auto** (default): Invokes `claude -p` with the diff, gets a structured JSON verdict (PASS/FAIL with issues), and blocks the push only on critical issues (bugs, security vulnerabilities, data loss risks).
+- **manual**: Blocks the push and tells you to run `/prepush_review` in Claude Code to review interactively before pushing.
+
+**Configuration** (`.claude/prepush.json`):
+
+```json
+{
+  "version": 1,
+  "mode": "auto",
+  "qualityTools": [
+    { "name": "lint", "command": "npm run lint" },
+    { "name": "test", "command": "npm test" }
+  ],
+  "review": {
+    "enabled": true,
+    "focus": ["correctness", "security"],
+    "command": "prepush_review"
+  }
+}
+```
+
+Edit `.claude/commands/prepush_review.md` to customize the AI review behavior. To uninstall, remove `.claude/prepush.json`, `.claude/commands/prepush_review.md`, and `.git/hooks/pre-push`.
 
 ## Updating Plugins
 

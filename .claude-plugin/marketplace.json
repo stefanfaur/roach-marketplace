@@ -31,6 +31,13 @@
       "version": "1.0.0",
       "source": "./agent-browser",
       "category": "productivity"
+    },
+    {
+      "name": "prepush",
+      "description": "Git pre-push hook with configurable quality checks and AI-powered code review",
+      "version": "1.0.0",
+      "source": "./prepush",
+      "category": "development"
     }
   ]
 }
