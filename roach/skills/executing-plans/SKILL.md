@@ -66,8 +66,8 @@ When all tasks are done:
 
 ## Related Skills
 
-- **roach:writing-plans** - Create plans to execute
-- **roach:subagent-driven-development** - Alternative execution approach
+- **writing-plans** - Create plans to execute
+- **subagent-driven-development** - Alternative execution approach
 
 ## Remember
 - Review plan critically first

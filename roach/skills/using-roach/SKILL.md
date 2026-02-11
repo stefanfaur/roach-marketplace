@@ -84,8 +84,8 @@ Commands are structured multi-step workflows invoked by the user:
 
 - **Research phase**: Use `/research_codebase` for deep investigation, `/create_plan` for implementation planning
 - **Implementation phase**: Skills activate automatically (brainstorming, TDD, debugging, verification)
-- **Execution phase**: Use `/implement_plan` or `roach:executing-plans` to execute plans
-- **Quality phase**: Use `/validate_plan`, `roach:verification-before-completion`, `roach:requesting-code-review`
+- **Execution phase**: Use `/implement_plan` or `executing-plans` to execute plans
+- **Quality phase**: Use `/validate_plan`, `verification-before-completion`, `requesting-code-review`
 - **Documentation phase** (opt-in): Use `/write_docs capture` during implementation to accumulate notes, `/write_docs finalize` at the end to produce polished docs
 - **Continuity phase**: Use `/create_handoff` to preserve context, `/resume_handoff` to continue
 

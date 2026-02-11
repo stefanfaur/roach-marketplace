@@ -189,7 +189,7 @@ async function main() {
     hookSpecificOutput: {
       hookEventName: 'SessionStart',
       additionalContext: '<EXTREMELY_IMPORTANT>\nYou have roach.\n\n'
-        + '**Below is the full content of your \'roach:using-roach\' skill - your introduction to using skills and commands. For all other skills, use the \'Skill\' tool:**\n\n'
+        + '**Below is the full content of your \'using-roach\' skill - your introduction to using skills and commands. For all other skills, use the \'Skill\' tool:**\n\n'
         + usingForgeEscaped
         + companionWarning
         + jetbrainsContext

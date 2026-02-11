@@ -50,7 +50,7 @@ You: Let me request code review before proceeding.
 BASE_SHA=$(git log --oneline | rg "Task 1" | head -1 | awk '{print $1}')
 HEAD_SHA=$(git rev-parse HEAD)
 
-[Dispatch roach:code-reviewer subagent]
+[Dispatch code-reviewer subagent]
   WHAT_WAS_IMPLEMENTED: Verification and repair functions for conversation index
   PLAN_OR_REQUIREMENTS: Task 2 from thoughts/shared/plans/<domain>/deployment-plan.md
   BASE_SHA: a7981ec
