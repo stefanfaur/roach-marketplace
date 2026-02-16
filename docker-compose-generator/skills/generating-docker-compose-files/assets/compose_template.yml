@@ -1,0 +1,80 @@
+# Compose Specification template (works with both Docker Compose and Podman Compose)
+# No 'version' key needed — uses Compose Specification format
+
+# Define services for your application
+services:
+
+  # Example web application service
+  web:
+    image: nginx:latest # Replace with your web application image
+    container_name: web_app
+    ports:
+      # Docker: use 80:80 directly
+      # Podman rootless: use 8080:80 (ports < 1024 blocked by default)
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - ./html:/usr/share/nginx/html       # Add :z on SELinux systems
+      - ./nginx/conf.d:/etc/nginx/conf.d   # Add :z on SELinux systems
+    depends_on:
+      - app
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - app_network # Custom network required for DNS resolution in Podman
+    environment:
+      - REPLACE_ME=YOUR_VALUE_HERE
+
+  # Example application service
+  app:
+    build:
+      context: ./app # Path to Dockerfile/Containerfile
+    container_name: app_service
+    environment:
+      - DATABASE_URL=postgres://user:password@db:5432/database
+      - SECRET_KEY=YOUR_SECRET_KEY
+    depends_on:
+      - db
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - app_network
+    volumes:
+      - ./app:/app  # Add :z on SELinux systems, :U for rootless Podman
+
+  # Example database service
+  db:
+    image: postgres:14
+    container_name: database
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=database
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d database"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - app_network
+
+# Custom bridge networks — required for container DNS resolution in Podman
+# The default 'podman' network does NOT support DNS
+networks:
+  app_network:
+    driver: bridge
+
+# Named volumes for persistent data
+volumes:
+  db_data:
