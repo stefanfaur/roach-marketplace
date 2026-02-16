@@ -1,0 +1,37 @@
+{
+  "skill": {
+    "name": "database-query-profiling",
+    "version": "1.0.0",
+    "enabled": true,
+    "settings": {
+      "verbose": false,
+      "autoActivate": true,
+      "toolRestrictions": true
+    }
+  },
+  "triggers": {
+    "keywords": [
+      "profile queries",
+      "optimize SQL",
+      "N+1 queries",
+      "slow query",
+      "index recommendation",
+      "database performance"
+    ],
+    "patterns": []
+  },
+  "tools": {
+    "allowed": [
+      "Read",
+      "Grep",
+      "Glob",
+      "Bash"
+    ],
+    "restricted": []
+  },
+  "metadata": {
+    "author": "Jeremy Longshore",
+    "category": "performance",
+    "tags": ["database", "sql", "optimization", "profiling"]
+  }
+}

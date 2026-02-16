@@ -1,0 +1,27 @@
+{
+  "testCases": [
+    {
+      "name": "Basic activation test",
+      "input": "profile queries in this project",
+      "expected": {
+        "activated": true,
+        "toolsUsed": ["Read", "Grep"],
+        "success": true
+      }
+    },
+    {
+      "name": "N+1 detection test",
+      "input": "find N+1 queries in the codebase",
+      "expected": {
+        "activated": true,
+        "steps": 3,
+        "toolsUsed": ["Read", "Grep", "Glob"],
+        "success": true
+      }
+    }
+  ],
+  "fixtures": {
+    "sampleInput": "SELECT * FROM users WHERE id IN (SELECT user_id FROM orders)",
+    "expectedOutput": "Consider using a JOIN instead of subquery"
+  }
+}
