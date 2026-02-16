@@ -1,0 +1,21 @@
+{
+  "name": "ci-cd-pipeline-builder",
+  "version": "1.0.1",
+  "description": "Build CI/CD pipelines for GitHub Actions, Gitea Actions, GitLab CI, Jenkins, and more",
+  "author": {
+    "name": "Jeremy Longshore",
+    "email": "jeremy@intentsolutions.io"
+  },
+  "repository": "https://github.com/jeremylongshore/claude-code-plugins-plus-skills",
+  "license": "MIT",
+  "keywords": [
+    "ci-cd",
+    "github-actions",
+    "gitea-actions",
+    "gitlab-ci",
+    "jenkins",
+    "devops",
+    "automation",
+    "agent-skills"
+  ]
+}
