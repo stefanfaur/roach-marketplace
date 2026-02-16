@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "roach-marketplace",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "roach and its companion plugins",
   "owner": {
     "name": "Stefan Faur"
@@ -10,7 +10,7 @@
     {
       "name": "roach",
       "description": "Research-first methodology with skills-first enforcement for Claude Code",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "source": "./roach",
       "category": "productivity"
     },
@@ -28,7 +28,7 @@
     {
       "name": "agent-browser",
       "description": "Browser automation skill and agent with workflow persistence for agent-browser CLI",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "source": "./agent-browser",
       "category": "productivity"
     },
@@ -38,6 +38,50 @@
       "version": "1.0.0",
       "source": "./prepush",
       "category": "development"
+    },
+    {
+      "name": "ci-cd-pipeline-builder",
+      "description": "Build CI/CD pipelines for GitHub Actions, Gitea Actions, GitLab CI, Jenkins, and more",
+      "version": "1.0.1",
+      "author": {
+        "name": "Jeremy Longshore",
+        "email": "jeremy@intentsolutions.io"
+      },
+      "source": "./ci-cd-pipeline-builder",
+      "category": "devops"
+    },
+    {
+      "name": "ansible-playbook-creator",
+      "description": "Create Ansible playbooks for configuration management",
+      "version": "1.0.1",
+      "author": {
+        "name": "Jeremy Longshore",
+        "email": "jeremy@intentsolutions.io"
+      },
+      "source": "./ansible-playbook-creator",
+      "category": "devops"
+    },
+    {
+      "name": "docker-compose-generator",
+      "description": "Generate Docker Compose and Podman Compose configurations for multi-container applications",
+      "version": "1.1.1",
+      "author": {
+        "name": "Jeremy Longshore",
+        "email": "jeremy@intentsolutions.io"
+      },
+      "source": "./docker-compose-generator",
+      "category": "devops"
+    },
+    {
+      "name": "database-query-profiler",
+      "description": "Profile and optimize database queries for performance",
+      "version": "1.0.1",
+      "author": {
+        "name": "Jeremy Longshore",
+        "email": "jeremy@intentsolutions.io"
+      },
+      "source": "./database-query-profiler",
+      "category": "performance"
     }
   ]
 }
