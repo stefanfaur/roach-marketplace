@@ -1,0 +1,21 @@
+{
+  "name": "mariadb-mcp",
+  "version": "1.0.0",
+  "description": "MariaDB MCP server integration with comprehensive best practices for schema design, indexing, query optimization, Hibernate/QueryDSL, and operations",
+  "author": {
+    "name": "Stefan Faur"
+  },
+  "repository": "https://github.com/MariaDB/mcp",
+  "license": "MIT",
+  "keywords": [
+    "mariadb",
+    "mysql",
+    "database",
+    "mcp",
+    "hibernate",
+    "querydsl",
+    "sql",
+    "indexing",
+    "schema-design"
+  ]
+}

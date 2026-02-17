@@ -16,6 +16,7 @@ The agent-browser plugin wraps [Vercel's agent-browser CLI](https://github.com/v
 | **frontend-design** | Distinctive, production-grade frontend interface generation (by Anthropic) |
 | **agent-browser** | Browser automation agent with workflow persistence (requires `agent-browser` CLI) |
 | **prepush** | Git pre-push hook with configurable quality checks and AI-powered code review |
+| **mariadb-mcp** | MariaDB MCP server integration with automated setup and database best practices |
 
 ## Installation
 
@@ -51,7 +52,7 @@ gh repo view stefanfaur/roach-marketplace --json name
 
 ### Enable plugins
 
-After adding the marketplace, enable the plugins you want from the list: `roach`, `frontend-design`, `agent-browser`, `prepush`.
+After adding the marketplace, enable the plugins you want from the list: `roach`, `frontend-design`, `agent-browser`, `prepush`, `mariadb-mcp`.
 
 ### Install required CLI tools
 
@@ -217,6 +218,21 @@ Installs and manages a git `pre-push` hook with configurable quality checks and 
 ```
 
 Edit `.claude/commands/prepush_review.md` to customize the AI review behavior. To uninstall, remove `.claude/prepush.json`, `.claude/commands/prepush_review.md`, and `.git/hooks/pre-push`.
+
+### mariadb-mcp
+
+Integrates the [MariaDB MCP server](https://github.com/MariaDB/mcp) with one-command automated setup and comprehensive database best practices.
+
+**One-command setup**: `/mariadb-setup` installs the MariaDB MCP server, prompts for credentials, generates configuration, and tests the connection. No manual cloning, environment setup, or config file editing. Supports update, reconfigure, and reinstall flows.
+
+**Best practices guidance**: Router skill (`mariadb-best-practices`) activates on database tasks and pulls from reference files covering schema design, indexing, query optimization, Hibernate/QueryDSL patterns, performance tuning, security hardening, backup/replication, and migrations. If MCP is connected, validates advice against your actual database.
+
+**Commands**:
+- `/mariadb-setup` — Install/update/reconfigure the MCP server
+- `/mariadb` — Guided database health assessment (schema audit, index analysis, configuration review, security scan)
+- `/mariadb-review` — Review Java codebase for MariaDB/Hibernate/QueryDSL issues (no connection required)
+
+**Session hook**: Auto-detects MCP server configuration at startup and reports availability.
 
 ## Updating Plugins
 

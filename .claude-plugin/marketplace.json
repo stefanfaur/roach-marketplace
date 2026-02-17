@@ -82,6 +82,13 @@
       },
       "source": "./database-query-profiler",
       "category": "performance"
+    },
+    {
+      "name": "mariadb-mcp",
+      "description": "MariaDB MCP integration with best practices for schema design, indexing, Hibernate/QueryDSL, and database operations",
+      "version": "1.0.0",
+      "source": "./mariadb-mcp",
+      "category": "development"
     }
   ]
 }
