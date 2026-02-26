@@ -103,7 +103,7 @@ When MariaDB MCP is available, these tools are at your disposal:
 - `list_tables` — List tables in a database
 - `get_table_schema` — Column definitions, types, keys
 - `get_table_schema_with_relations` — Schema + foreign key relationships
-- `execute_sql` — Run SELECT, SHOW, DESCRIBE, EXPLAIN queries (read-only by default)
+- `execute_sql` — Run SELECT, SHOW, DESCRIBE, EXPLAIN queries
 - `create_database` — Create new databases
 
 Use these to validate any recommendation before presenting it.
