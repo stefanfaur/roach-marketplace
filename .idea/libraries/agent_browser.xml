@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="agent-browser">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/agent-browser.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

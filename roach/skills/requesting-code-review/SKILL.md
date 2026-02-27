@@ -1,99 +1,112 @@
 ---
 name: requesting-code-review
 description: Use when completing tasks, implementing major features, or before merging to verify work meets requirements
+context: fork
+agent: Explore
+argument-hint: "BASE_SHA HEAD_SHA 'what was implemented' 'plan path or requirements'"
 ---
 
 # Requesting Code Review
 
-Dispatch code-reviewer subagent to catch issues before they cascade.
+## Before Invoking This Skill (runs in main context)
 
-**Core principle:** Review early, review often.
-
-## When to Request Review
-
-**Mandatory:**
+**When to request — mandatory:**
 - After each task in subagent-driven development
-- After completing major feature
+- After completing a major feature
 - Before merge to main
 
-**Optional but valuable:**
+**When to request — optional:**
 - When stuck (fresh perspective)
 - Before refactoring (baseline check)
-- After fixing complex bug
+- After fixing a complex bug
 
-## How to Request
+**How to invoke:**
+1. Determine BASE_SHA: the commit just before implementation started
+   ```bash
+   git log --oneline -10   # find the right commit
+   ```
+2. Determine HEAD_SHA:
+   ```bash
+   git rev-parse HEAD
+   ```
+3. Invoke the skill with all context:
+   ```
+   Skill("requesting-code-review", "BASE_SHA HEAD_SHA 'what was implemented' 'plan path or requirements'")
+   ```
 
-**1. Dispatch code-reviewer subagent:**
-
-Use Task tool with code-reviewer type, fill template at `code-reviewer.md`
-
-**Placeholders:**
-- `{WHAT_WAS_IMPLEMENTED}` - What you just built
-- `{PLAN_OR_REQUIREMENTS}` - What it should do
-- `{BASE_SHA}` - Starting commit
-- `{HEAD_SHA}` - Ending commit
-- `{DESCRIPTION}` - Brief summary
-
-**2. Act on feedback:**
-- Fix Critical issues immediately
-- Fix Important issues before proceeding
+**After the fork returns:**
+- Fix Critical issues immediately before proceeding
+- Fix Important issues before next task
 - Note Minor issues for later
-- Push back if reviewer is wrong (with reasoning)
-
-## Example
-
-```
-[Just completed Task 2: Add verification function]
-
-You: Let me request code review before proceeding.
-
-BASE_SHA=$(git log --oneline | rg "Task 1" | head -1 | awk '{print $1}')
-HEAD_SHA=$(git rev-parse HEAD)
-
-[Dispatch code-reviewer subagent]
-  WHAT_WAS_IMPLEMENTED: Verification and repair functions for conversation index
-  PLAN_OR_REQUIREMENTS: Task 2 from thoughts/shared/plans/<domain>/deployment-plan.md
-  BASE_SHA: a7981ec
-  HEAD_SHA: 3df7661
-  DESCRIPTION: Added verifyIndex() and repairIndex() with 4 issue types
-
-[Subagent returns]:
-  Strengths: Clean architecture, real tests
-  Issues:
-    Important: Missing progress indicators
-    Minor: Magic number (100) for reporting interval
-  Assessment: Ready to proceed
-
-You: [Fix progress indicators]
-[Continue to Task 3]
-```
-
-## Integration with Workflows
-
-**Subagent-Driven Development:**
-- Review after EACH task
-- Catch issues before they compound
-- Fix before moving to next task
-
-**Executing Plans:**
-- Review after each batch (3 tasks)
-- Get feedback, apply, continue
-
-**Ad-Hoc Development:**
-- Review before confirming completion
-- Review when stuck
-
-## Red Flags
+- Push back with technical reasoning if reviewer is wrong
 
 **Never:**
 - Skip review because "it's simple"
 - Ignore Critical issues
 - Proceed with unfixed Important issues
-- Argue with valid technical feedback
 
-**If reviewer wrong:**
-- Push back with technical reasoning
-- Show code/tests that prove it works
-- Request clarification
+---
 
-See template at: requesting-code-review/code-reviewer.md
+# Reviewer Instructions (runs in forked Explore context)
+
+## Context
+$ARGUMENTS
+
+## Diff
+!`git diff $(echo "$ARGUMENTS" | awk '{print $1}')..$(echo "$ARGUMENTS" | awk '{print $2}') -- . 2>/dev/null`
+
+---
+
+You are a Senior Code Reviewer. Review the diff above against the requirements described in
+the $ARGUMENTS context string.
+
+**Steps:**
+1. Parse $ARGUMENTS: first two tokens are BASE_SHA and HEAD_SHA (already used above for the
+   diff). Remaining text is what was implemented and the plan/requirements reference.
+2. If a plan file path appears in $ARGUMENTS, read it:
+   ```bash
+   cat <plan-path>
+   ```
+3. For each significantly modified file in the diff, read its full current state to understand
+   context beyond what the diff shows.
+4. Check all of: code quality, architecture, testing, requirements compliance, production
+   readiness.
+5. Output the structured review below. Nothing else.
+
+## Output Format
+
+### Strengths
+[What is well done. Be specific — file:line references where relevant.]
+
+### Issues
+
+#### Critical (Must Fix Before Proceeding)
+[Bugs, security issues, data loss risks, broken functionality]
+
+#### Important (Should Fix)
+[Architecture problems, missing features, poor error handling, test gaps]
+
+#### Minor (Nice to Have)
+[Code style, optimization opportunities, documentation improvements]
+
+**For each issue:**
+- File and line reference
+- What is wrong
+- Why it matters
+- How to fix (if not obvious)
+
+### Assessment
+
+**Ready to proceed?** [Yes / No / With fixes]
+
+**Reasoning:** [Technical assessment in 1-2 sentences]
+
+## Reviewer Rules
+
+- Categorize by actual severity — not everything is Critical
+- Be specific: file:line references, not vague descriptions
+- Explain WHY each issue matters, not just what it is
+- Always acknowledge what was done well
+- Always give a clear, unambiguous verdict
+- Do not say "looks good" without having checked
+- Do not give feedback on code you did not read
