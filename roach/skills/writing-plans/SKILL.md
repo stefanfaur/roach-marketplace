@@ -1,32 +1,80 @@
 ---
 name: writing-plans
 description: Use when you have a spec or requirements for a multi-step task, before touching code
+context: fork
+agent: Explore
+argument-hint: "domain, feature description, key files or components involved, any constraints"
 ---
 
 # Writing Plans
 
-## Overview
+## Before Invoking This Skill (runs in main context)
 
-Write comprehensive implementation plans assuming the engineer has zero context for our codebase and questionable taste. Document everything they need to know: which files to touch for each task, code, testing, docs they might need to check, how to test it. Give them the whole plan as bite-sized tasks. DRY. YAGNI. TDD. Frequent commits.
+**Announce:** "I'm using writing-plans to create the implementation plan."
 
-Assume they are a skilled developer, but know almost nothing about our toolset or problem domain. Assume they don't know good test design very well.
+**Gather before invoking:**
+1. Determine the domain from task context (e.g., auth, payments, search). If unclear, ask:
+   "What domain is this for?"
+2. If the user mentioned specific files or existing patterns, note them.
+3. If there are constraints (must be stateless, must match existing patterns, etc.), note them.
 
-**Announce at start:** "I'm using the writing-plans skill to create the implementation plan."
+**Then invoke:**
+```
+Skill("writing-plans", "domain=<domain> feature='<description>' files='<key files if known>' constraints='<constraints if any>'")
+```
 
-**Save plans to:** Determine the domain from the task context (e.g., accrual, KPI, project-management, etc.). If unclear, ask the user. Save to `thoughts/shared/plans/<domain>/YYYY-MM-DD-<feature-name>.md`
+**After the fork returns the plan path:**
 
-## Bite-Sized Task Granularity
+Present execution choice:
 
-**Each step is one action (2-5 minutes):**
-- "Write the failing test" - step
-- "Run it to make sure it fails" - step
-- "Implement the minimal code to make the test pass" - step
-- "Run the tests and make sure they pass" - step
-- "Commit" - step
+"Plan complete and saved to `<returned path>`. Two execution options:
 
-## Plan Document Header
+**1. Subagent-Driven (this session)** — I dispatch a fresh subagent per task, review between
+tasks, fast iteration. REQUIRED SUB-SKILL: subagent-driven-development.
 
-**Every plan MUST start with this header:**
+**2. Parallel Session (separate)** — Open new session with executing-plans, batch execution
+with checkpoints. REQUIRED SUB-SKILL: executing-plans in the new session.
+
+Which approach?"
+
+---
+
+# Plan Writer Instructions (runs in forked Explore context)
+
+## Task
+Write a comprehensive implementation plan for: $ARGUMENTS
+
+## Steps
+
+**1. Explore the codebase for relevant context**
+
+Based on $ARGUMENTS, identify and read:
+- Files most likely to be modified or extended
+- Existing similar implementations to use as patterns
+- Current test structure and conventions
+- Tech stack details (package.json, pyproject.toml, go.mod, etc.) if needed
+
+**2. Determine exact file paths**
+
+Every task in the plan must reference real, exact paths — not invented ones. Verify paths exist
+or confirm they are correct new-file paths based on existing conventions.
+
+**3. Write the plan**
+
+Follow the structure below exactly. Save to:
+`thoughts/shared/plans/<domain>/YYYY-MM-DD-<feature-name>.md`
+
+where `<domain>` and `<feature-name>` come from $ARGUMENTS.
+
+**4. Return the saved path**
+
+Output only: `Plan written to thoughts/shared/plans/<domain>/<filename>.md`
+
+---
+
+## Plan Document Structure
+
+Every plan starts with this exact header:
 
 ```markdown
 # [Feature Name] Implementation Plan
@@ -35,80 +83,70 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 **Goal:** [One sentence describing what this builds]
 
-**Architecture:** [2-3 sentences about approach]
+**Architecture:** [2-3 sentences about approach and key decisions]
 
-**Tech Stack:** [Key technologies/libraries]
+**Tech Stack:** [Key technologies, libraries, versions]
 
 ---
 ```
 
 ## Task Structure
 
+Each task follows this pattern:
+
 ```markdown
 ### Task N: [Component Name]
 
 **Files:**
-- Create: `exact/path/to/file.py`
-- Modify: `exact/path/to/existing.py:123-145`
-- Test: `tests/exact/path/to/test.py`
+- Create: `exact/path/to/new-file.ts`
+- Modify: `exact/path/to/existing.ts:42-67`
+- Test: `tests/exact/path/to/test.ts`
 
 **Step 1: Write the failing test**
 
-```python
-def test_specific_behavior():
-    result = function(input)
-    assert result == expected
+```typescript
+it('should do specific thing', () => {
+  const result = functionUnderTest(input);
+  expect(result).toEqual(expected);
+});
 ```
 
-**Step 2: Run test to verify it fails**
+**Step 2: Run test to confirm it fails**
 
-Run: `pytest tests/path/test.py::test_name -v`
-Expected: FAIL with "function not defined"
+```bash
+npm test -- --testPathPattern="path/to/test"
+```
+Expected: FAIL — "functionUnderTest is not defined" or equivalent.
 
 **Step 3: Write minimal implementation**
 
-```python
-def function(input):
-    return expected
+```typescript
+export function functionUnderTest(input: InputType): OutputType {
+  // minimal implementation
+}
 ```
 
-**Step 4: Run test to verify it passes**
+**Step 4: Run test to confirm it passes**
 
-Run: `pytest tests/path/test.py::test_name -v`
-Expected: PASS
+```bash
+npm test -- --testPathPattern="path/to/test"
+```
+Expected: PASS.
 
 **Step 5: Commit**
 
 ```bash
-git add tests/path/test.py src/path/file.py
-git commit -m "feat: add specific feature"
+git add exact/path/to/new-file.ts tests/exact/path/to/test.ts
+git commit -m "feat: add specific component"
 ```
 ```
 
-## Remember
-- Exact file paths always
-- Complete code in plan (not "add validation")
+## Plan Writing Rules
+
+- Exact file paths always — verify against actual codebase
+- Complete code in plan steps, not "add validation here"
 - Exact commands with expected output
-- Reference relevant skills with @ syntax
+- Each step is one action (2-5 minutes)
 - DRY, YAGNI, TDD, frequent commits
-
-## Execution Handoff
-
-After saving the plan, offer execution choice:
-
-**"Plan complete and saved to `thoughts/shared/plans/<domain>/<filename>.md`. Two execution options:**
-
-**1. Subagent-Driven (this session)** - I dispatch fresh subagent per task, review between tasks, fast iteration
-
-**2. Parallel Session (separate)** - Open new session with executing-plans, batch execution with checkpoints
-
-**Which approach?"**
-
-**If Subagent-Driven chosen:**
-- **REQUIRED SUB-SKILL:** Use subagent-driven-development
-- Stay in this session
-- Fresh subagent per task + code review
-
-**If Parallel Session chosen:**
-- Guide them to open new session
-- **REQUIRED SUB-SKILL:** New session uses executing-plans
+- Assume the implementer is skilled but knows nothing about this codebase or domain
+- Assume poor test design intuition — be explicit about what to test and how
