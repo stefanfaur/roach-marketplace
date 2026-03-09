@@ -4,20 +4,11 @@ description: Create git commits with user approval and no Claude attribution
 
 # Commit Changes
 
-You are tasked with creating git commits for explicitly provided files.
+You are tasked with creating git commits. You support two modes: explicit file paths as arguments, or auto-discovery when no arguments are given.
 
-## Arguments
+## Mode 1: Explicit Files
 
-This command REQUIRES file paths as arguments. If no file paths are provided, respond with:
-
-```
-I need explicit file paths to commit. Please provide them:
-/commit file1.java file2.java path/to/file3.ts
-```
-
-Do NOT proceed without file arguments. Do NOT run `git status` or `git diff` to discover files.
-
-## Process:
+If file paths are provided as arguments:
 
 1. **Read scoped diffs:**
    - Run `git diff -- <file1> <file2> ...` scoped to ONLY the provided files
@@ -25,8 +16,7 @@ Do NOT proceed without file arguments. Do NOT run `git status` or `git diff` to 
    - Only inspect the files you were given
 
 2. **Analyze and split intelligently:**
-   - Understand the changes across the provided files
-   - Determine whether they form one logical commit or should be split into multiple commits (e.g., separate a refactor from a feature addition)
+   - Determine whether the files form one logical commit or should be split
    - Use imperative mood in commit messages
    - Focus on why the changes were made, not just what
 
@@ -41,21 +31,47 @@ Do NOT proceed without file arguments. Do NOT run `git status` or `git diff` to 
    - **NEVER use** `git add` followed by `git commit -m` (this commits ALL staged files!)
    - Show the result with `git log --oneline -n [number of commits created]`
 
+## Mode 2: No Arguments (Auto-Discovery)
+
+If no file paths are provided:
+
+1. **Discover all changes:**
+   - Run `git status` to list all staged and unstaged files
+   - Run `git diff --cached` to inspect staged changes
+   - Run `git diff` to inspect unstaged changes
+
+2. **Analyze and propose grouping:**
+   - Group files by logical relationship: same feature, same domain, same type of change (e.g. config vs. implementation vs. tests)
+   - Always propose a grouping, whether that results in one commit or several
+   - If a file has both staged and unstaged changes, note it explicitly:
+     > "note: file.ts has both staged and unstaged changes — this will commit only the staged portion"
+
+3. **Present the proposal — always required:**
+
+   ```
+   I found changes across N files. Here's how I'd group them:
+
+   Commit 1: "feat: add X"
+     - path/to/file1.ts
+     - path/to/file2.ts
+
+   Commit 2: "chore: update config"
+     - config/settings.json
+
+   Does this grouping look right, or would you like to adjust?
+   ```
+
+4. **Wait for user confirmation.** The user may approve as-is or request adjustments (merge commits, exclude files, reword messages, etc.). Do NOT proceed until confirmed.
+
+5. **Execute upon confirmation:**
+   - **ALWAYS use direct commit syntax**: `git commit <file1> <file2> ... -m "message"` per commit
+   - **NEVER use** `git add` followed by `git commit -m`
+   - Create commits in the order proposed
+   - Show the result with `git log --oneline -n [number of commits created]`
+
 ## Important:
 - **NEVER add co-author information or Claude attribution**
 - Commits should be authored solely by the user
 - Do not include any "Generated with Claude" messages
 - Do not add "Co-Authored-By" lines
 - Write commit messages as if the user wrote them
-
-## Remember:
-- You have the full context of what was done in this session
-- Group related changes together
-- Keep commits focused and atomic when possible
-- The user trusts your judgment on splitting - they asked you to commit
-
-## Example:
-```bash
-# Commits only the specified files
-git commit file1.java file2.java -m "message"
-```
