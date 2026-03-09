@@ -4,23 +4,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-A private Claude Code plugin marketplace bundling **roach** (research-first workflow methodology) and **agent-browser** (browser automation wrapping Vercel's agent-browser CLI). Derived from HumanLayer and obra/superpowers configurations.
+A private Claude Code plugin marketplace bundling **roach** (research-first workflow methodology), **preroach** (legacy plan-centric workflow skills), and **agent-browser** (browser automation wrapping Vercel's agent-browser CLI). Derived from HumanLayer and obra/superpowers configurations.
 
-There is no application code, build system, or test suite. The repository contains only markdown files (skills, commands, agents), Node.js scripts (hooks), and JSON configuration.
+There is no application code, build system, or test suite. The repository contains only markdown files (skills, agents), Node.js scripts (hooks), and JSON configuration.
 
 ## Repository Layout
 
 ```
 .claude-plugin/marketplace.json    # Marketplace manifest
-roach/                       # Main plugin: agents, commands, hooks, skills, scripts
+roach/                             # Main plugin: agents, hooks, skills, scripts
+preroach/                          # Legacy plan-centric workflow skills
 agent-browser/                     # Browser automation agent + skill
 ```
 
 ### roach Internal Structure
 
 - `agents/` — 7 specialized subagents (codebase-analyzer, codebase-locator, codebase-pattern-finder, code-reviewer, thoughts-analyzer, thoughts-locator, web-search-researcher)
-- `commands/` — 9 slash commands (create_plan, implement_plan, validate_plan, iterate_plan, research_codebase, commit, create_handoff, resume_handoff, write_docs)
-- `skills/` — 12 skills, each in `skills/<name>/SKILL.md` (brainstorming, dispatching-parallel-agents, executing-plans, receiving-code-review, requesting-code-review, subagent-driven-development, systematic-debugging, test-driven-development, using-roach, verification-before-completion, writing-plans, writing-skills)
+- `skills/` — skills, each in `skills/<name>/SKILL.md` (brainstorming, committing, dispatching-parallel-agents, executing-plans, initializing-codebase-index, receiving-code-review, requesting-code-review, researching-codebase, resuming-handoff, subagent-driven-development, systematic-debugging, test-driven-development, using-roach, verification-before-completion, writing-plans, writing-skills, and more)
+
+### preroach Internal Structure
+
+- `skills/` — legacy plan workflow skills (creating-plans, implementing-plans, validating-plans, iterating-plans)
 - `hooks/` — hooks.json + Node.js scripts (session-start.js runs on startup/resume/clear/compact; context-monitor.js runs on Stop)
 - `lib/elements-of-style.md` — Style reference for documentation quality
 - `scripts/spec_metadata.js` — Metadata extraction utility (Node.js, cross-platform)

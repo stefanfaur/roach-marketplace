@@ -13,6 +13,7 @@ The agent-browser plugin wraps [Vercel's agent-browser CLI](https://github.com/v
 | Plugin | Description |
 |--------|-------------|
 | **roach** | Research-first methodology with skills-first enforcement |
+| **preroach** | Legacy plan-centric workflow skills (creating, implementing, validating, iterating plans) |
 | **agent-browser** | Browser automation agent with workflow persistence (requires `agent-browser` CLI) |
 | **mariadb-mcp** | MariaDB MCP server integration with automated setup and database best practices |
 
@@ -50,7 +51,7 @@ gh repo view stefanfaur/roach-marketplace --json name
 
 ### Enable plugins
 
-After adding the marketplace, enable the plugins you want from the list: `roach`, `agent-browser`, `mariadb-mcp`.
+After adding the marketplace, enable the plugins you want from the list: `roach`, `preroach`, `agent-browser`, `mariadb-mcp`.
 
 ### Install required CLI tools
 
@@ -132,7 +133,7 @@ A two-tier persistent map of the codebase stored in `thoughts/shared/index/`:
 
 **Write path** (`update-codebase-index`, `context:fork`): invoked automatically at the end of `executing-plans`, `subagent-driven-development`, and `research_codebase`. Patches only the affected sections.
 
-**Bootstrap**: run `/init_codebase_index` once on a new project. Safe to skip — agents fall back to normal exploration if the index is missing, and `update-codebase-index` will create it from that session's context.
+**Bootstrap**: invoke `initializing-codebase-index` once on a new project. Safe to skip — agents fall back to normal exploration if the index is missing, and `update-codebase-index` will create it from that session's context.
 
 #### Skills
 
@@ -152,6 +153,11 @@ A two-tier persistent map of the codebase stored in `thoughts/shared/index/`:
 | `writing-skills` | TDD for skill authoring — pressure-test without the skill, then write it to counter the failure modes |
 | `using-codebase-index` | Check the index before any exploration — read path for the codebase index |
 | `update-codebase-index` | Patch the index after implementation or research sessions — write path |
+| `committing` | Git commit with user approval; never uses `git add` (preserves IDE changelists) |
+| `researching-codebase` | Document code as-is via parallel agents into `thoughts/shared/research/` |
+| `resuming-handoff` | Resume from a handoff document with context validation and action planning |
+| `initializing-codebase-index` | Bootstrap the codebase index from scratch (run once per project) |
+| `create-handoff` | Save context for another session to pick up |
 
 #### Agents
 
@@ -167,20 +173,16 @@ A two-tier persistent map of the codebase stored in `thoughts/shared/index/`:
 
 All codebase agents are documentarians — they describe what exists without suggesting improvements.
 
-#### Commands
+### preroach
 
-| Command | What it does |
-|---------|-------------|
-| `/create_plan` | Create an implementation plan through interactive research |
-| `/iterate_plan` | Update an existing plan with new research |
-| `/implement_plan` | Execute a plan with verification at each step |
-| `/validate_plan` | Check implementation against plan success criteria |
-| `/research_codebase` | Document code as-is into `thoughts/shared/research/` |
-| `/init_codebase_index` | Bootstrap the codebase index from scratch (run once per project) |
-| `/commit` | Git commit that never uses `git add` (preserves IDE changelists) |
-| `/create_handoff` | Save context for another session to pick up |
-| `/resume_handoff` | Resume from a handoff document |
-| `/write_docs` | Capture notes during implementation or produce final docs |
+Legacy plan-centric workflow skills, kept separate from the main roach plugin for clarity. These skills predate the `brainstorming` → `writing-plans` → `executing-plans` flow and implement the older interactive plan creation and execution workflow.
+
+| Skill | What it does |
+|-------|-------------|
+| `creating-plans` | Create a detailed implementation plan through interactive research and parallel agent investigation |
+| `implementing-plans` | Execute a plan phase-by-phase with automated and manual verification checkpoints |
+| `validating-plans` | Check implementation against plan success criteria and produce a validation report |
+| `iterating-plans` | Update an existing plan surgically based on new requirements or feedback |
 
 ### agent-browser
 

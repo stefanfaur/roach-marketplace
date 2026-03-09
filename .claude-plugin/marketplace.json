@@ -15,6 +15,13 @@
       "category": "productivity"
     },
     {
+      "name": "preroach",
+      "description": "Legacy plan-centric workflow skills for creating, implementing, validating, and iterating implementation plans",
+      "version": "1.0.0",
+      "source": "./preroach",
+      "category": "productivity"
+    },
+    {
       "name": "agent-browser",
       "description": "Browser automation skill and agent with workflow persistence for agent-browser CLI",
       "version": "1.0.1",

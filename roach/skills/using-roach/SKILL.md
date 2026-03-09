@@ -64,28 +64,13 @@ These thoughts mean STOP-you're rationalizing:
 | "This feels productive" | Undisciplined action wastes time. Skills prevent this. |
 | "I know what that means" | Knowing the concept != using the skill. Invoke it. |
 
-# Available Commands
-
-Commands are structured multi-step workflows invoked by the user:
-
-| Command | Description |
-|---------|-------------|
-| `/create_plan` | Create detailed implementation plans through interactive research and iteration |
-| `/research_codebase` | Document codebase as-is with thoughts directory for historical context |
-| `/implement_plan` | Implement technical plans from thoughts/shared/plans with verification |
-| `/validate_plan` | Validate implementation against plan, verify success criteria |
-| `/iterate_plan` | Iterate on existing implementation plans with thorough research and updates |
-| `/commit` | Create git commits with user approval |
-| `/create_handoff` | Create handoff document for transferring work to another session |
-| `/resume_handoff` | Resume work from handoff document with context analysis and validation |
-
 ## Unified Workflow
 
-- **Research phase**: Use `/brainstorming` for design, /research_codebase for thorough analysis, `/writing-plans` skill for implementation planning
-- **Implementation phase**: Skills activate automatically (brainstorming, TDD, debugging, verification)
+- **Research phase**: Use `brainstorming` for design, `writing-plans` for implementation planning
+- **Implementation phase**: Skills activate automatically (TDD, debugging, verification)
 - **Execution phase**: Use `executing-plans` to execute plans
-- **Quality phase**: Use `/validate_plan`, `verification-before-completion`, `requesting-code-review`
-- **Continuity phase**: Use `/create_handoff` to preserve context, `/resume_handoff` to continue
+- **Quality phase**: Use `verification-before-completion`, `requesting-code-review`
+- **Continuity phase**: Use `create-handoff` to preserve context, `resuming-handoff` to continue
 
 ## File Organization
 
