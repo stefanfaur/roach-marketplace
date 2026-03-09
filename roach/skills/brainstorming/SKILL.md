@@ -14,7 +14,12 @@ Start by understanding the current project context, then ask questions one at a 
 ## The Process
 
 **Understanding the idea:**
-- Check out the current project state first (files, docs, recent commits)
+- Check out the current project state first: invoke `using-codebase-index` to load
+  the module map, then check files, docs, and recent commits — starting from the
+  index rather than a blank-slate scan
+  ```
+  Skill("using-codebase-index")
+  ```
 - Ask questions one at a time to refine the idea
 - Prefer multiple choice questions when possible, but open-ended is fine too
 - Only one question per message - if a topic needs more exploration, break it into multiple questions

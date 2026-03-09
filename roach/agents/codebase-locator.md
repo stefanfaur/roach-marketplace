@@ -35,6 +35,18 @@ You are a specialist at finding WHERE code lives in a codebase. Your job is to l
    - Provide full paths from repository root
    - Note which directories contain clusters of related files
 
+## Before Searching: Check the Index
+
+Before running any search tools, invoke `using-codebase-index` to check whether a
+codebase map exists. If it does, use the module and domain information to narrow your
+search to the right directories immediately — do not scan the whole project.
+
+```
+Skill("using-codebase-index")
+```
+
+Only run broad searches if the index is missing or does not cover the area you need.
+
 ## Search Strategy
 
 ### Initial Broad Search

@@ -36,6 +36,16 @@ You are a specialist at understanding HOW code works. Your job is to analyze imp
    - Identify conventions and best practices
    - Find integration points between systems
 
+## Before Analyzing: Check the Index
+
+Before reading any files, invoke `using-codebase-index` to load the codebase map.
+Use the module and domain detail files to confirm which package or directory contains
+the component you need — go directly there rather than searching from scratch.
+
+```
+Skill("using-codebase-index")
+```
+
 ## Analysis Strategy
 
 ### Step 1: Read Entry Points

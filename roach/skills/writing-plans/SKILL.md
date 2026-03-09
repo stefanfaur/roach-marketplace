@@ -46,6 +46,17 @@ Write a comprehensive implementation plan for: $ARGUMENTS
 
 ## Steps
 
+**0. Check the codebase index**
+
+Before any file exploration, invoke `using-codebase-index` to load the existing
+index. Use the module map and relevant domain files to identify which files to read,
+rather than scanning from scratch. If the index is missing, proceed with normal
+exploration.
+
+```
+Skill("using-codebase-index")
+```
+
 **1. Explore the codebase for relevant context**
 
 Based on $ARGUMENTS, identify and read:
