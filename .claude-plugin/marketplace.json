@@ -15,29 +15,11 @@
       "category": "productivity"
     },
     {
-      "name": "frontend-design",
-      "description": "Create distinctive, production-grade frontend interfaces with high design quality",
-      "version": "1.0.0",
-      "author": {
-        "name": "Prithvi Rajasekaran & Alexander Bricken",
-        "email": "prithvi@anthropic.com"
-      },
-      "source": "./frontend-design",
-      "category": "development"
-    },
-    {
       "name": "agent-browser",
       "description": "Browser automation skill and agent with workflow persistence for agent-browser CLI",
       "version": "1.0.1",
       "source": "./agent-browser",
       "category": "productivity"
-    },
-    {
-      "name": "prepush",
-      "description": "Git pre-push hook with configurable quality checks and AI-powered code review",
-      "version": "1.0.0",
-      "source": "./prepush",
-      "category": "development"
     },
     {
       "name": "ci-cd-pipeline-builder",

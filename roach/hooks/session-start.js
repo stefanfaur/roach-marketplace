@@ -54,7 +54,6 @@ function run(cmd, fallback) {
 
 async function main() {
   var missing = [];
-  var settingsFile = path.join(os.homedir(), '.claude', 'settings.json');
 
   // --- Companion dependency checks ---
 
@@ -63,32 +62,9 @@ async function main() {
     missing.push("CLI tool 'ripgrep' (rg) is not installed. Install via: brew install ripgrep (macOS), apt install ripgrep (Linux), or winget install BurntSushi.ripgrep.MSVC (Windows).");
   }
 
-  // Check frontend-design plugin via settings.json
-  var settings = readJSON(settingsFile);
-  if (settings) {
-    var found = false;
-    try {
-      var settingsRaw = fs.readFileSync(settingsFile, 'utf-8');
-      if (/"frontend-design@[^"]*"\s*:\s*true/.test(settingsRaw)) {
-        found = true;
-      }
-    } catch (_) { /* ignore */ }
-    if (!found) {
-      missing.push("Plugin 'frontend-design' is not enabled. Install it from the claude-code-plugins marketplace.");
-    }
-  } else {
-    missing.push("Plugin 'frontend-design' is not enabled (settings.json not found).");
-  }
-
   // Check agent-browser
   if (!commandExists('agent-browser')) {
     missing.push("CLI tool 'agent-browser' is not installed. Install via: npm install -g agent-browser.");
-  }
-
-  // Check claude-hud plugin (needed for statusline + context monitoring)
-  var hudCacheDir = path.join(os.homedir(), '.claude', 'plugins', 'cache', 'claude-hud');
-  if (!fs.existsSync(hudCacheDir)) {
-    missing.push("Plugin 'claude-hud' is not installed. Required for statusline display and context window monitoring. See: https://github.com/anthropics/claude-hud");
   }
 
   // --- WebSearch / WebFetch permission check ---

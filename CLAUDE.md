@@ -4,17 +4,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-A private Claude Code plugin marketplace bundling three plugins: **roach** (research-first workflow methodology), **frontend-design** (UI/UX generation by Anthropic), and **agent-browser** (browser automation wrapping Vercel's agent-browser CLI). Derived from HumanLayer and obra/superpowers configurations.
+A private Claude Code plugin marketplace bundling **roach** (research-first workflow methodology) and **agent-browser** (browser automation wrapping Vercel's agent-browser CLI). Derived from HumanLayer and obra/superpowers configurations.
 
 There is no application code, build system, or test suite. The repository contains only markdown files (skills, commands, agents), Node.js scripts (hooks), and JSON configuration.
 
 ## Repository Layout
 
 ```
-.claude-plugin/marketplace.json    # Marketplace manifest listing all 3 plugins
+.claude-plugin/marketplace.json    # Marketplace manifest
 roach/                       # Main plugin: agents, commands, hooks, skills, scripts
 agent-browser/                     # Browser automation agent + skill
-frontend-design/                   # UI/UX design skill
 ```
 
 ### roach Internal Structure
@@ -38,7 +37,7 @@ git add -A && git commit -m "Sync roach"
 git push
 ```
 
-Same pattern for agent-browser and frontend-design.
+Same pattern for agent-browser.
 
 ## Key Conventions
 
@@ -48,7 +47,7 @@ Same pattern for agent-browser and frontend-design.
 - **Handoffs path**: `thoughts/shared/handoffs/<domain>/YYYY-MM-DD_HH-MM-SS_description.md`
 - **File references**: Always use `file_path:line_number` format in plans and research
 - **Skills-first enforcement**: Skills must be invoked if there's any possibility they apply (the "1% rule")
-- **Process skills before implementation skills**: brainstorming/debugging first, then frontend-design etc.
+- **Process skills before implementation skills**: brainstorming/debugging first, then domain-specific skills
 - **Commits**: Never add `Co-Authored-By: Claude` lines. Use `git commit <files> -m "message"` (not `git add` then `git commit`)
 
 ## Hook Behavior

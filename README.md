@@ -13,9 +13,7 @@ The agent-browser plugin wraps [Vercel's agent-browser CLI](https://github.com/v
 | Plugin | Description |
 |--------|-------------|
 | **roach** | Research-first methodology with skills-first enforcement |
-| **frontend-design** | Distinctive, production-grade frontend interface generation (by Anthropic) |
 | **agent-browser** | Browser automation agent with workflow persistence (requires `agent-browser` CLI) |
-| **prepush** | Git pre-push hook with configurable quality checks and AI-powered code review |
 | **mariadb-mcp** | MariaDB MCP server integration with automated setup and database best practices |
 
 ## Installation
@@ -52,7 +50,7 @@ gh repo view stefanfaur/roach-marketplace --json name
 
 ### Enable plugins
 
-After adding the marketplace, enable the plugins you want from the list: `roach`, `frontend-design`, `agent-browser`, `prepush`, `mariadb-mcp`.
+After adding the marketplace, enable the plugins you want from the list: `roach`, `agent-browser`, `mariadb-mcp`.
 
 ### Install required CLI tools
 
@@ -123,6 +121,19 @@ The core plugin. Derived from [obra/superpowers](https://github.com/obra) and [H
 
 A `SessionStart` hook injects the foundational skill into every session, forcing Claude to check for applicable skills before responding. A `Stop` hook monitors context window usage and warns at 80%/90%, prompting handoff creation before context runs out.
 
+#### Codebase Index
+
+A two-tier persistent map of the codebase stored in `thoughts/shared/index/`:
+
+- **`CODEBASE-MAP.md`** — under 40 lines: physical modules, tech stack, list of domain detail files
+- **`thoughts/shared/index/<domain>.md`** — per-domain: key files with line references, how it works, where to look
+
+**Read path** (`using-codebase-index`): loaded automatically by codebase agents and brainstorming before any search. Agents go directly to the right module instead of scanning the whole project.
+
+**Write path** (`update-codebase-index`, `context:fork`): invoked automatically at the end of `executing-plans`, `subagent-driven-development`, and `research_codebase`. Patches only the affected sections.
+
+**Bootstrap**: run `/init_codebase_index` once on a new project. Safe to skip — agents fall back to normal exploration if the index is missing, and `update-codebase-index` will create it from that session's context.
+
 #### Skills
 
 | Skill | What it does |
@@ -139,6 +150,8 @@ A `SessionStart` hook injects the foundational skill into every session, forcing
 | `requesting-code-review` | Dispatch reviewer subagent after completing work |
 | `receiving-code-review` | Evaluate review feedback technically, push back when warranted |
 | `writing-skills` | TDD for skill authoring — pressure-test without the skill, then write it to counter the failure modes |
+| `using-codebase-index` | Check the index before any exploration — read path for the codebase index |
+| `update-codebase-index` | Patch the index after implementation or research sessions — write path |
 
 #### Agents
 
@@ -163,16 +176,11 @@ All codebase agents are documentarians — they describe what exists without sug
 | `/implement_plan` | Execute a plan with verification at each step |
 | `/validate_plan` | Check implementation against plan success criteria |
 | `/research_codebase` | Document code as-is into `thoughts/shared/research/` |
+| `/init_codebase_index` | Bootstrap the codebase index from scratch (run once per project) |
 | `/commit` | Git commit that never uses `git add` (preserves IDE changelists) |
 | `/create_handoff` | Save context for another session to pick up |
 | `/resume_handoff` | Resume from a handoff document |
 | `/write_docs` | Capture notes during implementation or produce final docs |
-
-### frontend-design
-
-A skill by Anthropic (Prithvi Rajasekaran, Alexander Bricken). Single skill, no agents, no commands.
-
-Prevents Claude from generating generic-looking UIs. Before writing any frontend code, it forces a concrete aesthetic direction and provides guidelines for typography (pick distinctive fonts, avoid Inter/Roboto/system defaults), color (dominant color with sharp accents, not evenly distributed palettes), motion (CSS-first animations, staggered reveals, scroll-triggered effects), layout (asymmetry, overlap, grid-breaking), and visual texture (gradients, noise, grain — not flat solid colors). Based on Anthropic's [Frontend Aesthetics Cookbook](https://github.com/anthropics/claude-cookbooks/blob/main/coding/prompting_for_frontend_aesthetics.ipynb).
 
 ### agent-browser
 
@@ -183,41 +191,6 @@ The key difference from raw browser tools: `snapshot -i` returns only interactiv
 The plugin adds workflow persistence on top. Before touching the browser, the agent checks `thoughts/shared/browser/` for saved workflows matching the domain and task. After a successful run, it saves the workflow with steps, auth notes, and gotchas. Future runs of the same task reuse the saved workflow instead of rediscovering everything. Session state (`state save/load`) persists authentication so login flows only need to be solved once.
 
 All browser interaction runs in an isolated subagent to keep the main context window clean.
-
-### prepush
-
-Installs and manages a git `pre-push` hook with configurable quality checks and optional AI code review. No agents, no skills — just a `SessionStart` hook that handles setup and a git hook that runs on push.
-
-**First session flow**: The startup hook auto-detects your project's tech stack (JS/TS, Python, Go, Rust, Ruby, Makefile targets) and reads `CLAUDE.md` for project conventions. It asks whether you want to set up pre-push checks, with options to customize what the AI review focuses on (security, performance, test coverage, etc.). When you say yes, it creates three files:
-
-- `.claude/prepush.json` — configuration (which tools to run, review mode, focus areas)
-- `.claude/commands/prepush_review.md` — project-specific AI review slash command
-- `.git/hooks/pre-push` — the git hook script
-
-**On push**: The hook runs your configured quality tools sequentially (lint, test, typecheck, etc.). If any fail, the push is blocked. If AI review is enabled, it proceeds in one of two modes:
-
-- **auto** (default): Invokes `claude -p` with the diff, gets a structured JSON verdict (PASS/FAIL with issues), and blocks the push only on critical issues (bugs, security vulnerabilities, data loss risks).
-- **manual**: Blocks the push and tells you to run `/prepush_review` in Claude Code to review interactively before pushing.
-
-**Configuration** (`.claude/prepush.json`):
-
-```json
-{
-  "version": 1,
-  "mode": "auto",
-  "qualityTools": [
-    { "name": "lint", "command": "npm run lint" },
-    { "name": "test", "command": "npm test" }
-  ],
-  "review": {
-    "enabled": true,
-    "focus": ["correctness", "security"],
-    "command": "prepush_review"
-  }
-}
-```
-
-Edit `.claude/commands/prepush_review.md` to customize the AI review behavior. To uninstall, remove `.claude/prepush.json`, `.claude/commands/prepush_review.md`, and `.git/hooks/pre-push`.
 
 ### mariadb-mcp
 
