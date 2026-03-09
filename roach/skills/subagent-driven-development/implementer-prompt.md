@@ -38,6 +38,22 @@ Task tool (general-purpose):
 
     Work from: [directory]
 
+    ## Deviation Rules
+
+    If the plan doesn't match reality (wrong paths, missing deps, etc.), follow these rules:
+
+    **Auto-fix (just do it, report later):**
+    - Wrong import paths, typos, broken references, incorrect file locations
+    - Missing error handling, input validation, null checks not in the plan but needed for correctness
+    - Missing dependencies, type errors, broken tests from upstream, config adjustments
+
+    **Escalate (stop and ask):**
+    - Plan says use library X but codebase uses library Y — ask which to use
+    - New database tables/schemas, new service layers, new abstractions — ask before creating
+    - Anything that would affect other tasks or the broader architecture — ask first
+
+    The rule: if the fix is local to this task, auto-fix it. If it has implications beyond this task, escalate.
+
     **While you work:** If you encounter something unexpected or unclear, **ask questions**.
     It's always OK to pause and clarify. Don't guess or make assumptions.
 
@@ -75,4 +91,13 @@ Task tool (general-purpose):
     - Files changed
     - Self-review findings (if any)
     - Any issues or concerns
+
+    **If you auto-fixed anything**, include a Deviations section:
+
+    ## Deviations from Plan
+
+    - [AUTO-FIX] Description of what differed and what you did
+    - [ESCALATED] Description of what you stopped to ask about (if any)
+
+    Omit this section if there were no deviations.
 ```

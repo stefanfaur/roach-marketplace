@@ -68,6 +68,26 @@ When all tasks are done:
 
 **Don't force through blockers** - stop and ask.
 
+## Deviation Rules
+
+When executing a plan and reality doesn't match (wrong paths, missing deps, etc.):
+
+**Auto-fix (continue, note in batch report):**
+- Wrong import paths, typos, broken references, incorrect file locations
+- Missing error handling, input validation, null checks not in the plan but needed for correctness
+- Missing dependencies, type errors, broken tests from upstream, config adjustments
+
+**Escalate (stop batch, ask for guidance):**
+- Plan says use library X but codebase uses library Y
+- New database tables/schemas, new service layers, new abstractions
+- Anything that would affect tasks outside the current batch
+
+The rule: if the fix is local to the current task, fix it and note it. If it has cross-task implications, stop and ask.
+
+When reporting at batch checkpoint, include any deviations:
+- `[AUTO-FIX]` what differed and what you did
+- `[ESCALATED]` what you stopped to ask about
+
 ## Related Skills
 
 - **writing-plans** - Create plans to execute

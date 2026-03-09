@@ -223,6 +223,34 @@ Done!
 - Move to next task while either review has open issues
 - Skip `update-codebase-index` after all tasks complete
 
+## Deviation Rules
+
+When an implementer encounters a discrepancy between the plan and reality, the response depends on whether the fix has implications beyond the current task.
+
+### Auto-Fix (report in completion summary)
+
+Local-impact fixes — just do them, report in Deviations section:
+
+- **Mechanical correctness** — wrong import paths, typos, broken references, incorrect file locations
+- **Defensive completeness** — missing error handling, input validation, null checks the plan didn't mention but correctness requires
+- **Unblocking** — missing dependencies, type errors, broken tests from upstream changes, config adjustments
+
+### Escalate (stop and ask orchestrator)
+
+Cross-task-impact changes — stop, report, wait for decision:
+
+- **Architectural alignment** — plan says library X but codebase already uses library Y
+- **Structural changes** — new database tables/schemas, new service layers, new abstraction boundaries
+- **Scope expansion** — anything that would affect other tasks, plans, or the broader architecture
+
+### Judging Subagent Behavior
+
+When reviewing an implementer's Deviations section:
+- Every auto-fix should be local-impact only — if it ripples to other tasks, it should have been escalated
+- Spec reviewer verifies each auto-fix was justified (not scope creep)
+- If an implementer escalated something that could have been auto-fixed, that's fine (conservative is OK)
+- If an implementer auto-fixed something that should have been escalated, that's a review failure
+
 **If subagent asks questions:**
 - Answer clearly and completely
 - Provide additional context if needed
