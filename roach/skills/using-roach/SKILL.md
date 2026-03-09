@@ -78,7 +78,6 @@ Commands are structured multi-step workflows invoked by the user:
 | `/commit` | Create git commits with user approval |
 | `/create_handoff` | Create handoff document for transferring work to another session |
 | `/resume_handoff` | Resume work from handoff document with context analysis and validation |
-| `/write_docs` | Write documentation with Elements of Style quality. Capture notes or finalize docs. |
 
 ## Unified Workflow
 
@@ -86,7 +85,6 @@ Commands are structured multi-step workflows invoked by the user:
 - **Implementation phase**: Skills activate automatically (brainstorming, TDD, debugging, verification)
 - **Execution phase**: Use `executing-plans` to execute plans
 - **Quality phase**: Use `/validate_plan`, `verification-before-completion`, `requesting-code-review`
-- **Documentation phase** (opt-in): Use `/write_docs capture` during implementation to accumulate notes, `/write_docs finalize` at the end to produce polished docs
 - **Continuity phase**: Use `/create_handoff` to preserve context, `/resume_handoff` to continue
 
 ## File Organization

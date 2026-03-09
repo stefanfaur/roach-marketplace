@@ -160,16 +160,6 @@ Once aligned on approach:
 
 2. **Get feedback on structure** before writing details
 
-3. **Ask about documentation phase**:
-   Before writing the detailed plan, use AskUserQuestion to ask:
-   - Question: "Should this plan include a documentation phase?"
-   - Option 1: "Yes, include documentation phase" (description: "A final phase will be added for writing/updating docs using /write_docs. Intermediary doc notes will be captured during implementation.")
-   - Option 2: "No documentation needed" (description: "Skip the documentation phase. You can always run /write_docs manually later.")
-
-   If the user selects yes:
-   - Add a reminder at the end of each implementation phase: "**Doc note**: After completing this phase, consider running `/write_docs capture` to record documentation-relevant observations."
-   - Add a final "Documentation" phase to the plan (see template below).
-
 ### Step 4: Detailed Plan Writing
 
 After structure approval:
@@ -276,32 +266,6 @@ After structure approval:
 ## Migration Notes
 
 [If applicable, how to handle existing data/systems]
-
-## Phase N: Documentation (include only if user opted in)
-
-### Overview
-Produce final documentation for this feature using accumulated intermediary notes.
-
-### Prerequisites
-- All implementation phases complete
-- Intermediary documentation notes captured at `thoughts/shared/docs/<domain>/<feature>-notes.md`
-
-### Process
-1. Run `/write_docs finalize <feature-name>` to produce polished documentation
-2. Review the output with the user
-3. Commit the documentation
-
-### Success Criteria:
-
-#### Automated Verification:
-- [ ] Documentation file exists at the chosen output location
-
-#### Manual Verification:
-- [ ] Documentation accurately describes the feature
-- [ ] Writing is clear and concise
-- [ ] Documentation covers all user-facing changes
-
----
 
 ## References
 
