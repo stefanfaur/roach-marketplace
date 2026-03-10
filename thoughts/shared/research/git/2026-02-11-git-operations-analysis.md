@@ -257,7 +257,7 @@ These commands define the commit range that the code-reviewer subagent should ex
 - `create_plan.md`
 - `implement_plan.md`
 - `iterate_plan.md`
-- `resume_handoff.md`
+- `resuming_handoff.md`
 
 **Hook files with no git**:
 - `context-monitor.js`
