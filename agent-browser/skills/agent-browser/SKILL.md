@@ -10,8 +10,9 @@ Use the `agent-browser` CLI to control a headless Chromium browser. **All browse
 ## Why Delegate?
 
 - Runs in an isolated context window (keeps your main conversation clean)
-- Checks `thoughts/shared/browser/` for saved workflows before starting (avoids re-discovering navigation paths)
-- Saves successful workflows after completion (builds institutional knowledge)
+- **Replays known workflows instantly** — checks for `.replay.json` files first, executes without LLM involvement
+- Falls back to **batch mode** for new workflows — plans multiple actions per tool call, 3-5x fewer round-trips
+- Auto-captures replay files during LLM-driven runs (builds replayable knowledge)
 - Maintains `thoughts/shared/browser/GENERAL.md` with cross-cutting facts (auth endpoints, credential sources, session state files)
 
 ## How to Delegate
@@ -38,3 +39,4 @@ Be specific: target URL, actions to perform, what constitutes success.
 | `get text @e1` | Extract text from element |
 | `screenshot` | Capture viewport |
 | `state save/load <file>` | Persist or restore session cookies |
+| `find role button click --name "X"` | Semantic locator (stable across page changes) |
