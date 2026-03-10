@@ -22,36 +22,97 @@ This creates `thoughts/shared/browser/` and `GENERAL.md` if missing. Note the `G
 **Then:**
 
 1. Read `GENERAL.md` in full. Extract: auth endpoints, credential sources, state file locations, shared setup defaults, safety notes.
-2. Glob for existing workflow files:
+2. Glob for existing workflow and replay files:
    ```
-   Glob("thoughts/shared/browser/*.md")
+   Glob("thoughts/shared/browser/*")
    ```
 3. Grep for files matching the target domain or task:
    ```
    Grep(pattern: "domain-keyword", path: "thoughts/shared/browser/")
    ```
-4. If a matching workflow file is found, read it and follow its steps, auth method, and gotchas.
-5. If no match, proceed from scratch.
+4. If a matching `.replay.json` exists, go to **Phase 2A (Replay Mode)**.
+5. If a matching workflow `.md` exists but no replay, read it for steps/auth/gotchas, then go to **Phase 2B (Batch Mode)**.
+6. If no match, proceed to **Phase 2B (Batch Mode)** from scratch.
 
 ---
 
-# Phase 2: EXECUTION
+# Phase 2A: REPLAY MODE
 
-Follow the core interaction cycle:
+Run the replay file directly:
 
+```bash
+node ~/.claude/plugins/agent-browser/scripts/replay-browser.js \
+  thoughts/shared/browser/<domain>--<action>.replay.json \
+  PARAM_NAME="value" ANOTHER_PARAM="value"
 ```
+
+**If output contains `REPLAY_SUCCESS`:** Skip to Phase 3. Done.
+
+**If output contains `REPLAY_FAILED_AT_STEP`:** The output includes:
+- The failed step number and description
+- A snapshot of the current page state
+- The remaining steps as plain-text descriptions
+
+**Surgical recovery:** Continue from the failure point using **Phase 2B (Batch Mode)**. You already have the page state and know what actions remain. Do NOT restart the entire workflow.
+
+After successful recovery, the replay file should be updated with corrected locators for the failed step. Use the `finalize-replay.js` script if the replay needs new verify steps.
+
+---
+
+# Phase 2B: BATCH MODE (LLM-Driven)
+
+**You MUST think in phases, not per-action.** The old pattern of snapshot-click-snapshot-click is wasteful. Instead:
+
+## The Observe-Plan-Batch-Verify Cycle
+
+**1. Observe** — Take ONE snapshot to understand the page:
+
+```bash
 agent-browser open <url>
-agent-browser snapshot -i          # Get interactive element refs
-agent-browser click @e1            # Interact using refs
-agent-browser snapshot -i          # Re-snapshot after DOM changes
+agent-browser wait --load networkidle
+agent-browser snapshot -i
 ```
 
-## Critical Rules
+**2. Plan** — Look at the snapshot and decide the next 3-10 actions. Ask yourself:
+- What sequence of interactions gets me to the next meaningful page state?
+- Can I fill multiple form fields before needing to re-snapshot?
+- Where is the next natural checkpoint (page navigation, modal, new content)?
 
-- **Always use `snapshot -i`** — the `-i` flag returns only interactive elements, reducing context by ~80%
-- **Always re-snapshot after DOM changes** — element refs (@e1, @e2) become invalid after clicks, navigation, or form submissions
-- **Wait for page loads**: `agent-browser wait --load networkidle` after navigation and form submissions
-- **Use state persistence for auth**: `agent-browser state save/load <file>` to avoid re-authenticating
+**3. Batch Execute** — Run all planned actions in a single tool call:
+
+```bash
+echo 'click @e3
+fill @e7 "user@example.com"
+fill @e9 "password123"
+click @e12
+wait --load networkidle
+snapshot -i' | node ~/.claude/plugins/agent-browser/scripts/batch-browser.js --record thoughts/shared/browser/<domain>--<action>.replay.json
+```
+
+The batch wrapper:
+- Executes each command sequentially
+- Returns `OK <cmd>` for successes, only printing full output for snapshots/gets
+- On failure: stops, prints `FAIL <cmd>`, and takes a recovery snapshot automatically
+- With `--record`: captures semantic locators for each interaction (for replay)
+
+**4. Verify** — Read the final snapshot output. Did the batch succeed? Are you where you expected?
+- **Yes** → Plan the next batch (go to step 2)
+- **No** → You have the recovery snapshot. Adjust and try again.
+
+## Batching Rules
+
+- **Always batch form fills** — filling 3 fields in a row never needs intermediate snapshots
+- **Batch click + wait + snapshot** — a click that navigates should be followed by wait and a new snapshot, all in one batch
+- **DON'T batch across page navigations where you can't predict the next page** — take a snapshot after navigation to plan the next batch
+- **DON'T batch when you don't know the element refs** — snapshot first, then batch
+
+## Recording
+
+**Always pass `--record`** during LLM-driven workflows so the batch wrapper captures semantic locators. The record path should match the workflow naming convention:
+
+```
+thoughts/shared/browser/<domain>--<action>.replay.json
+```
 
 ## Command Reference
 
@@ -102,8 +163,8 @@ agent-browser snapshot -i          # Re-snapshot after DOM changes
 
 ## Error Handling
 
-- If a click fails, re-snapshot and try again with updated refs
-- If page doesn't load, check URL and retry with `agent-browser wait --load networkidle`
+- If a batch fails, you get a recovery snapshot — use it to plan the next batch
+- If a single action keeps failing, try semantic locators (`find` commands) instead of refs
 - If authentication fails, clear state and re-authenticate from scratch
 - Maximum 3 retries per action before reporting failure
 
@@ -127,7 +188,21 @@ If you are thinking any of the following, stop. You are rationalizing. Do POST-F
 
 ## Steps
 
-**1. Scaffold the workflow file:**
+**1. Finalize the replay file (if recording was active):**
+
+```bash
+node ~/.claude/plugins/agent-browser/scripts/finalize-replay.js \
+  thoughts/shared/browser/<domain>--<action>.replay.json \
+  --url "<start-url>" \
+  --workflow "<domain>--<action>.md" \
+  --verify url_contains "<success-indicator>" \
+  --param PARAM_NAME \
+  --auth "thoughts/shared/browser/<state-file>.json"
+```
+
+Read the finalized replay file and verify it looks correct — check that steps, locators, and params make sense.
+
+**2. Scaffold the workflow file:**
 
 ```bash
 node ~/.claude/plugins/agent-browser/scripts/scaffold-workflow.js <url> <action-description>
@@ -136,7 +211,7 @@ node ~/.claude/plugins/agent-browser/scripts/scaffold-workflow.js <url> <action-
 - If output starts with `CREATED:` — fill in the 3 sections (Steps, Authentication, Gotchas)
 - If output starts with `EXISTS:` — read the existing file, update what changed, preserve what still works
 
-**2. Fill in Steps, Authentication, Gotchas:**
+**3. Fill in Steps, Authentication, Gotchas:**
 
 - **Steps**: numbered, concrete actions. URL, what you clicked, what you filled, what confirmed success.
 - **Authentication**: state file path + how to create it, or "No authentication required"
@@ -144,7 +219,7 @@ node ~/.claude/plugins/agent-browser/scripts/scaffold-workflow.js <url> <action-
 
 Never store passwords or secrets. Reference state files or environment variables instead.
 
-**3. Evaluate GENERAL.md for cross-cutting facts:**
+**4. Evaluate GENERAL.md for cross-cutting facts:**
 
 Ask: did this session reveal something that applies to *all* workflows on this project, not just this one?
 
@@ -161,7 +236,10 @@ Keep GENERAL.md concise. If in doubt, leave it in the workflow file.
 
 # Behavioral Guidelines
 
-- Snapshot → understand → act → verify → re-snapshot
+- **Observe → Plan → Batch → Verify** (not snapshot → act → snapshot → act)
+- Batch predictable sequences — form fills, click-wait-snapshot chains
+- Always `--record` during LLM-driven workflows
+- Check for replay files before LLM-driven browsing
 - Workflow docs: document the minimum needed to reproduce. No prose.
 - When updating an existing workflow: preserve what still works, only change what's different
 - Never store secrets in workflow files — reference state files or environment variables
