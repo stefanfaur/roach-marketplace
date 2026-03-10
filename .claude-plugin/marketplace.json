@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "roach-marketplace",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "roach and its companion plugins",
   "owner": {
     "name": "Stefan Faur"
@@ -24,7 +24,7 @@
     {
       "name": "agent-browser",
       "description": "Browser automation skill and agent with workflow persistence for agent-browser CLI",
-      "version": "1.0.2",
+      "version": "1.1.0",
       "source": "./agent-browser",
       "category": "productivity"
     },
