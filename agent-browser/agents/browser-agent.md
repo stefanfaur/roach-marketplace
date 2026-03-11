@@ -227,7 +227,7 @@ Read the finalized file and verify steps, locators, and params look correct.
 **2. Scaffold the workflow file:**
 
 ```bash
-node "$AB_SCRIPTS/scaffold-workflow.js" <url> <action-description>
+node "$AB_SCRIPTS/scaffold-workflow.js" --replay thoughts/shared/browser/<domain>--<action>.replay.json <url> <action-description>
 ```
 
 - `CREATED:` → fill in Steps, Authentication, Gotchas
