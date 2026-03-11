@@ -24,9 +24,22 @@ try {
   process.exit(1);
 }
 
+// Check for --force flag first
+var forceFinalize = args.indexOf('--force') !== -1;
+
+// Seal check: already finalized files are immutable unless --force
+if (replay.finalized && !forceFinalize) {
+  console.log('ALREADY_FINALIZED: ' + replayPath);
+  console.log('FINALIZED_AT: ' + replay.finalized);
+  console.log('Use --force to re-finalize');
+  process.exit(0);
+}
+
 // Parse flags
 for (var i = 1; i < args.length; i++) {
-  if (args[i] === '--url' && args[i + 1]) {
+  if (args[i] === '--force') {
+    continue; // already handled
+  } else if (args[i] === '--url' && args[i + 1]) {
     replay.start_url = args[++i];
   } else if (args[i] === '--auth' && args[i + 1]) {
     replay.auth_state = args[++i];
