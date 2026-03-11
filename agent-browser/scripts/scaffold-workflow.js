@@ -15,23 +15,52 @@ function run(cmd, fallback) {
 }
 
 var args = process.argv.slice(2);
-if (args.length < 2) {
-  console.error('Usage: scaffold-workflow.js <url> <action-description>');
-  console.error('Example: scaffold-workflow.js https://github.com create-pull-request');
-  process.exit(1);
+
+// Parse --replay flag
+var replayPath = null;
+var positionalArgs = [];
+for (var a = 0; a < args.length; a++) {
+  if (args[a] === '--replay' && args[a + 1]) {
+    replayPath = args[++a];
+  } else {
+    positionalArgs.push(args[a]);
+  }
 }
 
-var url = args[0];
-var action = args.slice(1).join('-').toLowerCase().replace(/[^a-z0-9-]/g, '-');
+var url, action, domain, filename, domainMatch;
 
-// Derive domain slug from URL
-var domainMatch = url.match(/^https?:\/\/([^/]+)/);
-if (!domainMatch) {
-  console.error('ERROR: Could not parse domain from URL: ' + url);
-  process.exit(1);
+if (replayPath) {
+  // Derive filename from replay path: foo--bar.replay.json -> foo--bar.md
+  var replayBasename = path.basename(replayPath, '.replay.json');
+  filename = replayBasename + '.md';
+  // Extract domain from replay basename (everything before first --)
+  var domainPart = replayBasename.split('--')[0] || replayBasename;
+  domain = domainPart;
+  // Use positional args for frontmatter if provided, otherwise derive from replay name
+  url = positionalArgs[0] || '';
+  action = positionalArgs.slice(1).join('-').toLowerCase().replace(/[^a-z0-9-]/g, '-');
+  if (!action) {
+    action = replayBasename.split('--').slice(1).join('-') || 'workflow';
+  }
+  domainMatch = url.match(/^https?:\/\/([^/]+)/);
+} else {
+  // Original behavior: derive from url + action-description
+  if (positionalArgs.length < 2) {
+    console.error('Usage: scaffold-workflow.js [--replay <replay.json>] <url> <action-description>');
+    console.error('Example: scaffold-workflow.js https://github.com create-pull-request');
+    console.error('Example: scaffold-workflow.js --replay thoughts/shared/browser/github-com--create-pr.replay.json');
+    process.exit(1);
+  }
+  url = positionalArgs[0];
+  action = positionalArgs.slice(1).join('-').toLowerCase().replace(/[^a-z0-9-]/g, '-');
+  domainMatch = url.match(/^https?:\/\/([^/]+)/);
+  if (!domainMatch) {
+    console.error('ERROR: Could not parse domain from URL: ' + url);
+    process.exit(1);
+  }
+  domain = domainMatch[1].replace(/\./g, '-');
+  filename = domain + '--' + action + '.md';
 }
-var domain = domainMatch[1].replace(/\./g, '-');
-var filename = domain + '--' + action + '.md';
 
 var browserDir = path.join(process.cwd(), 'thoughts', 'shared', 'browser');
 var filePath = path.join(browserDir, filename);
@@ -63,9 +92,9 @@ var content = [
   'git_commit: ' + metadata.git_commit,
   'repository: ' + metadata.repository,
   'cwd: ' + metadata.cwd,
-  'title: "' + domainMatch[1] + ' - ' + action.replace(/-/g, ' ') + '"',
+  'title: "' + (domainMatch ? domainMatch[1] : domain.replace(/-/g, '.')) + ' - ' + action.replace(/-/g, ' ') + '"',
   'description: ""',
-  'domain: ' + domainMatch[1],
+  'domain: ' + (domainMatch ? domainMatch[1] : domain.replace(/-/g, '.')),
   '---',
   '',
   '## Steps',
