@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "captured": "2026-03-11T14:49:06.932Z",
+  "steps": [
+    {
+      "action": "open",
+      "url": "https://httpbin.org/forms/post"
+    },
+    {
+      "action": "wait",
+      "args": [
+        "--load",
+        "networkidle"
+      ]
+    },
+    {
+      "action": "wait",
+      "args": [
+        "--load",
+        "networkidle"
+      ]
+    },
+    {
+      "action": "verify",
+      "check": "url_contains",
+      "value": "httpbin.org/post"
+    }
+  ],
+  "start_url": "https://httpbin.org/forms/post",
+  "source_workflow": "httpbin--form-submit.md",
+  "finalized": "2026-03-11T14:49:22.553Z"
+}

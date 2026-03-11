@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "captured": "2026-03-11T14:51:05.817Z",
+  "steps": [
+    {
+      "action": "open",
+      "url": "https://example.com"
+    },
+    {
+      "action": "wait",
+      "args": [
+        "--load",
+        "networkidle"
+      ]
+    },
+    {
+      "action": "verify",
+      "check": "url_contains",
+      "value": "example.com"
+    },
+    {
+      "action": "open",
+      "url": "https://example.com"
+    },
+    {
+      "action": "wait",
+      "args": [
+        "--load",
+        "networkidle"
+      ]
+    },
+    {
+      "action": "verify",
+      "check": "url_contains",
+      "value": "example.com"
+    }
+  ],
+  "start_url": "https://example.com",
+  "source_workflow": "example-com--health-check.md",
+  "finalized": "2026-03-11T14:51:10.821Z"
+}
