@@ -23,9 +23,10 @@ The codebase index is a persistent navigation map at `thoughts/shared/index/`. R
 ls thoughts/shared/index/CODEBASE-MAP.md 2>/dev/null && echo "EXISTS" || echo "MISSING"
 ```
 
-- **MISSING**: Proceed with normal exploration. If you are the main session, invoke
-  `update-codebase-index` with `first-time=true` after the task completes.
-  Subagents should not invoke it — the orchestrating skill handles this.
+- **MISSING**: If you are the main session, immediately invoke `update-codebase-index`
+  with `first-time=true` as a fire-and-forget fork — then proceed with normal exploration.
+  The index will be ready for the next session.
+  Subagents: do not invoke — the main session handles this.
 - **EXISTS**: Read it now — it is always compact (under 40 lines).
 
 **2. Read the map**
