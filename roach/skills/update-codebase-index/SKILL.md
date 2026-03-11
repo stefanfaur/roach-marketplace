@@ -15,7 +15,6 @@ argument-hint: "modules='<modules-or-empty>' domains='<domains>' summary='<what 
 - After `subagent-driven-development` completes all tasks
 - After `/research_codebase` command finishes
 - After `brainstorming` when significant architectural decisions were made
-- After any session where `using-codebase-index` reported MISSING and significant exploration followed — use `first-time=true` to bootstrap from scratch
 
 **Gather before invoking:**
 1. Which physical modules were touched (e.g. `eit-app, eit-domain`). Pass `modules=''` if no code was touched (e.g. research-only sessions).
