@@ -9,12 +9,15 @@ var path = require('path');
 var args = process.argv.slice(2);
 var recordPath = null;
 var session = null;
+var forceRecord = false;
 
 for (var i = 0; i < args.length; i++) {
   if (args[i] === '--record' && args[i + 1]) {
     recordPath = args[++i];
   } else if (args[i] === '--session' && args[i + 1]) {
     session = args[++i];
+  } else if (args[i] === '--force') {
+    forceRecord = true;
   }
 }
 
@@ -217,21 +220,36 @@ if (recordPath && recordedActions.length > 0) {
   if (fs.existsSync(recordPath)) {
     try { existing = JSON.parse(fs.readFileSync(recordPath, 'utf-8')); } catch (_) {}
   }
-  // Append to existing steps or create new
-  if (!existing.steps) {
-    existing = {
-      version: 1,
-      captured: new Date().toISOString(),
-      steps: []
-    };
-  }
-  existing.steps = existing.steps.concat(recordedActions);
-  existing.captured = new Date().toISOString();
 
-  var dir = path.dirname(recordPath);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(recordPath, JSON.stringify(existing, null, 2), 'utf-8');
-  results.push('RECORDED: ' + recordedActions.length + ' actions to ' + recordPath);
+  // Seal check: finalized files are immutable unless --force is used
+  if (existing.finalized && !forceRecord) {
+    results.push('WARN: replay file already finalized at ' + existing.finalized + ', skipping recording (use --force to override)');
+  } else {
+    // --force on a finalized file: full replacement (clear old steps)
+    if (existing.finalized && forceRecord) {
+      existing = {
+        version: 1,
+        captured: new Date().toISOString(),
+        steps: []
+      };
+      results.push('FORCE: cleared finalized replay, starting fresh recording');
+    }
+    // Append to existing steps or create new
+    if (!existing.steps) {
+      existing = {
+        version: 1,
+        captured: new Date().toISOString(),
+        steps: []
+      };
+    }
+    existing.steps = existing.steps.concat(recordedActions);
+    existing.captured = new Date().toISOString();
+
+    var dir = path.dirname(recordPath);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(recordPath, JSON.stringify(existing, null, 2), 'utf-8');
+    results.push('RECORDED: ' + recordedActions.length + ' actions to ' + recordPath);
+  }
 }
 
 console.log(results.join('\n'));
