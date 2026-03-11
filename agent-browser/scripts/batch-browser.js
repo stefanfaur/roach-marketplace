@@ -28,7 +28,7 @@ if (commands.length === 0) {
 }
 
 // State for recording
-var lastSnapshot = null;     // parsed element list from most recent snapshot
+var lastSnapshot = loadSnapshotState();  // load persisted state from previous batch call
 var recordedActions = [];     // actions with semantic locators for replay capture
 
 function runCmd(cmd) {
@@ -60,6 +60,38 @@ function parseSnapshot(output) {
     }
   }
   return elements;
+}
+
+// Snapshot state persistence across batch calls
+var SNAPSHOT_STATE_FILE = path.join(
+  process.env.TMPDIR || '/private/tmp/claude-501',
+  'agent-browser-snapshot-state.json'
+);
+var SNAPSHOT_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+function loadSnapshotState() {
+  try {
+    if (!fs.existsSync(SNAPSHOT_STATE_FILE)) return null;
+    var stat = fs.statSync(SNAPSHOT_STATE_FILE);
+    if (Date.now() - stat.mtimeMs > SNAPSHOT_TTL_MS) return null;
+    var data = JSON.parse(fs.readFileSync(SNAPSHOT_STATE_FILE, 'utf-8'));
+    return data.elements || null;
+  } catch (_) {
+    return null;
+  }
+}
+
+function saveSnapshotState(elements) {
+  try {
+    var dir = path.dirname(SNAPSHOT_STATE_FILE);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(SNAPSHOT_STATE_FILE, JSON.stringify({
+      elements: elements,
+      saved: new Date().toISOString()
+    }, null, 2), 'utf-8');
+  } catch (_) {
+    // Non-fatal — recording degrades but execution continues
+  }
 }
 
 // Extract semantic locators from an element description string
@@ -134,6 +166,7 @@ for (var c = 0; c < commands.length; c++) {
     // Track snapshots for recording
     if (cmd.match(/^snapshot\b/)) {
       lastSnapshot = parseSnapshot(result.output);
+      saveSnapshotState(lastSnapshot);
     }
 
     // Record interaction commands with semantic locators
