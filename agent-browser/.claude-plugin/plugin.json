@@ -1,6 +1,6 @@
 {
   "name": "agent-browser",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Browser automation skill and agent with workflow persistence",
   "author": {
     "name": "Stefan Faur"
