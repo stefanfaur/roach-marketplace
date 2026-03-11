@@ -1,13 +1,23 @@
 ---
 name: initializing-codebase-index
-description: Use when bootstrapping the codebase index for the first time on a project with no existing thoughts/shared/index/. One-time deep structural scan that produces CODEBASE-MAP.md and domain detail files
+description: Use when bootstrapping a comprehensive codebase index on a project with no existing thoughts/shared/index/, or when the user explicitly requests a deep index scan
 ---
 
-# Init Codebase Index
+# Init Codebase Index (Deep Scan)
 
-You are initializing the codebase index for a project that has none. This is a
-one-time deep scan. Produce `thoughts/shared/index/CODEBASE-MAP.md` and initial
-domain detail files.
+One-time deep scan using parallel subagents. Produces `thoughts/shared/index/CODEBASE-MAP.md`
+and rich domain detail files. For the lightweight auto-triggered path, see `update-codebase-index`
+with `first-time=true`.
+
+## When to Use
+
+- User explicitly asks to index the codebase
+- You want a comprehensive index with deep file-level analysis
+- The lightweight auto-triggered index (via `using-codebase-index`) is insufficient
+
+**Do NOT use when:**
+- Index already exists — use `update-codebase-index` instead
+- You want a quick background bootstrap — `using-codebase-index` handles that automatically
 
 ## Steps
 
@@ -17,50 +27,64 @@ domain detail files.
 ls thoughts/shared/index/CODEBASE-MAP.md 2>/dev/null && echo "EXISTS" || echo "MISSING"
 ```
 
-If EXISTS: stop immediately and tell the user:
-> Index already exists at `thoughts/shared/index/CODEBASE-MAP.md`.
-> `initializing-codebase-index` is a one-time bootstrap skill.
-> To update the existing index, invoke `update-codebase-index` instead.
-> To rebuild from scratch, delete `thoughts/shared/index/` first.
+If EXISTS: stop and tell the user:
+> Index already exists. Use `update-codebase-index` to update it,
+> or delete `thoughts/shared/index/` to rebuild from scratch.
 
 **2. Scan project structure**
 
 ```bash
-# Keep in sync with roach/skills/update-codebase-index/SKILL.md (same scan command used there)
+# Keep in sync with roach/skills/update-codebase-index/SKILL.md
 find . -mindepth 1 -maxdepth 2 -type d | grep -v '.git' | grep -v 'node_modules' | grep -v 'target' | grep -v '.idea' | grep -v 'dist' | grep -v '.angular' | sort
 ```
+
+Identify all top-level physical modules (source directories).
 
 **3. Detect tech stack**
 
 Check for: `pom.xml`, `package.json`, `go.mod`, `pyproject.toml`, `build.gradle`,
 `Cargo.toml`. Read any found to identify key dependencies, frameworks, and versions.
 
-**4. Identify physical modules**
+**4. Dispatch parallel subagents — one per physical module**
 
-For each top-level source directory, determine its purpose (backend module, frontend,
-DB migrations, infrastructure, etc.) from its name and a brief look at its contents.
+For each physical module, dispatch a `roach:codebase-analyzer` subagent with this prompt
+template (adapt module name and path):
 
-**5. Identify logical domains**
+> Analyze the module at `<module-path>/`. Produce a structured report:
+>
+> 1. **Purpose** — one sentence describing what this module does
+> 2. **Key files** — the 3-5 most important files with line references (path:line) and
+>    a brief description of each (ClassName — what it does)
+> 3. **Internal patterns** — how code is organized within the module (e.g., layered
+>    architecture, feature folders, etc.)
+> 4. **Dependencies** — which other modules this one depends on or is depended upon by
+> 5. **Logical domains** — which cross-cutting domains this module participates in
+>    (e.g., auth, api, database, frontend)
+>
+> Return ONLY the structured report, no preamble.
 
-From the modules found, infer cross-cutting logical domains (e.g. `auth`, `api`,
-`domain-model`, `frontend`, `database`, `infra`). These become the detail files.
+Dispatch all subagents in a single message for maximum parallelization.
 
-**6. Create index directory**
+**5. Synthesize results**
 
+Read all module reports. From them:
+
+a. **Identify logical domains** — deduplicate domain tags across all module reports.
+   Each unique domain becomes a detail file.
+
+b. **Create index directory:**
 ```bash
 mkdir -p thoughts/shared/index
 ```
 
-**7. Write CODEBASE-MAP.md**
-
-Create `thoughts/shared/index/CODEBASE-MAP.md`:
+c. **Write CODEBASE-MAP.md** — same format as `update-codebase-index`, under 40 lines:
 
 ```markdown
 # Codebase Map
-> Last updated: YYYY-MM-DD · "initial index (bootstrapped by initializing-codebase-index)"
+> Last updated: YYYY-MM-DD · "deep scan (bootstrapped by initializing-codebase-index)"
 
 ## Physical Modules
-- **module-name**   → one-liner purpose
+- **module-name**   → one-liner purpose (from subagent reports)
 
 ## Tech Stack
 - Backend: ...
@@ -71,14 +95,9 @@ Create `thoughts/shared/index/CODEBASE-MAP.md`:
 - **domain** → thoughts/shared/index/domain.md
 ```
 
-Target: under 40 lines regardless of project size. Describe modules and domains —
-never individual files.
-
-**8. Write domain detail files**
-
-For each logical domain, create `thoughts/shared/index/<domain>.md`. Populate
-Key Files with the 3-5 most important files found in that domain. Derive
-"How It Works" and "Where to Look" from a brief read of those files.
+d. **Write domain detail files** — for each logical domain, create
+   `thoughts/shared/index/<domain>.md`. Populate from subagent reports — these should be
+   rich, not stubs:
 
 ```markdown
 # Domain: <Name>
@@ -86,24 +105,27 @@ Key Files with the 3-5 most important files found in that domain. Derive
 
 ## Key Files
 - path/to/file.ext:line  # ClassName — what it does
+[populated from subagent reports — all key files tagged with this domain]
 
 ## How It Works
-[2-3 sentences on the domain flow]
+[2-3 sentences synthesized from subagent reports on the domain flow]
 
 ## Where to Look
 - To do X → file.ext:line
 - To do Y → other-file.ext:line
+[derived from key files and internal patterns in subagent reports]
 ```
 
-**9. Report and remind**
+**6. Report**
 
 Announce what was created:
 ```
-Codebase index initialized:
+Codebase index initialized (deep scan):
 - thoughts/shared/index/CODEBASE-MAP.md
 - thoughts/shared/index/<domain>.md  [list each]
+
+N modules scanned via parallel subagents.
 ```
 
 Remind the user:
-> Update the index after each significant change by invoking `update-codebase-index`
-> at the end of implementation or research sessions.
+> Update the index after significant changes by invoking `update-codebase-index`.
