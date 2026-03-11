@@ -5,7 +5,7 @@ description: Use when the user needs to interact with websites — navigating pa
 
 # agent-browser: AI-First Browser Automation
 
-Use the `agent-browser` CLI to control a headless Chromium browser. **All browser automation must be delegated to the `browser-agent` subagent** — invoke it via the Agent tool with `subagent_type: "browser-agent"`.
+**All browser automation must be delegated to the `browser-agent` subagent** — invoke it via the Agent tool with `subagent_type: "browser-agent"`.
 
 ## Why Delegate?
 
@@ -26,17 +26,10 @@ Agent(
 
 Be specific: target URL, actions to perform, what constitutes success.
 
-## Quick Command Reference
+## What the Agent Does Internally
 
-| Command | Purpose |
-|---------|---------|
-| `open <url>` | Navigate to URL |
-| `snapshot -i` | List interactive elements with refs |
-| `click @e1` | Click element |
-| `fill @e2 "text"` | Clear and type into input |
-| `select @e3 "option"` | Select dropdown option |
-| `wait --load networkidle` | Wait for page to finish loading |
-| `get text @e1` | Extract text from element |
-| `screenshot` | Capture viewport |
-| `state save/load <file>` | Persist or restore session cookies |
-| `find role button click --name "X"` | Semantic locator (stable across page changes) |
+1. Discovers its scripts dynamically (no hardcoded paths)
+2. Checks for existing replay files matching the target domain
+3. If replay exists: runs it deterministically, no LLM reasoning needed
+4. If no replay: uses batch mode — plans 3-10 actions per tool call, auto-records for future replay
+5. Writes workflow documentation and finalizes replay files after every session
