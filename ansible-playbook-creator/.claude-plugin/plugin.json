@@ -1,6 +1,6 @@
 {
   "name": "ansible-playbook-creator",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Create Ansible playbooks for configuration management",
   "author": {
     "name": "Jeremy Longshore",

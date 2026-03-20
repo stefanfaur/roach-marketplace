@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "roach-marketplace",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "roach and its companion plugins",
   "owner": {
     "name": "Stefan Faur"
@@ -10,28 +10,28 @@
     {
       "name": "roach",
       "description": "Research-first methodology with skills-first enforcement for Claude Code",
-      "version": "1.0.6",
+      "version": "1.0.7",
       "source": "./roach",
       "category": "productivity"
     },
     {
       "name": "preroach",
       "description": "Legacy plan-centric workflow skills for creating, implementing, validating, and iterating implementation plans",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "source": "./preroach",
       "category": "productivity"
     },
     {
       "name": "agent-browser",
       "description": "Browser automation skill and agent with workflow persistence for agent-browser CLI",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "source": "./agent-browser",
       "category": "productivity"
     },
     {
       "name": "ci-cd-pipeline-builder",
       "description": "Build CI/CD pipelines for GitHub Actions, Gitea Actions, GitLab CI, Jenkins, and more",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "author": {
         "name": "Jeremy Longshore",
         "email": "jeremy@intentsolutions.io"
@@ -42,7 +42,7 @@
     {
       "name": "ansible-playbook-creator",
       "description": "Create Ansible playbooks for configuration management",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "author": {
         "name": "Jeremy Longshore",
         "email": "jeremy@intentsolutions.io"
@@ -53,7 +53,7 @@
     {
       "name": "docker-compose-generator",
       "description": "Generate Docker Compose and Podman Compose configurations for multi-container applications",
-      "version": "1.1.1",
+      "version": "1.1.2",
       "author": {
         "name": "Jeremy Longshore",
         "email": "jeremy@intentsolutions.io"
@@ -64,7 +64,7 @@
     {
       "name": "database-query-profiler",
       "description": "Profile and optimize database queries for performance",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "author": {
         "name": "Jeremy Longshore",
         "email": "jeremy@intentsolutions.io"
@@ -75,7 +75,7 @@
     {
       "name": "mariadb-mcp",
       "description": "MariaDB MCP integration with best practices for schema design, indexing, Hibernate/QueryDSL, and database operations",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "source": "./mariadb-mcp",
       "category": "development"
     }
