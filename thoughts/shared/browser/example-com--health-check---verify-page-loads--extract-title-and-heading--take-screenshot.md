@@ -3,7 +3,7 @@ date: 2026-03-11T14:47:35.851Z
 git_branch: main
 git_commit: bfd42e4
 repository: roach-marketplace
-cwd: /Users/stefanfaur/Desktop/work/ai-tools/roach-marketplace
+cwd: .
 title: "example.com - health check: verify page loads, extract title and heading, take screenshot"
 description: "Health check workflow for example.com: navigates to the page, extracts the page title and h1 heading, and saves a screenshot."
 domain: example.com

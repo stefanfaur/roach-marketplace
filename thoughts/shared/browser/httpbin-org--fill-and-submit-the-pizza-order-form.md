@@ -3,7 +3,7 @@ date: 2026-03-11T14:49:28.868Z
 git_branch: main
 git_commit: bfd42e4
 repository: roach-marketplace
-cwd: /Users/stefanfaur/Desktop/work/ai-tools/roach-marketplace
+cwd: .
 title: "httpbin.org - fill and submit the pizza order form"
 description: "Fill all fields in the httpbin sample pizza order form and submit it. Verifies the POST response echoes back the submitted data."
 domain: httpbin.org

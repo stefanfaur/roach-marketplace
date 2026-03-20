@@ -1,7 +1,7 @@
 # roach + claude-octopus In-Roach Integration Analysis
 
 Date: 2026-02-16
-Repository: /Users/stefanfaur/Desktop/work/ai-tools/roach-marketplace
+Repository: roach-marketplace
 Method: Brainstorming skill workflow pattern (context scan -> architecture options -> recommendation)
 Status: Revised for clarified goal (integrate octopus WITH roach, not as a sibling plugin)
 

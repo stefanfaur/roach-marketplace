@@ -3,7 +3,7 @@ date: 2026-03-11T14:51:15.470Z
 git_branch: main
 git_commit: bfd42e4
 repository: roach-marketplace
-cwd: /Users/stefanfaur/Desktop/work/ai-tools/roach-marketplace
+cwd: .
 title: "example.com - health check - verify page loads and extract title"
 description: "Navigate to example.com, confirm the page loads, and extract the page title."
 domain: example.com

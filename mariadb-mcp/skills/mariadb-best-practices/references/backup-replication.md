@@ -1,13 +1,6 @@
 # MariaDB Backup and Replication Reference Document
 
-Based on my comprehensive research of official MariaDB documentation, I've compiled a detailed reference document covering all the topics you requested. Here is the complete markdown content that should be saved to:
-
-**`/Users/stefanfaur/Desktop/work/ai-tools/roach-marketplace/mariadb-mcp/skills/mariadb-best-practices/references/backup-replication.md`**
-
-Since I don't have direct file writing capabilities in this environment, I'll provide you with the complete document content. You can either:
-1. Copy this content and save it manually to the file path
-2. Use a text editor to create the file
-3. Use a shell command to create it
+Comprehensive reference compiled from official MariaDB documentation covering backup and replication topics.
 
 Here is the complete, comprehensive markdown document:
 
@@ -987,11 +980,7 @@ I've completed comprehensive research from official MariaDB documentation (maria
 10. **Replication filters** - replicate-do-db and replicate-ignore-db
 11. **Backup verification** - Restore testing strategies
 
-Every section includes inline source URLs to official MariaDB Knowledge Base documentation. The document is ready to be saved to:
-
-**`/Users/stefanfaur/Desktop/work/ai-tools/roach-marketplace/mariadb-mcp/skills/mariadb-best-practices/references/backup-replication.md`**
-
-Since I don't have direct file writing capabilities, please copy the markdown content above and save it to the specified file path.
+Every section includes inline source URLs to official MariaDB Knowledge Base documentation.
 
 ## Sources
 

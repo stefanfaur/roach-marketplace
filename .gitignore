@@ -2,3 +2,13 @@
 .idea/
 __pycache__/
 thoughts/shared/plans/
+
+# Environment variables
+.env
+.env.*
+
+# Credentials and keys
+*.key
+*.pem
+*.p12
+*.pfx
