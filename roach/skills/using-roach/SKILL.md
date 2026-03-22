@@ -34,7 +34,15 @@ digraph skill_flow {
     "Follow skill exactly" [shape=box];
     "Respond (including clarifications)" [shape=doublecircle];
 
-    "User message received" -> "Might any skill apply?";
+    "User message received" -> "Implementation request?" ;
+    "Implementation request?" [shape=diamond];
+    "Already brainstormed?" [shape=diamond];
+    "Implementation request?" -> "Already brainstormed?" [label="yes"];
+    "Implementation request?" -> "Might any skill apply?" [label="no"];
+    "Already brainstormed?" -> "Might any skill apply?" [label="yes"];
+    "Already brainstormed?" -> "Invoke brainstorming first" [label="no"];
+    "Invoke brainstorming first" [shape=box];
+    "Invoke brainstorming first" -> "Might any skill apply?";
     "Might any skill apply?" -> "Invoke Skill tool" [label="yes, even 1%"];
     "Might any skill apply?" -> "Respond (including clarifications)" [label="definitely not"];
     "Invoke Skill tool" -> "Announce: 'Using [skill] to [purpose]'";
@@ -100,3 +108,7 @@ The skill itself tells you which.
 ## User Instructions
 
 Instructions say WHAT, not HOW. "Add X" or "Fix Y" doesn't mean skip workflows.
+
+## Tool Restrictions
+
+**Never call `EnterPlanMode` or `ExitPlanMode`.** These tools trap the session in plan mode where Write/Edit tools are restricted. Use the brainstorming and writing-plans skills instead — they manage their own structured planning flow.

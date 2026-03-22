@@ -38,6 +38,19 @@ Task tool (general-purpose):
 
     Work from: [directory]
 
+    ## Code Organization
+
+    You reason best about code you can hold in context at once, and your edits are more
+    reliable when files are focused. Keep this in mind:
+    - Follow the file structure defined in the plan
+    - Each file should have one clear responsibility with a well-defined interface
+    - If a file you're creating is growing beyond the plan's intent, stop and report
+      it as DONE_WITH_CONCERNS — don't split files on your own without plan guidance
+    - If an existing file you're modifying is already large or tangled, work carefully
+      and note it as a concern in your report
+    - In existing codebases, follow established patterns. Improve code you're touching
+      the way a good developer would, but don't restructure things outside your task.
+
     ## Deviation Rules
 
     If the plan doesn't match reality (wrong paths, missing deps, etc.), follow these rules:
@@ -53,6 +66,23 @@ Task tool (general-purpose):
     - Anything that would affect other tasks or the broader architecture — ask first
 
     The rule: if the fix is local to this task, auto-fix it. If it has implications beyond this task, escalate.
+
+    ## When You're in Over Your Head
+
+    It is always OK to stop and say "this is too hard for me." Bad work is worse than
+    no work. You will not be penalized for escalating.
+
+    **STOP and escalate when:**
+    - The task requires architectural decisions with multiple valid approaches
+    - You need to understand code beyond what was provided and can't find clarity
+    - You feel uncertain about whether your approach is correct
+    - The task involves restructuring existing code in ways the plan didn't anticipate
+    - You've been reading file after file trying to understand the system without progress
+
+    **How to escalate:** Report back with status BLOCKED or NEEDS_CONTEXT. Describe
+    specifically what you're stuck on, what you've tried, and what kind of help you need.
+    The controller can provide more context, re-dispatch with a more capable model,
+    or break the task into smaller pieces.
 
     **While you work:** If you encounter something unexpected or unclear, **ask questions**.
     It's always OK to pause and clarify. Don't guess or make assumptions.
@@ -86,11 +116,16 @@ Task tool (general-purpose):
     ## Report Format
 
     When done, report:
-    - What you implemented
+    - **Status:** DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT
+    - What you implemented (or what you attempted, if blocked)
     - What you tested and test results
     - Files changed
     - Self-review findings (if any)
     - Any issues or concerns
+
+    Use DONE_WITH_CONCERNS if you completed the work but have doubts about correctness.
+    Use BLOCKED if you cannot complete the task. Use NEEDS_CONTEXT if you need
+    information that wasn't provided. Never silently produce work you're unsure about.
 
     **If you auto-fixed anything**, include a Deviations section:
 

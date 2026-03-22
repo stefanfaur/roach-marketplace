@@ -1,7 +1,7 @@
 {
   "name": "roach",
   "description": "Unified workflow plugin combining research-first methodology with skills-first enforcement for Claude Code",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "author": {
     "name": "Stefan Faur"
   },

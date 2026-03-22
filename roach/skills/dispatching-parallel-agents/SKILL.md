@@ -7,6 +7,8 @@ description: Use when facing 2+ independent tasks that can be worked on without 
 
 ## Overview
 
+You delegate tasks to specialized agents with isolated context. By precisely crafting their instructions and context, you ensure they stay focused and succeed at their task. They should never inherit your session's context or history — you construct exactly what they need. This also preserves your own context for coordination work.
+
 When you have multiple unrelated failures (different test files, different subsystems, different bugs), investigating them sequentially wastes time. Each investigation is independent and can happen in parallel.
 
 **Core principle:** Dispatch one agent per independent problem domain. Let them work concurrently.
@@ -178,3 +180,41 @@ From debugging session (2025-10-03):
 - All investigations completed concurrently
 - All fixes integrated successfully
 - Zero conflicts between agent changes
+
+---
+
+## Native Task Integration
+
+Track parallel agent work with native task tools.
+
+### Before Dispatch
+
+Create a task per agent:
+
+```
+TaskCreate:
+  subject: "Fix agent-tool-abort.test.ts"
+  description: "Investigate timing failures..."
+  activeForm: "Fixing abort tests"
+```
+
+### Monitor Progress
+
+```
+TaskList
+```
+
+### After Completion
+
+When marking tasks completed via `TaskUpdate`, also sync `.tasks.json` if a plan file exists:
+
+1. Read `<plan-path>.tasks.json`
+2. Set the task's `"status"` to `"completed"`
+3. Set `"lastUpdated"` to current ISO timestamp
+4. Write back
+
+### Notes
+
+- No blockedBy (parallel = independent)
+- Each agent updates its own task status
+- Controller is responsible for `.tasks.json` sync (not the dispatched agents)

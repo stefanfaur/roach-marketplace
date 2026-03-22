@@ -44,7 +44,13 @@ Which approach?"
 ## Task
 Write a comprehensive implementation plan for: $ARGUMENTS
 
+## CRITICAL CONSTRAINTS
+
+**You MUST NOT call `EnterPlanMode` or `ExitPlanMode` at any point during this skill.** This skill operates in normal mode. Calling `EnterPlanMode` traps the session in plan mode where Write/Edit are restricted. Calling `ExitPlanMode` breaks the workflow and skips the user's execution choice.
+
 ## Steps
+
+**Scope Check:** If the spec covers multiple independent subsystems that should have been split during brainstorming, suggest breaking into separate plans — one per subsystem. Each plan should produce working, testable software on its own.
 
 **0. Check the codebase index**
 
@@ -76,6 +82,13 @@ Follow the structure below exactly. Save to:
 `thoughts/shared/plans/<domain>/YYYY-MM-DD-<feature-name>.md`
 
 where `<domain>` and `<feature-name>` come from $ARGUMENTS.
+
+**3.5. Plan review loop**
+
+After writing the complete plan:
+1. Dispatch a plan-document-reviewer subagent (use code-reviewer agent in review mode) — provide the plan path and spec path, never your session history
+2. If issues found: fix, re-dispatch reviewer (max 3 iterations)
+3. If approved: proceed to save and return
 
 **4. Return the saved path**
 
@@ -161,3 +174,22 @@ git commit -m "feat: add specific component"
 - DRY, YAGNI, TDD, frequent commits
 - Assume the implementer is skilled but knows nothing about this codebase or domain
 - Assume poor test design intuition — be explicit about what to test and how
+
+## Task Persistence
+
+At plan completion, write a task persistence file co-located with the plan:
+
+If the plan is saved to `thoughts/shared/plans/<domain>/2026-01-15-feature.md`, save tasks to `thoughts/shared/plans/<domain>/2026-01-15-feature.md.tasks.json`.
+
+```json
+{
+  "planPath": "thoughts/shared/plans/<domain>/2026-01-15-feature.md",
+  "tasks": [
+    {"id": 0, "subject": "Task 0: ...", "status": "pending"},
+    {"id": 1, "subject": "Task 1: ...", "status": "pending", "blockedBy": [0]}
+  ],
+  "lastUpdated": "<timestamp>"
+}
+```
+
+Any new session can resume by running the executing-plans skill with the plan path. It reads `.tasks.json` and continues from where it left off.

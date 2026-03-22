@@ -11,6 +11,12 @@ Help turn ideas into fully formed designs and specs through natural collaborativ
 
 Start by understanding the current project context, then ask questions one at a time to refine the idea. Once you understand what you're building, present the design in small sections (200-300 words), checking after each section whether it looks right so far.
 
+<HARD-GATE>
+Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until you have presented a design and the user has approved it. This applies to EVERY project regardless of perceived simplicity.
+</HARD-GATE>
+
+**You MUST NOT call `EnterPlanMode` or `ExitPlanMode` during this skill.** This skill operates in normal mode. Plan mode restricts Write/Edit tools and has no clean exit. Use the writing-plans skill for structured planning instead.
+
 ## The Process
 
 **Understanding the idea:**
@@ -24,6 +30,8 @@ Start by understanding the current project context, then ask questions one at a 
 - Prefer multiple choice questions when possible, but open-ended is fine too
 - Only one question per message - if a topic needs more exploration, break it into multiple questions
 - Focus on understanding: purpose, constraints, success criteria
+- Before asking detailed questions, assess scope: if the request describes multiple independent subsystems, flag this immediately. Don't spend questions refining details of a project that needs to be decomposed first.
+- If the project is too large for a single spec, help the user decompose into sub-projects: what are the independent pieces, how do they relate, what order should they be built? Then brainstorm the first sub-project through the normal design flow.
 
 **Exploring approaches:**
 - Propose 2-3 different approaches with trade-offs
@@ -37,12 +45,28 @@ Start by understanding the current project context, then ask questions one at a 
 - Cover: architecture, components, data flow, error handling, testing
 - Be ready to go back and clarify if something doesn't make sense
 
+**Design for isolation and clarity:**
+- Break the system into smaller units that each have one clear purpose, communicate through well-defined interfaces, and can be understood and tested independently
+- For each unit, you should be able to answer: what does it do, how do you use it, and what does it depend on?
+- Smaller, well-bounded units are also easier for you to work with — you reason better about code you can hold in context at once, and your edits are more reliable when files are focused
+
 ## After the Design
 
 **Documentation:**
 - Determine the domain from the task context (e.g., accrual, KPI, project-management, etc.). If unclear, ask the user.
 - Write the validated design to `thoughts/shared/plans/<domain>/YYYY-MM-DD-<topic>-design.md`
 - Use elements-of-style:writing-clearly-and-concisely skill if available
+
+**Spec Review Loop:**
+After writing the design doc:
+1. Dispatch a spec-document-reviewer subagent (use code-reviewer agent in review mode) — provide the spec path and original requirements, never your session history
+2. If issues found: fix, re-dispatch, repeat until approved (max 3 iterations)
+3. If loop exceeds 3 iterations, surface to human for guidance
+
+**User Review Gate:**
+After the spec review loop passes, ask the user to review the written spec before proceeding:
+> "Spec written to `<path>`. Please review and let me know if you want changes before we move to implementation planning."
+Wait for user response. Only proceed once the user approves.
 
 **Implementation (if continuing):**
 - Ask: "Ready to set up for implementation?"

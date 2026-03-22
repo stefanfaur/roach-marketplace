@@ -3,6 +3,10 @@ name: executing-plans
 description: Use when you have a written implementation plan to execute in a separate session with review checkpoints
 ---
 
+## CRITICAL CONSTRAINTS
+
+**You MUST NOT call `EnterPlanMode` or `ExitPlanMode` during this skill.** This skill operates in normal mode, executing a plan that already exists on disk. Plan mode is unnecessary and dangerous here — it restricts Write/Edit tools needed for implementation.
+
 # Executing Plans
 
 ## Overview
@@ -19,7 +23,15 @@ Load plan, review critically, execute tasks in batches, report for review betwee
 1. Read plan file
 2. Review critically - identify any questions or concerns about the plan
 3. If concerns: Raise them with your human partner before starting
-4. If no concerns: Create TodoWrite and proceed
+4. If no concerns: Create tasks and proceed
+
+### Step 1b: Load Persisted Tasks (if available)
+
+1. Check for `<plan-path>.tasks.json` co-located with the plan file
+2. If found AND no native tasks exist: recreate from JSON using TaskCreate, restore blockedBy with TaskUpdate
+3. If native tasks already exist: verify they match plan, resume from first `pending`/`in_progress`
+4. If no .tasks.json: create tasks from plan headers using TaskCreate
+5. **After every task status change:** sync back to `.tasks.json` — read file, update status and `lastUpdated`, write back
 
 ### Step 2: Execute Batch
 **Default: First 3 tasks**
