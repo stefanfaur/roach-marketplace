@@ -4,17 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-A private Claude Code plugin marketplace bundling **roach** (research-first workflow methodology), **preroach** (legacy plan-centric workflow skills), **agent-browser** (browser automation wrapping Vercel's agent-browser CLI), **mariadb-mcp** (MariaDB MCP server integration), and four community plugins from Jeremy Longshore (CI/CD, Ansible, Docker Compose, database query profiling). Core plugins derive from HumanLayer and obra/superpowers configurations.
+A private Claude Code plugin marketplace bundling **roach** (research-first workflow methodology), **mariadb-mcp** (MariaDB MCP server integration), and four community plugins from Jeremy Longshore (CI/CD, Ansible, Docker Compose, database query profiling). Core plugins derive from HumanLayer and obra/superpowers configurations.
 
 There is no application code or build system. The repository contains markdown files (skills, agents), Node.js scripts (hooks), and JSON configuration.
 
 ## Repository Layout
 
 ```
-.claude-plugin/marketplace.json    # Marketplace manifest (8 plugins)
+.claude-plugin/marketplace.json    # Marketplace manifest (6 plugins)
 roach/                             # Main plugin: agents, hooks, skills, scripts, lib
-preroach/                          # Legacy plan-centric workflow skills
-agent-browser/                     # Browser automation agent + skill
 mariadb-mcp/                       # MariaDB MCP integration: commands, hooks, skills, tests
 ci-cd-pipeline-builder/            # CI/CD pipeline generation (Jeremy Longshore)
 ansible-playbook-creator/          # Ansible playbook creation (Jeremy Longshore)
@@ -25,14 +23,10 @@ database-query-profiler/           # Database query profiling (Jeremy Longshore)
 ### roach Internal Structure
 
 - `agents/` — 7 specialized subagents (codebase-analyzer, codebase-locator, codebase-pattern-finder, code-reviewer, thoughts-analyzer, thoughts-locator, web-search-researcher)
-- `skills/` — 17 skills, each in `skills/<name>/SKILL.md` (brainstorming, committing, create-handoff, dispatching-parallel-agents, executing-plans, receiving-code-review, requesting-code-review, researching-codebase, resuming-handoff, subagent-driven-development, systematic-debugging, test-driven-development, using-roach, verification-before-completion, writing-natural, writing-plans, writing-skills)
+- `skills/` — 18 skills, each in `skills/<name>/SKILL.md` (brainstorming, committing, create-handoff, dispatching-parallel-agents, executing-plans, grill-me, receiving-code-review, requesting-code-review, researching-codebase, resuming-handoff, subagent-driven-development, systematic-debugging, test-driven-development, using-roach, verification-before-completion, writing-natural, writing-plans, writing-skills)
 - `hooks/` — hooks.json, session-start.js (SessionStart), context-monitor.js (PostToolUse)
 - `lib/elements-of-style.md` — Style reference for documentation quality
 - `scripts/spec_metadata.js` — Metadata extraction utility (Node.js, cross-platform)
-
-### preroach Internal Structure
-
-- `skills/` — legacy plan workflow skills (creating-plans, implementing-plans, validating-plans, iterating-plans)
 
 ## Development Workflow
 
@@ -45,8 +39,6 @@ cp -R ~/.claude/plugins/roach roach
 git add -A && git commit -m "Sync roach"
 git push
 ```
-
-Same pattern for agent-browser.
 
 ## Key Conventions
 
