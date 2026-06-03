@@ -1,21 +1,25 @@
 # roach Marketplace
 
-Private Claude Code plugin marketplace bundling **roach** and its companion plugins.
+Private Claude Code plugin marketplace.
 
 ## Background
 
-The commands, agents, and skills in roach are derived from the Claude Code configurations of [HumanLayer](https://github.com/humanlayer) and [obra/superpowers](https://github.com/obra), customized to work together as a unified plugin with a domain-focused directory structure (`thoughts/shared/plans/<domain>/`, `thoughts/shared/research/<domain>/`, etc.).
+The core plugins — roach, preroach, and agent-browser — derive from the Claude Code configurations of [HumanLayer](https://github.com/humanlayer) and [obra/superpowers](https://github.com/obra), restructured into a unified plugin with domain-scoped artifact storage (`thoughts/shared/{plans|research|handoffs}/<domain>/`).
 
-The agent-browser plugin wraps [Vercel's agent-browser CLI](https://github.com/vercel/agent-browser) with a workflow that persists relevant context as steps succeed. It returns shorter, more focused page summaries that avoid flooding the context window while remaining sufficient for most browsing tasks.
+The marketplace also includes community-contributed plugins from Jeremy Longshore for CI/CD, Ansible, Docker Compose, and database query profiling.
 
 ## Included Plugins
 
-| Plugin | Description |
-|--------|-------------|
-| **roach** | Research-first methodology with skills-first enforcement |
-| **preroach** | Legacy plan-centric workflow skills (creating, implementing, validating, iterating plans) |
-| **agent-browser** | Browser automation agent with workflow persistence (requires `agent-browser` CLI) |
-| **mariadb-mcp** | MariaDB MCP server integration with automated setup and database best practices |
+| Plugin | Author | Description |
+|--------|--------|-------------|
+| **roach** | Stefan Faur | Research-first methodology with skills-first enforcement |
+| **preroach** | Stefan Faur | Legacy plan-centric workflow skills (creating, implementing, validating, iterating plans) |
+| **agent-browser** | Stefan Faur | Browser automation with workflow persistence (requires `agent-browser` CLI) |
+| **mariadb-mcp** | Stefan Faur | MariaDB MCP server integration with automated setup and database best practices |
+| **ci-cd-pipeline-builder** | Jeremy Longshore | Build CI/CD pipelines for GitHub Actions, Gitea, GitLab CI, Jenkins |
+| **ansible-playbook-creator** | Jeremy Longshore | Create and validate Ansible playbooks |
+| **docker-compose-generator** | Jeremy Longshore | Generate Docker Compose files with validation |
+| **database-query-profiler** | Jeremy Longshore | Profile and optimize database queries |
 
 ## Installation
 
@@ -51,7 +55,7 @@ gh repo view stefanfaur/roach-marketplace --json name
 
 ### Enable plugins
 
-After adding the marketplace, enable the plugins you want from the list: `roach`, `preroach`, `agent-browser`, `mariadb-mcp`.
+After adding the marketplace, enable the plugins you want. Available plugins: `roach`, `preroach`, `agent-browser`, `mariadb-mcp`, `ci-cd-pipeline-builder`, `ansible-playbook-creator`, `docker-compose-generator`, `database-query-profiler`.
 
 ### Install required CLI tools
 
@@ -84,20 +88,6 @@ roach detects JetBrains MCP availability at session start and tells the agent wh
 
 roach warns at session start if any companion is missing.
 
-### Configure statusline with claude-hud (recommended)
-
-Install the [claude-hud](https://github.com/anthropics/claude-hud) plugin for a live statusline in your terminal.
-
-roach wraps claude-hud with its own statusline handler (`hooks/statusline-wrapper.js`). This wrapper intercepts context window usage data — which powers the automatic 80%/90% handoff warnings from the Stop hook — and passes it through to claude-hud for display. Without it, the context monitoring feature does not work.
-
-After installing claude-hud, point your statusline command at the wrapper instead of claude-hud directly:
-
-```bash
-node ~/.claude/plugins/roach/hooks/statusline-wrapper.js
-```
-
-See the [claude-hud repository](https://github.com/anthropics/claude-hud) for installation and configuration.
-
 ## Team Distribution
 
 Add this to your project's `.claude/settings.json` to auto-prompt teammates:
@@ -120,7 +110,7 @@ Add this to your project's `.claude/settings.json` to auto-prompt teammates:
 
 The core plugin. Derived from [obra/superpowers](https://github.com/obra) and [HumanLayer](https://github.com/humanlayer)'s Claude Code configurations, restructured into a single plugin with domain-scoped artifact storage (`thoughts/shared/{plans|research|handoffs}/<domain>/`).
 
-A `SessionStart` hook injects the foundational skill into every session, forcing Claude to check for applicable skills before responding. A `Stop` hook monitors context window usage and warns at 80%/90%, prompting handoff creation before context runs out.
+A `SessionStart` hook injects the foundational skill into every session, forcing Claude to check for applicable skills before responding. A `PostToolUse` hook monitors context window usage after every tool call and warns when remaining context drops below 35% (warning) or 25% (critical), prompting handoff creation before context runs out.
 
 #### Codebase Index
 
@@ -131,7 +121,7 @@ A two-tier persistent map of the codebase stored in `thoughts/shared/index/`:
 
 **Read path** (`using-codebase-index`): loaded automatically by codebase agents and brainstorming before any search. Agents go directly to the right module instead of scanning the whole project.
 
-**Write path** (`update-codebase-index`, `context:fork`): invoked automatically at the end of `executing-plans`, `subagent-driven-development`, and `research_codebase`. Patches only the affected sections.
+**Write path** (`update-codebase-index`): invoked automatically at the end of `executing-plans`, `subagent-driven-development`, and `researching-codebase`. Patches only the affected sections.
 
 **Bootstrap**: invoke `initializing-codebase-index` once on a new project. Safe to skip — agents fall back to normal exploration if the index is missing, and `update-codebase-index` will create it from that session's context.
 
@@ -151,6 +141,7 @@ A two-tier persistent map of the codebase stored in `thoughts/shared/index/`:
 | `requesting-code-review` | Dispatch reviewer subagent after completing work |
 | `receiving-code-review` | Evaluate review feedback technically, push back when warranted |
 | `writing-skills` | TDD for skill authoring — pressure-test without the skill, then write it to counter the failure modes |
+| `writing-natural` | Apply Elements of Style principles to any prose output |
 | `using-codebase-index` | Check the index before any exploration — read path for the codebase index |
 | `update-codebase-index` | Patch the index after implementation or research sessions — write path |
 | `committing` | Git commit with user approval; never uses `git add` (preserves IDE changelists) |

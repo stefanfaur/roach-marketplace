@@ -4,30 +4,35 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-A private Claude Code plugin marketplace bundling **roach** (research-first workflow methodology), **preroach** (legacy plan-centric workflow skills), and **agent-browser** (browser automation wrapping Vercel's agent-browser CLI). Derived from HumanLayer and obra/superpowers configurations.
+A private Claude Code plugin marketplace bundling **roach** (research-first workflow methodology), **preroach** (legacy plan-centric workflow skills), **agent-browser** (browser automation wrapping Vercel's agent-browser CLI), **mariadb-mcp** (MariaDB MCP server integration), and four community plugins from Jeremy Longshore (CI/CD, Ansible, Docker Compose, database query profiling). Core plugins derive from HumanLayer and obra/superpowers configurations.
 
-There is no application code, build system, or test suite. The repository contains only markdown files (skills, agents), Node.js scripts (hooks), and JSON configuration.
+There is no application code or build system. The repository contains markdown files (skills, agents), Node.js scripts (hooks), and JSON configuration.
 
 ## Repository Layout
 
 ```
-.claude-plugin/marketplace.json    # Marketplace manifest
-roach/                             # Main plugin: agents, hooks, skills, scripts
+.claude-plugin/marketplace.json    # Marketplace manifest (8 plugins)
+roach/                             # Main plugin: agents, hooks, skills, scripts, lib
 preroach/                          # Legacy plan-centric workflow skills
 agent-browser/                     # Browser automation agent + skill
+mariadb-mcp/                       # MariaDB MCP integration: commands, hooks, skills, tests
+ci-cd-pipeline-builder/            # CI/CD pipeline generation (Jeremy Longshore)
+ansible-playbook-creator/          # Ansible playbook creation (Jeremy Longshore)
+docker-compose-generator/          # Docker Compose generation (Jeremy Longshore)
+database-query-profiler/           # Database query profiling (Jeremy Longshore)
 ```
 
 ### roach Internal Structure
 
 - `agents/` — 7 specialized subagents (codebase-analyzer, codebase-locator, codebase-pattern-finder, code-reviewer, thoughts-analyzer, thoughts-locator, web-search-researcher)
-- `skills/` — skills, each in `skills/<name>/SKILL.md` (brainstorming, committing, dispatching-parallel-agents, executing-plans, initializing-codebase-index, receiving-code-review, requesting-code-review, researching-codebase, resuming-handoff, subagent-driven-development, systematic-debugging, test-driven-development, using-roach, verification-before-completion, writing-plans, writing-skills, and more)
+- `skills/` — 20 skills, each in `skills/<name>/SKILL.md` (brainstorming, committing, create-handoff, dispatching-parallel-agents, executing-plans, initializing-codebase-index, receiving-code-review, requesting-code-review, researching-codebase, resuming-handoff, subagent-driven-development, systematic-debugging, test-driven-development, update-codebase-index, using-codebase-index, using-roach, verification-before-completion, writing-natural, writing-plans, writing-skills)
+- `hooks/` — hooks.json, session-start.js (SessionStart), context-monitor.js (PostToolUse)
+- `lib/elements-of-style.md` — Style reference for documentation quality
+- `scripts/spec_metadata.js` — Metadata extraction utility (Node.js, cross-platform)
 
 ### preroach Internal Structure
 
 - `skills/` — legacy plan workflow skills (creating-plans, implementing-plans, validating-plans, iterating-plans)
-- `hooks/` — hooks.json + Node.js scripts (session-start.js runs on startup/resume/clear/compact; context-monitor.js runs on Stop)
-- `lib/elements-of-style.md` — Style reference for documentation quality
-- `scripts/spec_metadata.js` — Metadata extraction utility (Node.js, cross-platform)
 
 ## Development Workflow
 
@@ -56,11 +61,16 @@ Same pattern for agent-browser.
 
 ## Hook Behavior
 
-`session-start.js` runs asynchronously on every session start and:
+`session-start.js` (`SessionStart`) runs asynchronously on every session start and:
 1. Checks for companion CLI tools (ripgrep, agent-browser)
 2. Detects JetBrains MCP availability and reports whether IDE tools are usable
 3. Checks WebSearch/WebFetch blanket permissions and offers to configure them
 4. Injects the `using-roach` skill content into the session context
+
+`context-monitor.js` (`PostToolUse`) runs after every tool call and:
+1. Reads context window metrics from stdin
+2. Warns when remaining context drops below 35%
+3. Issues critical alerts below 25%, prompting handoff creation
 
 ## Required CLI Tools
 
