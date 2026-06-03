@@ -1,6 +1,6 @@
 {
   "name": "docker-compose-generator",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Generate Docker Compose and Podman Compose configurations for multi-container applications with best practices",
   "author": {
     "name": "Jeremy Longshore",

@@ -1,6 +1,6 @@
 {
   "name": "ci-cd-pipeline-builder",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Build CI/CD pipelines for GitHub Actions, Gitea Actions, GitLab CI, Jenkins, and more",
   "author": {
     "name": "Jeremy Longshore",
