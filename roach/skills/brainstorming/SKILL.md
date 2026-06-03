@@ -25,7 +25,7 @@ Every project goes through this process. A todo list, a single-function utility,
 
 You MUST create a task for each of these items and complete them in order:
 
-1. **Explore project context** — invoke `using-codebase-index`, then check files, docs, recent commits
+1. **Explore project context** — check files, docs, recent commits
 2. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 3. **Propose 2-3 approaches** — with trade-offs and your recommendation
 4. **Present design** — in sections scaled to their complexity, get user approval after each section
@@ -66,12 +66,7 @@ digraph brainstorming {
 ## The Process
 
 **Understanding the idea:**
-- Check out the current project state first: invoke `using-codebase-index` to load
-  the module map, then check files, docs, and recent commits — starting from the
-  index rather than a blank-slate scan
-  ```
-  Skill("using-codebase-index")
-  ```
+- Check out the current project state first: check files, docs, and recent commits
 - Ask questions one at a time to refine the idea
 - Prefer multiple choice questions when possible, but open-ended is fine too
 - Only one question per message - if a topic needs more exploration, break it into multiple questions

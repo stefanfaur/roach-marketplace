@@ -121,13 +121,7 @@ Implementer subagents report one of four statuses. Handle each appropriately:
 
 ## After All Tasks Complete
 
-After the final code reviewer approves, before announcing completion:
-
-1. Invoke `update-codebase-index` with a summary of all tasks implemented:
-   ```
-   Skill("update-codebase-index", "modules='<touched modules>' domains='<touched domains>' summary='<what was built across all tasks>' first-time=<true|false>")
-   ```
-2. Then announce completion and ask the user how to proceed.
+After the final code reviewer approves, announce completion and ask the user how to proceed.
 
 ## Prompt Templates
 
@@ -258,7 +252,6 @@ Done!
 - Let implementer self-review replace actual review (both are needed)
 - **Start code quality review before spec compliance is ✅** (wrong order)
 - Move to next task while either review has open issues
-- Skip `update-codebase-index` after all tasks complete
 
 ## Deviation Rules
 

@@ -55,12 +55,7 @@ Based on feedback:
 - Repeat until complete
 
 ### Step 5: Completion
-When all tasks are done:
-1. Invoke `update-codebase-index` with a summary of everything that was implemented:
-   ```
-   Skill("update-codebase-index", "modules='<touched modules>' domains='<touched domains>' summary='<what was built>' first-time=<true|false>")
-   ```
-2. Announce completion and ask the user how they'd like to proceed (commit, further testing, etc.).
+When all tasks are done, announce completion and ask the user how they'd like to proceed (commit, further testing, etc.).
 
 ## When to Stop and Ask for Help
 

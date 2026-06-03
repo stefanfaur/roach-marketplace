@@ -112,19 +112,6 @@ The core plugin. Derived from [obra/superpowers](https://github.com/obra) and [H
 
 A `SessionStart` hook injects the foundational skill into every session, forcing Claude to check for applicable skills before responding. A `PostToolUse` hook monitors context window usage after every tool call and warns when remaining context drops below 35% (warning) or 25% (critical), prompting handoff creation before context runs out.
 
-#### Codebase Index
-
-A two-tier persistent map of the codebase stored in `thoughts/shared/index/`:
-
-- **`CODEBASE-MAP.md`** — under 40 lines: physical modules, tech stack, list of domain detail files
-- **`thoughts/shared/index/<domain>.md`** — per-domain: key files with line references, how it works, where to look
-
-**Read path** (`using-codebase-index`): loaded automatically by codebase agents and brainstorming before any search. Agents go directly to the right module instead of scanning the whole project.
-
-**Write path** (`update-codebase-index`): invoked automatically at the end of `executing-plans`, `subagent-driven-development`, and `researching-codebase`. Patches only the affected sections.
-
-**Bootstrap**: invoke `initializing-codebase-index` once on a new project. Safe to skip — agents fall back to normal exploration if the index is missing, and `update-codebase-index` will create it from that session's context.
-
 #### Skills
 
 | Skill | What it does |
@@ -142,12 +129,9 @@ A two-tier persistent map of the codebase stored in `thoughts/shared/index/`:
 | `receiving-code-review` | Evaluate review feedback technically, push back when warranted |
 | `writing-skills` | TDD for skill authoring — pressure-test without the skill, then write it to counter the failure modes |
 | `writing-natural` | Apply Elements of Style principles to any prose output |
-| `using-codebase-index` | Check the index before any exploration — read path for the codebase index |
-| `update-codebase-index` | Patch the index after implementation or research sessions — write path |
 | `committing` | Git commit with user approval; never uses `git add` (preserves IDE changelists) |
 | `researching-codebase` | Document code as-is via parallel agents into `thoughts/shared/research/` |
 | `resuming-handoff` | Resume from a handoff document with context validation and action planning |
-| `initializing-codebase-index` | Bootstrap the codebase index from scratch (run once per project) |
 | `create-handoff` | Save context for another session to pick up |
 
 #### Agents

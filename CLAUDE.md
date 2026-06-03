@@ -25,7 +25,7 @@ database-query-profiler/           # Database query profiling (Jeremy Longshore)
 ### roach Internal Structure
 
 - `agents/` — 7 specialized subagents (codebase-analyzer, codebase-locator, codebase-pattern-finder, code-reviewer, thoughts-analyzer, thoughts-locator, web-search-researcher)
-- `skills/` — 20 skills, each in `skills/<name>/SKILL.md` (brainstorming, committing, create-handoff, dispatching-parallel-agents, executing-plans, initializing-codebase-index, receiving-code-review, requesting-code-review, researching-codebase, resuming-handoff, subagent-driven-development, systematic-debugging, test-driven-development, update-codebase-index, using-codebase-index, using-roach, verification-before-completion, writing-natural, writing-plans, writing-skills)
+- `skills/` — 17 skills, each in `skills/<name>/SKILL.md` (brainstorming, committing, create-handoff, dispatching-parallel-agents, executing-plans, receiving-code-review, requesting-code-review, researching-codebase, resuming-handoff, subagent-driven-development, systematic-debugging, test-driven-development, using-roach, verification-before-completion, writing-natural, writing-plans, writing-skills)
 - `hooks/` — hooks.json, session-start.js (SessionStart), context-monitor.js (PostToolUse)
 - `lib/elements-of-style.md` — Style reference for documentation quality
 - `scripts/spec_metadata.js` — Metadata extraction utility (Node.js, cross-platform)

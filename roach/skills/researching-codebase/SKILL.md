@@ -27,13 +27,6 @@ Then wait for the user's research query.
 
 ## Steps to follow after receiving the research query:
 
-0. **Check the codebase index:**
-   - Before spawning any sub-agents, invoke `using-codebase-index` to load the
-     existing module map. Use it to focus sub-agent prompts on the right modules
-     and directories from the start.
-   - If the index is missing, proceed normally — this research session will build
-     the context to create one in step 10.
-
 1. **Read any directly mentioned files first:**
    - If the user mentions specific files (tickets, docs, JSON), read them FULLY first
    - **IMPORTANT**: Use the Read tool WITHOUT limit/offset parameters to read entire files
@@ -169,16 +162,7 @@ Then wait for the user's research query.
    - Include key file references for easy navigation
    - Ask if they have follow-up questions or need clarification
 
-10. **Update codebase index:**
-   - Invoke `update-codebase-index` with a summary of the domains researched and
-     key structural findings:
-     ```
-     Skill("update-codebase-index", "modules='' domains='<researched domains>' summary='<key structural findings from this research>' first-time=<true|false>")
-     ```
-   - This preserves the structural knowledge from this research session in the index
-     so future sessions can navigate directly to the areas documented here.
-
-11. **Handle follow-up questions:**
+10. **Handle follow-up questions:**
    - If the user has follow-up questions, append to the same research document
    - Update the frontmatter fields `last_updated` and `last_updated_by` to reflect the update
    - Add `last_updated_note: "Added follow-up research for [brief description]"` to frontmatter
