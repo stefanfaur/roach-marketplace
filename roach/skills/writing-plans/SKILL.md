@@ -25,7 +25,7 @@ Skill("writing-plans", "domain=<domain> feature='<description>' files='<key file
 
 **After the fork returns the plan path:**
 
-Present execution choice:
+Print the following as visible message text — the plan path must appear in your message, never only inside a question box. Then ask for the execution choice:
 
 "Plan complete and saved to `<returned path>`. Two execution options:
 

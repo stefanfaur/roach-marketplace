@@ -17,6 +17,22 @@ Do NOT invoke any implementation skill, write any code, scaffold any project, or
 
 **You MUST NOT call `EnterPlanMode` or `ExitPlanMode` during this skill.** This skill operates in normal mode. Plan mode restricts Write/Edit tools and has no clean exit. Use the writing-plans skill for structured planning instead.
 
+## Show, Then Ask
+
+The question box (AskUserQuestion) displays only a short question and option labels — it cannot carry content. Any content a question refers to MUST be visible as normal message text in the same message as the question:
+
+- Section approval → print the full section text, then ask
+- Revised section approval → re-print the full revised section, never just a summary of what changed
+- Approach choice → print the approaches with trade-offs, then ask
+- Spec or file review → print the file path, then ask
+
+No exceptions:
+- "The user already read it last turn" — they read the old version. Show the current one.
+- "Keeping output minimal" — minimal never means asking about invisible content.
+- "The option descriptions cover it" — option labels are answers, not content.
+
+Never ask "does this look right?" about something not visible in your current message.
+
 ## Anti-Pattern: "This Is Too Simple To Need A Design"
 
 Every project goes through this process. A todo list, a single-function utility, a config change — all of them. "Simple" projects are where unexamined assumptions cause the most wasted work. The design can be short (a few sentences for truly simple projects), but you MUST present it and get approval.
@@ -82,7 +98,8 @@ digraph brainstorming {
 **Presenting the design:**
 - Once you believe you understand what you're building, present the design
 - Break it into sections of 200-300 words
-- Ask after each section whether it looks right so far
+- Print each section as message text, then ask whether it looks right so far
+- After a revision, re-print the full revised section before asking again
 - Cover: architecture, components, data flow, error handling, testing
 - Be ready to go back and clarify if something doesn't make sense
 
@@ -116,6 +133,7 @@ Wait for user response. Only proceed once the user approves.
 ## Key Principles
 
 - **One question at a time** - Don't overwhelm with multiple questions
+- **Show, then ask** - Content a question refers to must be visible in the same message
 - **Multiple choice preferred** - Easier to answer than open-ended when possible
 - **YAGNI ruthlessly** - Remove unnecessary features from all designs
 - **Explore alternatives** - Always propose 2-3 approaches before settling
