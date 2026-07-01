@@ -81,6 +81,15 @@ When agents return:
 - Run full test suite
 - Integrate all changes
 
+## Choosing the Agent Type
+
+Match the agent to the work:
+
+- **Read-only investigation** — dispatch roach's purpose-built agents instead of a general one: `codebase-locator` (find where things live), `codebase-analyzer` (how a specific component works), `codebase-pattern-finder` (similar implementations to model after). For research, `thoughts-locator` (existing docs under `thoughts/`) and `web-search-researcher` (external/modern info). These stay narrowly scoped and can't accidentally edit code.
+- **Open-ended or read-write work** — fixing failing tests, implementing a change, anything that must edit files — use `general-purpose`. The test-fixing examples below are this case.
+
+Parallelize either kind: one `codebase-locator` per subsystem to map an unfamiliar codebase, or one `general-purpose` per failing test file.
+
 ## Agent Prompt Structure
 
 Good agent prompts are:
