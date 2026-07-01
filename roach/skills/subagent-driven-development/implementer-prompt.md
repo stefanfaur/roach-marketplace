@@ -10,11 +10,15 @@ Task tool (general-purpose):
 
     ## Task Description
 
-    [FULL TEXT of task from plan - paste it here, don't make subagent read file]
+    Read your task brief first: `thoughts/.sdd/task-N-brief.md` — it is your
+    requirements, with the exact values (numbers, magic strings, signatures,
+    test cases) to use verbatim. Do NOT read the full plan file; the brief is
+    the scoped subset you need.
 
     ## Context
 
-    [Scene-setting: where this fits, dependencies, architectural context]
+    [Scene-setting: where this fits, dependencies, architectural context, and
+    any interfaces/decisions from earlier tasks the brief cannot know]
 
     ## Before You Begin
 
@@ -115,13 +119,17 @@ Task tool (general-purpose):
 
     ## Report Format
 
-    When done, report:
+    Write your full report to `thoughts/.sdd/task-N-report.md` (create it), covering:
     - **Status:** DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT
     - What you implemented (or what you attempted, if blocked)
     - What you tested and test results
     - Files changed
     - Self-review findings (if any)
     - Any issues or concerns
+
+    Then return only a short summary: status, the commit range (`<base7>..<head7>`),
+    a one-line test summary, and any concerns — the full detail lives in the report
+    file so it does not bloat the controller's context.
 
     Use DONE_WITH_CONCERNS if you completed the work but have doubts about correctness.
     Use BLOCKED if you cannot complete the task. Use NEEDS_CONTEXT if you need
