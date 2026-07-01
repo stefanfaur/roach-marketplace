@@ -72,12 +72,15 @@ Follow the structure below exactly. Save to:
 
 where `<domain>` and `<feature-name>` come from $ARGUMENTS.
 
-**3.5. Plan review loop**
+**3.5. Pre-save self-review**
 
-After writing the complete plan:
-1. Dispatch a plan-document-reviewer subagent (use code-reviewer agent in review mode) — provide the plan path and spec path, never your session history
-2. If issues found: fix, re-dispatch reviewer (max 3 iterations)
-3. If approved: proceed to save and return
+After writing the complete plan, review it against the spec yourself — a checklist you run inline, not a subagent dispatch:
+1. **Spec coverage:** skim each spec requirement; can you point to a task that implements it? Add tasks for any gaps.
+2. **Placeholder scan:** search the plan for the "No Placeholders" red flags below; fix any you find.
+3. **Interface consistency:** do the types, signatures, and names used in later tasks match what earlier tasks define? (`clearLayers()` in Task 3 but `clearFullLayers()` in Task 7 is a bug.)
+4. **Scope vs. requirements:** every task traces back to a spec requirement; no invented scope.
+
+Fix issues inline — no re-review needed. The user review gate happens after this fork returns: the plan path is presented and the user picks the execution approach (see "Before Invoking This Skill").
 
 **4. Return the saved path**
 
@@ -100,8 +103,19 @@ Every plan starts with this exact header:
 
 **Tech Stack:** [Key technologies, libraries, versions]
 
+## Global Constraints
+
+[The spec's project-wide invariants that every task must respect — version floors,
+dependency limits, naming/copy rules, platform or environment assumptions, key
+integration points — one line each, exact values copied verbatim from the spec.
+Every task's requirements implicitly include this section.]
+
 ---
 ```
+
+## Task Right-Sizing
+
+A task is the smallest unit that carries its own verification cycle and is worth a fresh reviewer's gate. When drawing task boundaries: fold setup, configuration, scaffolding, and documentation steps into the task whose deliverable needs them; split only where a reviewer could meaningfully reject one task while approving its neighbor. Each task ends with one independently testable deliverable — no mid-task user gates.
 
 ## Task Structure
 
@@ -114,6 +128,12 @@ Each task follows this pattern:
 - Create: `exact/path/to/new-file.ts`
 - Modify: `exact/path/to/existing.ts:42-67`
 - Test: `tests/exact/path/to/test.ts`
+
+**Interfaces:**
+- Consumes: [what this task uses from earlier tasks — exact signatures]
+- Produces: [what later tasks rely on — exact function/type names with parameter
+  and return types. An implementer sees only their own task; this block is how
+  they learn the names and types neighboring tasks expose, without guessing.]
 
 **Step 1: Write the failing test**
 
@@ -163,6 +183,16 @@ git commit -m "feat: add specific component"
 - DRY, YAGNI, TDD, frequent commits
 - Assume the implementer is skilled but knows nothing about this codebase or domain
 - Assume poor test design intuition — be explicit about what to test and how
+
+## No Placeholders
+
+Every step must contain the actual content an implementer needs. These are **plan failures** — never write them:
+- "TBD", "TODO", "implement later", "fill in details"
+- "Add appropriate error handling" / "add validation" / "handle edge cases"
+- "Write tests for the above" (without the actual test code)
+- "Similar to Task N" (repeat the code — tasks may be read out of order)
+- Steps that say what to do without showing how (code steps require code blocks)
+- References to types, functions, or methods not defined in any task's Interfaces
 
 ## Task Persistence
 
