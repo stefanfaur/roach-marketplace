@@ -46,7 +46,7 @@ You MUST create a task for each of these items and complete them in order:
 3. **Propose 2-3 approaches** — with trade-offs and your recommendation
 4. **Present design** — in sections scaled to their complexity, get user approval after each section
 5. **Write design doc** — save to `thoughts/shared/plans/<domain>/YYYY-MM-DD-<topic>-design.md`
-6. **Spec review loop** — dispatch spec-document-reviewer subagent, fix issues, repeat (max 3 iterations)
+6. **Spec self-review** — run the inline self-review checklist (placeholder scan, internal consistency, scope, ambiguity/coverage), fix issues inline
 7. **User reviews written spec** — ask user to review the spec file before proceeding
 8. **Transition to implementation** — invoke writing-plans skill to create implementation plan
 
@@ -60,7 +60,7 @@ digraph brainstorming {
     "Present design sections" [shape=box];
     "User approves design?" [shape=diamond];
     "Write design doc" [shape=box];
-    "Spec review loop\n(subagent, max 3)" [shape=box];
+    "Spec self-review (fix inline)" [shape=box];
     "User reviews spec?" [shape=diamond];
     "Invoke writing-plans skill" [shape=doublecircle];
 
@@ -70,8 +70,8 @@ digraph brainstorming {
     "Present design sections" -> "User approves design?";
     "User approves design?" -> "Present design sections" [label="no, revise"];
     "User approves design?" -> "Write design doc" [label="yes"];
-    "Write design doc" -> "Spec review loop\n(subagent, max 3)";
-    "Spec review loop\n(subagent, max 3)" -> "User reviews spec?";
+    "Write design doc" -> "Spec self-review (fix inline)";
+    "Spec self-review (fix inline)" -> "User reviews spec?";
     "User reviews spec?" -> "Write design doc" [label="changes requested"];
     "User reviews spec?" -> "Invoke writing-plans skill" [label="approved"];
 }
@@ -115,14 +115,17 @@ digraph brainstorming {
 - Write the validated design to `thoughts/shared/plans/<domain>/YYYY-MM-DD-<topic>-design.md`
 - Use elements-of-style:writing-clearly-and-concisely skill if available
 
-**Spec Review Loop:**
-After writing the design doc:
-1. Dispatch a spec-document-reviewer subagent (use code-reviewer agent in review mode) — provide the spec path and original requirements, never your session history
-2. If issues found: fix, re-dispatch, repeat until approved (max 3 iterations)
-3. If loop exceeds 3 iterations, surface to human for guidance
+**Spec Self-Review:**
+After writing the design doc, look at it with fresh eyes — a checklist you run inline, not a subagent dispatch:
+1. **Placeholder scan:** any "TBD", "TODO", incomplete sections, or vague requirements? Fix them.
+2. **Internal consistency:** do any sections contradict each other? Does the architecture match the feature descriptions?
+3. **Scope vs. requirements:** is this focused enough for a single implementation plan, or does it need decomposition?
+4. **Ambiguity/coverage:** could any requirement be read two ways? Pick one and make it explicit. Is every requirement covered?
+
+Fix any issues inline. No need to re-review — just fix and move on.
 
 **User Review Gate:**
-After the spec review loop passes, ask the user to review the written spec before proceeding:
+After the spec self-review, ask the user to review the written spec before proceeding:
 > "Spec written to `<path>`. Please review and let me know if you want changes before we move to implementation planning."
 Wait for user response. Only proceed once the user approves.
 
