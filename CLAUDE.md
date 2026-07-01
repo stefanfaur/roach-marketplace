@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A private Claude Code plugin marketplace bundling **roach** (research-first workflow methodology), **mariadb-mcp** (MariaDB MCP server integration), and four community plugins from Jeremy Longshore (CI/CD, Ansible, Docker Compose, database query profiling). Core plugins derive from HumanLayer and obra/superpowers configurations.
 
-There is no application code or build system. The repository contains markdown files (skills, agents), Node.js scripts (hooks), and JSON configuration.
+There is no application code or build system. The repository contains markdown files (skills, agents), a bash SessionStart hook, a small Node.js utility script (roach's metadata helper), and JSON configuration.
 
 ## Repository Layout
 
@@ -24,7 +24,7 @@ database-query-profiler/           # Database query profiling (Jeremy Longshore)
 
 - `agents/` — 7 specialized subagents (codebase-analyzer, codebase-locator, codebase-pattern-finder, code-reviewer, thoughts-analyzer, thoughts-locator, web-search-researcher)
 - `skills/` — 18 skills, each in `skills/<name>/SKILL.md` (brainstorming, committing, create-handoff, dispatching-parallel-agents, executing-plans, grill-me, receiving-code-review, requesting-code-review, researching-codebase, resuming-handoff, subagent-driven-development, systematic-debugging, test-driven-development, using-roach, verification-before-completion, writing-natural, writing-plans, writing-skills)
-- `hooks/` — hooks.json, session-start.js (SessionStart), context-monitor.js (PostToolUse)
+- `hooks/` — hooks.json, session-start.sh (SessionStart, bash)
 - `lib/elements-of-style.md` — Style reference for documentation quality
 - `scripts/spec_metadata.js` — Metadata extraction utility (Node.js, cross-platform)
 
@@ -53,18 +53,13 @@ git push
 
 ## Hook Behavior
 
-`session-start.js` (`SessionStart`) runs asynchronously on every session start and:
-1. Checks for companion CLI tools (ripgrep, agent-browser)
-2. Detects JetBrains MCP availability and reports whether IDE tools are usable
-3. Checks WebSearch/WebFetch blanket permissions and offers to configure them
-4. Injects the `using-roach` skill content into the session context
+roach registers a single hook. `session-start.sh` (`SessionStart`, bash, matcher `startup|clear|compact`) injects the `using-roach` skill content into the session context. It is cat-only — no subprocess spawns, no network calls, no settings scans, and no IDE or permission probing. That is the entirety of roach's hook footprint: no other events are hooked.
 
-`context-monitor.js` (`PostToolUse`) runs after every tool call and:
-1. Reads context window metrics from stdin
-2. Warns when remaining context drops below 35%
-3. Issues critical alerts below 25%, prompting handoff creation
+roach does not monitor context-window usage; use the `create-handoff` skill proactively before context fills up.
 
-## Required CLI Tools
+## Recommended CLI Tools
+
+The hook no longer probes for these; they are companions you install yourself:
 
 - `ripgrep` (rg) — file content searching
 - `gh` — GitHub CLI for repo access
