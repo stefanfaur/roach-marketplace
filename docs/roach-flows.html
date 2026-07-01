@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Roach Field Guide — how the skills flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f4ede0; --paper-2:#efe6d5; --card:#fbf7ee; --card-2:#f3ead9;
+  --ink:#2a2018; --ink-soft:#6a5a48; --ink-faint:#8b7a64;
+  --line:#dccfb8; --line-strong:#c9b998;
+  --rust:#b5451f; --rust-deep:#8f3415; --rust-tint:#f0dcc9;
+  --pine:#2f5a49; --pine-soft:#48745f; --pine-tint:#dde8df;
+  --mustard:#d9a11c; --highlight:#f0d47a;
+  --disp:"Fraunces",Georgia,serif;
+  --body:"Archivo","Helvetica Neue",sans-serif;
+  --mono:"Space Mono",ui-monospace,monospace;
+  --shadow:0 1px 2px rgba(42,32,24,.06), 0 12px 30px -18px rgba(42,32,24,.35);
+  --shadow-lift:0 2px 4px rgba(42,32,24,.08), 0 26px 50px -22px rgba(143,52,21,.4);
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--body); font-size:clamp(15px,1vw + 12px,17px); line-height:1.6;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(181,69,31,.05), transparent 42%),
+    radial-gradient(circle at 88% 92%, rgba(47,90,73,.05), transparent 45%);
+}
+::selection{background:var(--highlight); color:var(--ink)}
+h1,h2,h3,h4{font-family:var(--disp); font-weight:600; line-height:1.05; margin:0; letter-spacing:-.01em}
+p{margin:0}
+a{color:var(--rust-deep)}
+.wrap{max-width:1160px; margin:0 auto; padding:0 clamp(20px,5vw,64px)}
+.mono{font-family:var(--mono)}
+
+/* ---------- command / clear chips ---------- */
+.cmd{font-family:var(--mono); font-size:.82em; background:var(--ink); color:var(--paper) !important;
+  padding:.12em .5em; border-radius:5px; white-space:nowrap; letter-spacing:-.02em}
+.cmd.clear{background:var(--highlight); color:var(--ink) !important; box-shadow:inset 0 0 0 1px var(--mustard)}
+.cmd.pine{background:var(--pine); color:var(--paper) !important}
+
+/* ---------- reveal animation ---------- */
+.reveal{opacity:0; transform:translateY(26px); transition:opacity .8s var(--ease), transform .8s var(--ease);
+  transition-delay:calc(var(--i,0) * 65ms)}
+.reveal.in{opacity:1; transform:none}
+
+/* ================= HERO ================= */
+header.hero{position:relative; padding:clamp(64px,11vh,150px) 0 clamp(40px,7vh,90px); overflow:hidden}
+.hero::before{ /* contour plate texture */
+  content:""; position:absolute; inset:-10% -10% auto -10%; height:120%; z-index:0; opacity:.5;
+  background:
+    repeating-radial-gradient(circle at 78% 22%, transparent 0 38px, rgba(143,52,21,.045) 38px 39px),
+    repeating-radial-gradient(circle at 20% 80%, transparent 0 46px, rgba(47,90,73,.04) 46px 47px);
+  -webkit-mask-image:linear-gradient(180deg,#000 40%,transparent);
+          mask-image:linear-gradient(180deg,#000 40%,transparent);
+}
+.hero .wrap{position:relative; z-index:2}
+.plate-no{font-family:var(--mono); font-size:.78rem; letter-spacing:.32em; text-transform:uppercase;
+  color:var(--rust-deep); display:flex; align-items:center; gap:14px}
+.plate-no::after{content:""; height:1px; flex:1; background:var(--line-strong); max-width:280px}
+.hero h1{font-size:clamp(2.9rem,8.5vw,6.4rem); letter-spacing:-.03em; margin:.18em 0 .12em;
+  font-weight:600}
+.hero h1 em{font-style:italic; color:var(--rust); font-weight:500}
+.hero .lede{font-size:clamp(1.05rem,1.6vw,1.35rem); max-width:60ch; color:var(--ink-soft); line-height:1.5}
+.hero .lede b{color:var(--ink); font-weight:600}
+.hero-stats{display:flex; flex-wrap:wrap; gap:clamp(24px,5vw,60px); margin-top:clamp(28px,4vh,48px)}
+.hero-stats .stat{display:flex; flex-direction:column; gap:2px}
+.hero-stats .num{font-family:var(--disp); font-size:clamp(1.9rem,4vw,2.8rem); font-weight:600; color:var(--rust); line-height:1}
+.hero-stats .lbl{font-family:var(--mono); font-size:.72rem; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-faint)}
+
+/* roach specimen */
+.roach{position:absolute; z-index:1; width:clamp(140px,22vw,300px); top:clamp(30px,6vh,90px); right:clamp(10px,4vw,60px);
+  color:var(--rust-deep); opacity:.92; transform-origin:center;
+  animation:scuttle-in 1.5s var(--ease) both}
+.roach svg{width:100%; height:auto; display:block; filter:drop-shadow(0 18px 24px rgba(143,52,21,.18))}
+.roach .leg{transform-origin:center; animation:wiggle 1.1s ease-in-out infinite}
+.roach .leg:nth-child(2n){animation-delay:-.55s}
+.roach .ant{transform-origin:top; animation:antenna 2.4s ease-in-out infinite alternate}
+@keyframes scuttle-in{from{transform:translateX(46vw) rotate(2deg)} to{transform:none}}
+@keyframes wiggle{0%,100%{transform:rotate(-3deg)} 50%{transform:rotate(3deg)}}
+@keyframes antenna{from{transform:rotate(-4deg)} to{transform:rotate(5deg)}}
+
+.scroll-hint{margin-top:clamp(30px,5vh,54px); font-family:var(--mono); font-size:.74rem; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--ink-faint); display:flex; align-items:center; gap:10px}
+.scroll-hint .dot{width:7px;height:7px;border-radius:50%;background:var(--rust);animation:blink 1.6s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:.25} 50%{opacity:1}}
+
+/* ================= SECTION SHELL ================= */
+section{position:relative; padding:clamp(56px,9vh,110px) 0}
+.sec-head{max-width:70ch; margin-bottom:clamp(34px,5vh,58px)}
+.sec-kicker{font-family:var(--mono); font-size:.75rem; letter-spacing:.28em; text-transform:uppercase;
+  color:var(--pine); display:flex; align-items:center; gap:12px; margin-bottom:16px}
+.sec-kicker .tick{display:inline-block; width:26px; height:2px; background:var(--pine)}
+.sec-head h2{font-size:clamp(2rem,4.4vw,3.3rem)}
+.sec-head p{margin-top:16px; color:var(--ink-soft); font-size:clamp(1rem,1.3vw,1.15rem); max-width:64ch}
+.rule{height:1px; background:var(--line); border:0; margin:0}
+
+/* ================= FLOW SPINE ================= */
+.flow{position:relative}
+.spine{position:relative; --rail-x:clamp(15px,2.6vw,30px); --spine-pad:clamp(54px,7vw,92px);
+  padding-left:var(--spine-pad)}
+.spine::before{ /* the vertical rail */
+  content:""; position:absolute; left:var(--rail-x); top:6px; bottom:6px; width:3px; border-radius:2px;
+  transform:translateX(-1.5px);
+  background:linear-gradient(var(--line-strong),var(--line-strong));
+}
+.spine::after{ /* traveling pulse */
+  content:""; position:absolute; left:var(--rail-x); top:0; width:7px; height:120px; border-radius:6px;
+  transform:translateX(-3.5px);
+  background:linear-gradient(180deg,transparent, var(--rust) 45%, var(--mustard) 60%, transparent);
+  filter:blur(.4px); animation:flow 5.5s linear infinite; opacity:.9;
+}
+@keyframes flow{from{top:-140px} to{top:100%}}
+
+.phase{position:relative; margin:0 0 clamp(30px,4.5vh,52px)}
+.node{position:absolute; left:calc(var(--rail-x) - var(--spine-pad)); top:2px;
+  width:clamp(30px,4.8vw,42px); height:clamp(30px,4.8vw,42px); transform:translateX(-50%);
+  border-radius:50%; background:var(--card); border:3px solid var(--rust); color:var(--rust-deep);
+  display:grid; place-items:center; font-family:var(--disp); font-weight:700; font-size:clamp(.95rem,1.8vw,1.2rem);
+  box-shadow:0 0 0 6px var(--paper), var(--shadow); z-index:3}
+.phase.pine .node{border-color:var(--pine); color:var(--pine)}
+.phase-head{display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-bottom:6px}
+.phase-head h3{font-size:clamp(1.4rem,2.8vw,2rem)}
+.phase-head .tag{font-family:var(--mono); font-size:.7rem; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--pine); background:var(--pine-tint); padding:.28em .7em; border-radius:20px}
+.phase-head .tag.rust{color:var(--rust-deep); background:var(--rust-tint)}
+.phase-note{color:var(--ink-soft); max-width:66ch; margin-bottom:18px}
+
+/* between-phase boundary marker */
+.boundary{position:relative; margin:clamp(24px,3.5vh,40px) 0; padding-left:0}
+.boundary .chip{display:inline-flex; align-items:center; gap:10px; background:var(--card);
+  border:1px dashed var(--line-strong); border-radius:30px; padding:8px 16px 8px 12px; box-shadow:var(--shadow)}
+.boundary .chip .ic{width:22px;height:22px;flex:none}
+.boundary .chip span{font-size:.9rem; color:var(--ink-soft)}
+.boundary .chip b{color:var(--ink)}
+
+/* skill card grid inside phase */
+.cards{display:grid; gap:16px; grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.card{position:relative; background:var(--card); border:1px solid var(--line); border-radius:14px;
+  padding:20px 20px 18px; box-shadow:var(--shadow); transition:transform .5s var(--ease), box-shadow .5s var(--ease), border-color .5s var(--ease);
+  display:flex; flex-direction:column}
+.card:hover{transform:translateY(-5px); box-shadow:var(--shadow-lift); border-color:var(--rust)}
+.card.wide{grid-column:span 2}
+@media(max-width:620px){.card.wide{grid-column:auto}}
+.card .sk-name{font-family:var(--mono); font-size:.98rem; font-weight:700; color:var(--rust-deep); letter-spacing:-.02em}
+.card.pine .sk-name{color:var(--pine)}
+.card .sk-role{font-family:var(--disp); font-size:1.18rem; margin:2px 0 10px; line-height:1.15}
+.card .sk-one{color:var(--ink-soft); font-size:.95rem; margin-bottom:14px}
+.meta-row{display:flex; gap:10px; font-size:.86rem; padding:7px 0; border-top:1px solid var(--line)}
+.meta-row .k{font-family:var(--mono); font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint);
+  flex:none; width:52px; padding-top:2px}
+.meta-row .v{color:var(--ink)}
+.meta-row .v code{font-family:var(--mono); font-size:.82em; background:var(--card-2); padding:.1em .35em; border-radius:4px; color:var(--rust-deep)}
+details.more{margin-top:12px; border-top:1px solid var(--line); padding-top:10px}
+details.more summary{list-style:none; cursor:pointer; font-family:var(--mono); font-size:.72rem; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--pine); display:flex; align-items:center; gap:7px}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary .caret{transition:transform .3s var(--ease)}
+details.more[open] summary .caret{transform:rotate(90deg)}
+details.more .body{font-size:.88rem; color:var(--ink-soft); margin-top:10px; line-height:1.5}
+details.more .body b{color:var(--ink)}
+
+/* execution lanes */
+.lanes{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:6px}
+@media(max-width:720px){.lanes{grid-template-columns:1fr}}
+.lane{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px; box-shadow:var(--shadow)}
+.lane h4{font-size:1.15rem; margin-bottom:4px}
+.lane .path-lbl{font-family:var(--mono); font-size:.7rem; letter-spacing:.2em; text-transform:uppercase; color:var(--rust-deep); margin-bottom:8px}
+.lane.b .path-lbl{color:var(--pine)}
+.lane p{font-size:.92rem; color:var(--ink-soft); margin-bottom:12px}
+.lane ul{margin:0; padding-left:18px; font-size:.88rem; color:var(--ink); line-height:1.5}
+.lane li{margin-bottom:4px}
+.auto-band{margin-top:18px; background:var(--rust-tint); border-radius:12px; padding:16px 20px;
+  display:flex; gap:14px; align-items:flex-start; flex-wrap:wrap}
+.auto-band .lbl{font-family:var(--mono); font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--rust-deep)}
+.auto-band .chips{display:flex; gap:8px; flex-wrap:wrap}
+.pill{font-family:var(--mono); font-size:.8rem; background:var(--card); border:1px solid var(--line-strong); border-radius:20px; padding:5px 12px; color:var(--ink)}
+
+/* ================= COMBINATIONS ================= */
+.combos{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px}
+.combo{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px; box-shadow:var(--shadow);
+  transition:transform .5s var(--ease), box-shadow .5s var(--ease); border-left:4px solid var(--pine)}
+.combo:hover{transform:translateY(-4px); box-shadow:var(--shadow-lift)}
+.combo.opt{border-left-color:var(--mustard)}
+.combo .eq{font-family:var(--mono); font-size:.95rem; color:var(--ink); margin-bottom:10px; line-height:1.7}
+.combo .eq b{color:var(--rust-deep)}
+.combo .eq .op{color:var(--mustard); font-weight:700; padding:0 3px}
+.combo p{font-size:.9rem; color:var(--ink-soft)}
+.combo .badge{font-family:var(--mono); font-size:.64rem; letter-spacing:.14em; text-transform:uppercase; color:var(--pine); display:inline-block; margin-bottom:10px}
+.combo.opt .badge{color:var(--mustard)}
+
+/* ================= CLEAR GUIDE ================= */
+.clear-guide{background:var(--ink); color:var(--paper); border-radius:20px; padding:clamp(28px,4vw,54px);
+  position:relative; overflow:hidden}
+.clear-guide::before{content:""; position:absolute; inset:0;
+  background:repeating-linear-gradient(135deg, transparent 0 22px, rgba(240,212,122,.04) 22px 23px); pointer-events:none}
+.clear-guide h3{color:var(--paper); font-size:clamp(1.5rem,3vw,2.2rem); margin-bottom:8px; position:relative}
+.clear-guide .sub{color:#cdbda3; max-width:66ch; position:relative; margin-bottom:28px}
+.clear-guide .sub em{color:var(--highlight); font-style:normal; font-family:var(--mono); font-size:.9em}
+.mechanisms{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px; margin-bottom:34px; position:relative}
+.mech{background:rgba(240,237,224,.05); border:1px solid rgba(240,237,224,.14); border-radius:12px; padding:16px}
+.mech .n{font-family:var(--mono); font-size:.7rem; letter-spacing:.16em; color:var(--highlight); text-transform:uppercase}
+.mech h5{font-family:var(--disp); font-size:1.1rem; color:var(--paper); margin:6px 0 6px; font-weight:600}
+.mech p{font-size:.85rem; color:#cdbda3; line-height:1.5}
+.steps{position:relative; display:grid; gap:0}
+.step{position:relative; padding:16px 0 16px 46px; border-top:1px solid rgba(240,237,224,.12)}
+.step:first-child{border-top:0}
+.step .num{position:absolute; left:0; top:14px; width:30px; height:30px; border-radius:50%;
+  border:2px solid var(--highlight); color:var(--highlight); display:grid; place-items:center;
+  font-family:var(--mono); font-size:.85rem; font-weight:700}
+.step .when{font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:#a89678}
+.step .act{color:var(--paper); font-size:1rem; margin-top:3px; line-height:1.45}
+.step .act b{color:var(--highlight)}
+.step .act .cmd{font-size:.82em}
+
+/* ================= IRON LAWS ================= */
+.laws{display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:2px; background:var(--line);
+  border:1px solid var(--line); border-radius:16px; overflow:hidden}
+.law{background:var(--paper); padding:26px 24px; transition:background .4s var(--ease)}
+.law:hover{background:var(--card)}
+.law .lw-no{font-family:var(--mono); font-size:.7rem; letter-spacing:.2em; color:var(--rust); margin-bottom:12px}
+.law .lw-txt{font-family:var(--disp); font-size:1.3rem; line-height:1.2; font-weight:600}
+.law .lw-src{font-family:var(--mono); font-size:.72rem; color:var(--ink-faint); margin-top:12px}
+
+/* ================= CHEAT SHEET ================= */
+.cheat{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:18px}
+.cheat .box{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px; box-shadow:var(--shadow)}
+.cheat h4{font-size:1.2rem; margin-bottom:12px; display:flex; align-items:center; gap:10px}
+.cheat h4 .mk{width:9px; height:9px; border-radius:2px; background:var(--rust); transform:rotate(45deg)}
+.cheat ul{margin:0; padding:0; list-style:none}
+.cheat li{padding:8px 0; border-top:1px solid var(--line); font-size:.92rem; color:var(--ink)}
+.cheat li:first-child{border-top:0}
+.cheat li code, .cheat li .cmd{font-size:.82em}
+.cheat li .lead{color:var(--ink-faint); font-family:var(--mono); font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; display:block; margin-bottom:2px}
+
+/* ================= FOOTER ================= */
+footer{padding:clamp(40px,6vh,80px) 0; border-top:1px solid var(--line); color:var(--ink-faint)}
+footer .wrap{display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; align-items:center}
+footer .fp{font-family:var(--mono); font-size:.78rem; letter-spacing:.1em}
+footer .fp b{color:var(--rust-deep)}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important; scroll-behavior:auto !important}
+  .reveal{opacity:1; transform:none; transition:none}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="roach" aria-hidden="true">
+    <svg viewBox="0 0 200 220" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round">
+      <!-- antennae -->
+      <path class="ant" d="M86 46 C70 20, 44 14, 30 4"/>
+      <path class="ant" d="M114 46 C130 20, 156 14, 170 4"/>
+      <!-- legs left -->
+      <path class="leg" d="M74 92 C48 84, 30 92, 12 78"/>
+      <path class="leg" d="M74 126 C46 126, 26 138, 8 132"/>
+      <path class="leg" d="M78 158 C54 168, 38 186, 20 190"/>
+      <!-- legs right -->
+      <path class="leg" d="M126 92 C152 84, 170 92, 188 78"/>
+      <path class="leg" d="M126 126 C154 126, 174 138, 192 132"/>
+      <path class="leg" d="M122 158 C146 168, 162 186, 180 190"/>
+      <!-- head -->
+      <ellipse cx="100" cy="52" rx="24" ry="18" fill="var(--rust-tint)"/>
+      <!-- pronotum / body -->
+      <path d="M100 66 C64 66, 52 96, 54 138 C56 182, 78 208, 100 208 C122 208, 144 182, 146 138 C148 96, 136 66, 100 66 Z" fill="var(--card)"/>
+      <!-- wing seam -->
+      <path d="M100 74 L100 202" stroke-width="2.6"/>
+      <path d="M78 92 C70 120, 72 158, 84 190" stroke-width="2" opacity=".6"/>
+      <path d="M122 92 C130 120, 128 158, 116 190" stroke-width="2" opacity=".6"/>
+    </svg>
+  </div>
+
+  <div class="wrap">
+    <div class="plate-no reveal">Plate 01 · Roach · Order Workflowptera</div>
+    <h1 class="reveal" style="--i:1">The Roach<br><em>Field Guide</em></h1>
+    <p class="lede reveal" style="--i:2"><b>Roach is a research-first workflow.</b> Eighteen skills, one disciplined loop: understand before you plan, plan before you build, verify before you claim done. This guide maps every skill — when it fires, what it leaves behind, where to reset context, and which pair up.</p>
+
+    <div class="hero-stats reveal" style="--i:3">
+      <div class="stat"><span class="num">18</span><span class="lbl">Skills</span></div>
+      <div class="stat"><span class="num">7</span><span class="lbl">Phases</span></div>
+      <div class="stat"><span class="num">6</span><span class="lbl">Iron Laws</span></div>
+      <div class="stat"><span class="num">4</span><span class="lbl">Ways to reset context</span></div>
+    </div>
+
+    <div class="scroll-hint reveal" style="--i:4"><span class="dot"></span>Follow the spine downward</div>
+  </div>
+</header>
+
+<hr class="rule">
+
+<!-- ================= THE LOOP ================= -->
+<section class="flow" id="loop">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-kicker reveal"><span class="tick"></span>The core loop</div>
+      <h2 class="reveal" style="--i:1">One skill flows into the next</h2>
+      <p class="reveal" style="--i:2">Every skill announces the one that comes after it. Brainstorming hands off to planning; planning offers two ways to execute; execution feeds verification, review, then commit. The rail below is that sequence. Numbered phases are the spine; dashed markers are where you reset context.</p>
+    </div>
+
+    <div class="spine">
+
+      <!-- Always-on -->
+      <div class="phase pine reveal">
+        <div class="node">✦</div>
+        <div class="phase-head"><h3>using-roach</h3><span class="tag">always active · session start</span></div>
+        <p class="phase-note">The bootstrap. Injected at the start of every session. Its one rule: <b>if there's even a 1% chance a skill applies, invoke it.</b> Process skills (brainstorming, debugging) come before implementation skills. Never touch <span class="cmd">EnterPlanMode</span> / <span class="cmd">ExitPlanMode</span> — roach manages its own planning flow.</p>
+      </div>
+
+      <!-- Phase 1 -->
+      <div class="phase reveal">
+        <div class="node">1</div>
+        <div class="phase-head"><h3>Understand</h3><span class="tag rust">research &amp; design</span></div>
+        <p class="phase-note">Before any code exists. Learn the terrain (existing code) and shape the idea (design). This is a hard gate — no implementation until a design is written and approved.</p>
+        <div class="cards">
+
+          <div class="card reveal" style="--i:0">
+            <div class="sk-name">brainstorming</div>
+            <div class="sk-role">Shape the idea</div>
+            <p class="sk-one">Turns a vague idea into an approved design spec through one-question-at-a-time dialogue. Mandatory before any creative work.</p>
+            <div class="meta-row"><span class="k">When</span><span class="v">Any new feature, component, or behavior change.</span></div>
+            <div class="meta-row"><span class="k">Output</span><span class="v"><code>plans/&lt;domain&gt;/…-design.md</code></span></div>
+            <details class="more"><summary><span class="caret">▸</span>sequencing &amp; combos</summary><div class="body"><b>Hard gate:</b> no code until the design is approved. <b>Terminal state:</b> the only skill it invokes next is <b>writing-plans</b>. <b>Combo:</b> pair with <b>grill-me</b> to stress-test the design before planning.</div></details>
+          </div>
+
+          <div class="card pine reveal" style="--i:1">
+            <div class="sk-name">researching-codebase</div>
+            <div class="sk-role">Learn the terrain</div>
+            <p class="sk-one">Documents how existing code works — as-is, no critiques or improvement proposals — by fanning out parallel research sub-agents.</p>
+            <div class="meta-row"><span class="k">When</span><span class="v">You need to understand existing code to answer a question.</span></div>
+            <div class="meta-row"><span class="k">Output</span><span class="v"><code>research/&lt;domain&gt;/…md</code></span></div>
+            <details class="more"><summary><span class="caret">▸</span>sequencing &amp; combos</summary><div class="body">Read mentioned files <b>yourself first</b>, then spawn locator / analyzer / pattern-finder agents in parallel and wait for all. Strictly descriptive — never proposes changes.</div></details>
+          </div>
+
+          <div class="card reveal" style="--i:2">
+            <div class="sk-name">grill-me</div>
+            <div class="sk-role">Stress-test it</div>
+            <p class="sk-one">Interviews you relentlessly, one question at a time, walking the decision tree until every branch is resolved.</p>
+            <div class="meta-row"><span class="k">When</span><span class="v">You want a plan or design poked full of holes.</span></div>
+            <div class="meta-row"><span class="k">Output</span><span class="v">A refined, defended design or plan.</span></div>
+            <details class="more"><summary><span class="caret">▸</span>sequencing &amp; combos</summary><div class="body">Optional overlay — not part of the mandatory chain. <b>Combines with brainstorming</b> (vet the design) or <b>writing-plans</b> (vet the plan). Explores the codebase for answers instead of asking when it can.</div></details>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="boundary reveal">
+        <span class="chip"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="var(--mustard)" stroke-width="2"><path d="M4 12h16M14 6l6 6-6 6"/></svg><span><b>Optional reset.</b> After research, consider <span class="cmd clear">/clear</span> so planning starts on a clean context (brainstorming forwards automatically; planning forks on its own).</span></span>
+      </div>
+
+      <!-- Phase 2 -->
+      <div class="phase reveal">
+        <div class="node">2</div>
+        <div class="phase-head"><h3>Plan</h3><span class="tag rust">forked context</span></div>
+        <p class="phase-note">Translate the approved design into an executable, step-by-step plan. Runs in an isolated <em class="mono">Explore</em> fork, so your main session stays clean.</p>
+        <div class="cards">
+          <div class="card wide reveal">
+            <div class="sk-name">writing-plans</div>
+            <div class="sk-role">Turn the spec into steps</div>
+            <p class="sk-one">Explores the codebase to pin exact file paths, writes a numbered implementation plan, and runs it through a plan-reviewer loop before returning.</p>
+            <div class="meta-row"><span class="k">When</span><span class="v">You have an approved design or clear requirements for a multi-step task.</span></div>
+            <div class="meta-row"><span class="k">Output</span><span class="v"><code>plans/&lt;domain&gt;/…md</code> + a co-located <code>.tasks.json</code> for cross-session resume.</span></div>
+            <details class="more"><summary><span class="caret">▸</span>the fork in the road</summary><div class="body">When the plan is done it offers <b>two execution paths</b> — Path A keeps you in this session (subagent-driven), Path B opens a fresh session (executing-plans). You pick one. <b>Combo:</b> run <b>grill-me</b> here to interrogate the plan first.</div></details>
+          </div>
+        </div>
+      </div>
+
+      <div class="boundary reveal">
+        <span class="chip"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="var(--pine)" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v16"/></svg><span><b>Choose an execution path.</b> Path A → stay here. Path B → open a <b>new session</b> and run <span class="cmd pine">/roach:executing-plans</span> with a clean context (the <code>.tasks.json</code> carries the state across).</span></span>
+      </div>
+
+      <!-- Phase 3 -->
+      <div class="phase reveal">
+        <div class="node">3</div>
+        <div class="phase-head"><h3>Execute</h3><span class="tag rust">two lanes</span></div>
+        <p class="phase-note">Build the plan, task by task. Same session or fresh session — the plan is identical, only the isolation model differs.</p>
+
+        <div class="lanes">
+          <div class="lane a reveal">
+            <div class="path-lbl">Path A · this session</div>
+            <h4>subagent-driven-development</h4>
+            <p>Dispatches a <b>fresh subagent per task</b>, then runs a two-stage review (spec compliance, then code quality) on each before moving on.</p>
+            <ul>
+              <li>No context switch — you stay put</li>
+              <li>Each subagent starts clean (no context pollution)</li>
+              <li>Reviews run automatically — no human between tasks</li>
+              <li>Fast iteration; best for mostly-independent tasks</li>
+            </ul>
+          </div>
+          <div class="lane b reveal" style="--i:1">
+            <div class="path-lbl">Path B · separate session</div>
+            <h4>executing-plans</h4>
+            <p>Loads the plan into a <b>new session</b>, executes in <b>batches of ~3</b>, and stops at a checkpoint after each batch for your review.</p>
+            <ul>
+              <li>Fresh session = clean context by construction</li>
+              <li>Human checkpoint after every batch</li>
+              <li>Stops immediately on a blocker — never guesses</li>
+              <li>Auto-fixes typos/paths; escalates scope changes</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="auto-band reveal">
+          <span class="lbl">Auto-active while building →</span>
+          <div class="chips">
+            <span class="pill">test-driven-development</span>
+            <span class="pill">systematic-debugging</span>
+            <span class="pill">dispatching-parallel-agents</span>
+          </div>
+        </div>
+
+        <div class="cards" style="margin-top:16px">
+          <div class="card reveal">
+            <div class="sk-name">test-driven-development</div>
+            <div class="sk-role">Test first, always</div>
+            <p class="sk-one">Red → Green → Refactor. Write the failing test, watch it fail, write the minimum to pass.</p>
+            <div class="meta-row"><span class="k">When</span><span class="v">Every feature, bugfix, or refactor.</span></div>
+            <div class="meta-row"><span class="k">Law</span><span class="v"><b>No production code without a failing test first.</b> Wrote code first? Delete it, start over.</span></div>
+          </div>
+          <div class="card reveal" style="--i:1">
+            <div class="sk-name">systematic-debugging</div>
+            <div class="sk-role">Root cause before fix</div>
+            <p class="sk-one">Four phases: investigate → analyse patterns → single hypothesis → implement one fix. Especially under time pressure.</p>
+            <div class="meta-row"><span class="k">When</span><span class="v">Any bug, test failure, or unexpected behavior.</span></div>
+            <div class="meta-row"><span class="k">Escalate</span><span class="v">3+ failed fixes → stop, question the architecture.</span></div>
+          </div>
+          <div class="card pine reveal" style="--i:2">
+            <div class="sk-name">dispatching-parallel-agents</div>
+            <div class="sk-role">Fan out the independent work</div>
+            <p class="sk-one">Sends 2+ genuinely independent tasks to parallel subagents, then integrates and runs the full suite.</p>
+            <div class="meta-row"><span class="k">When</span><span class="v">Multiple failures/tasks with no shared state.</span></div>
+            <div class="meta-row"><span class="k">Not when</span><span class="v">Fixes are related, or agents would collide.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 4 -->
+      <div class="phase reveal">
+        <div class="node">4</div>
+        <div class="phase-head"><h3>Verify</h3><span class="tag rust">the gate</span></div>
+        <p class="phase-note">Before the word "done" is allowed to appear.</p>
+        <div class="cards">
+          <div class="card wide reveal">
+            <div class="sk-name">verification-before-completion</div>
+            <div class="sk-role">Evidence before assertions</div>
+            <p class="sk-one">Identify the verification command, run it fresh, read the full output and exit code, and only then make the claim — attaching the evidence.</p>
+            <div class="meta-row"><span class="k">When</span><span class="v">Before any "passing / fixed / done" claim, and before every commit or PR.</span></div>
+            <div class="meta-row"><span class="k">Law</span><span class="v"><b>No completion claims without fresh verification evidence.</b> Banned words: "should work", "probably", "seems to".</span></div>
+            <details class="more"><summary><span class="caret">▸</span>combos</summary><div class="body">Applies after <b>any</b> work in any phase. If a subagent reports success, verify independently via the VCS diff rather than trusting the report.</div></details>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 5 -->
+      <div class="phase pine reveal">
+        <div class="node">5</div>
+        <div class="phase-head"><h3>Review</h3><span class="tag">forked context</span></div>
+        <p class="phase-note">A second pair of eyes, then a rigorous response to them. Request runs in an isolated fork and returns a report.</p>
+        <div class="cards">
+          <div class="card pine reveal">
+            <div class="sk-name">requesting-code-review</div>
+            <div class="sk-role">Ask for the review</div>
+            <p class="sk-one">Dispatches a senior review against the requirements, returning strengths and issues bucketed Critical / Important / Minor with a go/no-go verdict.</p>
+            <div class="meta-row"><span class="k">When</span><span class="v">After each task in Path A, after major features, before merging.</span></div>
+            <div class="meta-row"><span class="k">Output</span><span class="v">A structured review report.</span></div>
+          </div>
+          <div class="card pine reveal" style="--i:1">
+            <div class="sk-name">receiving-code-review</div>
+            <div class="sk-role">Respond with rigor</div>
+            <p class="sk-one">Read → understand → verify → evaluate → respond → implement, one item at a time. No performative "You're absolutely right!"</p>
+            <div class="meta-row"><span class="k">When</span><span class="v">Any time you receive review feedback.</span></div>
+            <div class="meta-row"><span class="k">Push back</span><span class="v">When a suggestion is wrong for this stack, breaks things, or violates YAGNI.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 6 -->
+      <div class="phase reveal">
+        <div class="node">6</div>
+        <div class="phase-head"><h3>Commit</h3><span class="tag rust">land it</span></div>
+        <p class="phase-note">Once verification passes.</p>
+        <div class="cards">
+          <div class="card wide reveal">
+            <div class="sk-name">committing</div>
+            <div class="sk-role">Group &amp; land the work</div>
+            <p class="sk-one">Analyses changes (explicit files or auto-discovered), proposes a logical commit grouping, and lands them after you confirm.</p>
+            <div class="meta-row"><span class="k">When</span><span class="v">Ready to commit — typically right after verification.</span></div>
+            <div class="meta-row"><span class="k">Rules</span><span class="v">Uses <code>git commit &lt;files&gt; -m</code> (never <code>git add</code> then commit). No Claude co-author line.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 7 -->
+      <div class="phase pine reveal">
+        <div class="node">7</div>
+        <div class="phase-head"><h3>Continuity</h3><span class="tag">anytime · across sessions</span></div>
+        <p class="phase-note">Not the end of the line — a lever you pull whenever context runs long. Preserve state richly, then pick it back up in a fresh session.</p>
+        <div class="cards">
+          <div class="card pine reveal">
+            <div class="sk-name">create-handoff</div>
+            <div class="sk-role">Preserve the context</div>
+            <p class="sk-one">Writes a rich handoff doc — tasks, learnings, artifacts, next steps — so a new session loses nothing. Prefer this over auto-compaction.</p>
+            <div class="meta-row"><span class="k">When</span><span class="v">Proactively, before context fills; pausing; or handing off.</span></div>
+            <div class="meta-row"><span class="k">Output</span><span class="v"><code>handoffs/&lt;domain&gt;/…md</code></span></div>
+          </div>
+          <div class="card pine reveal" style="--i:1">
+            <div class="sk-name">resuming-handoff</div>
+            <div class="sk-role">Pick it back up</div>
+            <p class="sk-one">Reads the handoff yourself first, verifies current state with parallel research, confirms with you, then builds an adapted action plan.</p>
+            <div class="meta-row"><span class="k">When</span><span class="v">Starting from a previous session's handoff.</span></div>
+            <div class="meta-row"><span class="k">Invoke</span><span class="v"><span class="cmd pine">/roach:resuming-handoff &lt;path&gt;</span></span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ================= META SKILLS ================= -->
+<section id="meta">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-kicker reveal"><span class="tick"></span>Cross-cutting</div>
+      <h2 class="reveal" style="--i:1">Two skills that sit outside the loop</h2>
+      <p class="reveal" style="--i:2">These aren't phases — they activate whenever their trigger appears, at any point in the flow.</p>
+    </div>
+    <div class="cards">
+      <div class="card reveal">
+        <div class="sk-name">writing-natural</div>
+        <div class="sk-role">Any prose a human will read</div>
+        <p class="sk-one">READMEs, changelogs, docs, summaries, even skill content. Reads the Elements of Style reference first, then writes.</p>
+        <div class="meta-row"><span class="k">When</span><span class="v">Writing any natural-language text for humans.</span></div>
+        <div class="meta-row"><span class="k">First</span><span class="v">Must read <code>lib/elements-of-style.md</code> before a single word.</span></div>
+      </div>
+      <div class="card reveal" style="--i:1">
+        <div class="sk-name">writing-skills</div>
+        <div class="sk-role">Build or edit a skill</div>
+        <p class="sk-one">TDD applied to process docs: run a pressure scenario without the skill (RED), write the minimal skill (GREEN), then close loopholes (REFACTOR).</p>
+        <div class="meta-row"><span class="k">When</span><span class="v">Creating, editing, or verifying a skill.</span></div>
+        <div class="meta-row"><span class="k">Law</span><span class="v"><b>No skill without a failing test first.</b> Requires knowing TDD.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ================= COMBINATIONS ================= -->
+<section id="combos">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-kicker reveal"><span class="tick"></span>Optional pairings</div>
+      <h2 class="reveal" style="--i:1">Which skills stack together</h2>
+      <p class="reveal" style="--i:2">Some transitions are hard-wired (brainstorming <span class="mono">→</span> writing-plans). Others are optional overlays you reach for when you want more rigor. <span style="color:var(--mustard);font-weight:600">Amber</span> = optional; <span style="color:var(--pine);font-weight:600">green</span> = built into the flow.</p>
+    </div>
+    <div class="combos">
+      <div class="combo opt reveal">
+        <span class="badge">optional overlay</span>
+        <div class="eq"><b>brainstorming</b> <span class="op">⊕</span> <b>grill-me</b></div>
+        <p>Present the design, then invite grill-me to attack its assumptions before you commit to a plan.</p>
+      </div>
+      <div class="combo opt reveal" style="--i:1">
+        <span class="badge">optional overlay</span>
+        <div class="eq"><b>writing-plans</b> <span class="op">⊕</span> <b>grill-me</b></div>
+        <p>Interrogate the plan itself — resolve every branch of the decision tree before execution starts.</p>
+      </div>
+      <div class="combo reveal" style="--i:2">
+        <span class="badge">built-in chain</span>
+        <div class="eq"><b>brainstorming</b> <span class="op">→</span> <b>writing-plans</b></div>
+        <p>Not optional — brainstorming's terminal state <em>is</em> invoking writing-plans. Nothing else runs in between.</p>
+      </div>
+      <div class="combo reveal" style="--i:0">
+        <span class="badge">built-in chain</span>
+        <div class="eq"><b>writing-plans</b> <span class="op">→</span> <b>A</b> / <b>B</b></div>
+        <p>The plan offers exactly two exits: subagent-driven (this session) or executing-plans (a new one).</p>
+      </div>
+      <div class="combo opt reveal" style="--i:1">
+        <span class="badge">apply after any work</span>
+        <div class="eq"><b>anything</b> <span class="op">⊕</span> <b>verification</b></div>
+        <p>Verification-before-completion follows any task, in any phase, before you claim it's done.</p>
+      </div>
+      <div class="combo opt reveal" style="--i:2">
+        <span class="badge">apply after any work</span>
+        <div class="eq"><b>anything</b> <span class="op">⊕</span> <b>code-review</b></div>
+        <p>Request a review for a fresh perspective on any significant chunk of work.</p>
+      </div>
+      <div class="combo reveal" style="--i:0">
+        <span class="badge">auto during execution</span>
+        <div class="eq"><b>execute</b> <span class="op">⊕</span> <b>TDD</b> <span class="op">+</span> <b>debug</b></div>
+        <p>TDD and systematic-debugging activate on their own the moment you write code or hit a bug.</p>
+      </div>
+      <div class="combo opt reveal" style="--i:1">
+        <span class="badge">when independent</span>
+        <div class="eq"><b>execute</b> <span class="op">⊕</span> <b>parallel-agents</b></div>
+        <p>Reach for dispatching-parallel-agents when 2+ tasks share no state and can run at once.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ================= CLEAR / CONTEXT GUIDE ================= -->
+<section id="clear">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-kicker reveal"><span class="tick"></span>Context hygiene</div>
+      <h2 class="reveal" style="--i:1">Where to <span class="mono" style="color:var(--rust)">/clear</span> — and why</h2>
+    </div>
+
+    <div class="clear-guide reveal">
+      <h3>The honest bit about <span class="mono">/clear</span></h3>
+      <p class="sub">No roach skill literally prints <em>/clear</em>. Instead it keeps context clean four different ways. Knowing which one is in play tells you whether <em>you</em> need to reset, or whether roach already handled it.</p>
+
+      <div class="mechanisms">
+        <div class="mech"><div class="n">Mechanism 01</div><h5>New session</h5><p>You open a fresh window. The big one — Path B execution and resuming a handoff both start clean here.</p></div>
+        <div class="mech"><div class="n">Mechanism 02</div><h5>Forked context</h5><p>writing-plans &amp; requesting-code-review run in an isolated <span class="mono">Explore</span> fork, then return just the result.</p></div>
+        <div class="mech"><div class="n">Mechanism 03</div><h5>Subagent isolation</h5><p>Path A spawns a fresh subagent per task — it inherits nothing but the brief you hand it.</p></div>
+        <div class="mech"><div class="n">Mechanism 04</div><h5>Handoff doc</h5><p>create-handoff serialises rich state to disk so a new session rebuilds context from a file, not scrollback.</p></div>
+      </div>
+
+      <div class="steps">
+        <div class="step reveal"><div class="num">1</div><div class="when">After research / brainstorm</div><div class="act"><b>Optional</b> <span class="cmd clear">/clear</span> before planning. Usually unnecessary — brainstorming forwards to writing-plans, which forks its own context anyway.</div></div>
+        <div class="step reveal" style="--i:1"><div class="num">2</div><div class="when">Planning</div><div class="act"><b>Automatic.</b> writing-plans runs in a fork. Nothing for you to do — your main context stays untouched.</div></div>
+        <div class="step reveal" style="--i:2"><div class="num">3</div><div class="when">Before Path B execution</div><div class="act"><b>Do this.</b> Open a <b>new session</b> and run <span class="cmd pine">/roach:executing-plans</span>. Clean context by construction; the <span class="mono" style="color:var(--highlight)">.tasks.json</span> carries state across.</div></div>
+        <div class="step reveal" style="--i:3"><div class="num">4</div><div class="when">Path A execution &amp; review</div><div class="act"><b>Automatic.</b> Each task's subagent and each review fork are already isolated — no reset needed between tasks.</div></div>
+        <div class="step reveal" style="--i:4"><div class="num">5</div><div class="when">Context running long, mid-task</div><div class="act">Run <span class="cmd">/roach:create-handoff</span>, then <span class="cmd clear">/clear</span> (or a new session) and <span class="cmd pine">/roach:resuming-handoff &lt;path&gt;</span>. Beats letting the session auto-compact.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ================= IRON LAWS ================= -->
+<section id="laws">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-kicker reveal"><span class="tick"></span>Non-negotiable</div>
+      <h2 class="reveal" style="--i:1">The six iron laws</h2>
+      <p class="reveal" style="--i:2">Each discipline skill is built on one rule it will not let you rationalize your way around.</p>
+    </div>
+    <div class="laws">
+      <div class="law reveal"><div class="lw-no">Law 01</div><div class="lw-txt">If a skill applies, you don't get to choose. You must use it.</div><div class="lw-src">using-roach</div></div>
+      <div class="law reveal" style="--i:1"><div class="lw-no">Law 02</div><div class="lw-txt">No implementation until the design is presented and approved.</div><div class="lw-src">brainstorming</div></div>
+      <div class="law reveal" style="--i:2"><div class="lw-no">Law 03</div><div class="lw-txt">No production code without a failing test first.</div><div class="lw-src">test-driven-development</div></div>
+      <div class="law reveal" style="--i:3"><div class="lw-no">Law 04</div><div class="lw-txt">No fixes without root-cause investigation first.</div><div class="lw-src">systematic-debugging</div></div>
+      <div class="law reveal" style="--i:4"><div class="lw-no">Law 05</div><div class="lw-txt">No completion claims without fresh verification evidence.</div><div class="lw-src">verification-before-completion</div></div>
+      <div class="law reveal" style="--i:5"><div class="lw-no">Law 06</div><div class="lw-txt">No skill without a failing test first.</div><div class="lw-src">writing-skills</div></div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ================= CHEAT SHEET ================= -->
+<section id="cheat">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-kicker reveal"><span class="tick"></span>Quick reference</div>
+      <h2 class="reveal" style="--i:1">The whole flow, at a glance</h2>
+    </div>
+    <div class="cheat">
+      <div class="box reveal">
+        <h4><span class="mk"></span>Start a feature</h4>
+        <ul>
+          <li><span class="lead">1 · understand</span><span class="cmd">/roach:brainstorming</span> — or just describe the feature</li>
+          <li><span class="lead">2 · plan</span><span class="cmd">/roach:writing-plans</span> (forks automatically)</li>
+          <li><span class="lead">3 · execute</span>Pick Path A (here) or Path B (<span class="cmd pine">/clear</span> → new session)</li>
+          <li><span class="lead">4 · verify → review → commit</span>Then continuity if needed</li>
+        </ul>
+      </div>
+      <div class="box reveal" style="--i:1">
+        <h4><span class="mk"></span>Priority order</h4>
+        <ul>
+          <li><span class="lead">first</span>Process skills — brainstorming, debugging</li>
+          <li><span class="lead">then</span>Implementation skills — TDD, execution, review</li>
+          <li>"Let's build X" → brainstorm first</li>
+          <li>"Fix this bug" → debug first</li>
+        </ul>
+      </div>
+      <div class="box reveal" style="--i:2">
+        <h4><span class="mk"></span>Never do this</h4>
+        <ul>
+          <li>Call <code>EnterPlanMode</code> / <code>ExitPlanMode</code> — traps the session</li>
+          <li><code>git add</code> then <code>git commit</code> — use <code>git commit &lt;files&gt;</code></li>
+          <li>Add a Claude co-author line to commits</li>
+          <li>Say "done" without running verification</li>
+        </ul>
+      </div>
+      <div class="box reveal" style="--i:3">
+        <h4><span class="mk"></span>Where artifacts live</h4>
+        <ul>
+          <li><span class="lead">research</span><code>thoughts/shared/research/&lt;domain&gt;/</code></li>
+          <li><span class="lead">plans + design</span><code>thoughts/shared/plans/&lt;domain&gt;/</code></li>
+          <li><span class="lead">handoffs</span><code>thoughts/shared/handoffs/&lt;domain&gt;/</code></li>
+          <li><span class="lead">task state</span><code>&lt;plan&gt;.tasks.json</code> (cross-session)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="fp">Plate 01 · <b>The Roach Field Guide</b> · research-first workflow · 18 skills</div>
+    <div class="fp">Understand → Plan → Execute → Verify → Review → Commit → Continuity</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, {rootMargin:'0px 0px -8% 0px', threshold:.08});
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+
+  // parallax drift on the roach specimen (skip if reduced motion)
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    var roach = document.querySelector('.roach');
+    if(roach){
+      addEventListener('scroll', function(){
+        var y = scrollY;
+        if(y < 900) roach.style.transform = 'translateY(' + (y*0.18) + 'px) rotate(' + (y*0.012) + 'deg)';
+      }, {passive:true});
+    }
+  }
+})();
+</script>
+</body>
+</html>
