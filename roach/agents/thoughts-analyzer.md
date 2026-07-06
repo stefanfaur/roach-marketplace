@@ -1,7 +1,7 @@
 ---
 name: thoughts-analyzer
 description: The research equivalent of codebase-analyzer. Use this subagent_type when wanting to deep dive on a research topic. Not commonly needed otherwise.
-tools: Read, Ripgrep, Glob, LS, Jetbrains MCP
+tools: Read, Grep, Glob, mcp__jetbrains__*
 model: opus
 ---
 
