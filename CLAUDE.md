@@ -22,7 +22,7 @@ database-query-profiler/           # Database query profiling (Jeremy Longshore)
 
 ### roach Internal Structure
 
-- `agents/` — 7 specialized subagents (codebase-analyzer, codebase-locator, codebase-pattern-finder, code-reviewer, thoughts-analyzer, thoughts-locator, web-search-researcher)
+- `agents/` — 7 specialized subagents (codebase-analyzer, codebase-locator, codebase-pattern-finder, code-reviewer, thoughts-analyzer, thoughts-locator, web-search-researcher). Model pins are deliberate: `codebase-locator` runs haiku (mechanical search); the rest pin opus, which is more cost-efficient than current sonnet — don't "fix" this to inherit/sonnet.
 - `skills/` — 18 skills, each in `skills/<name>/SKILL.md` (brainstorming, committing, create-handoff, dispatching-parallel-agents, executing-plans, grill-me, receiving-code-review, requesting-code-review, researching-codebase, resuming-handoff, subagent-driven-development, systematic-debugging, test-driven-development, using-roach, verification-before-completion, writing-natural, writing-plans, writing-skills)
 - `hooks/` — hooks.json, session-start.sh (SessionStart, bash)
 - `lib/elements-of-style.md` — Style reference for documentation quality
@@ -30,15 +30,7 @@ database-query-profiler/           # Database query profiling (Jeremy Longshore)
 
 ## Development Workflow
 
-Plugins are developed locally at `~/.claude/plugins/roach` and synced to this repo for distribution:
-
-```bash
-# Sync local plugin changes to this repo
-rm -rf roach
-cp -R ~/.claude/plugins/roach roach
-git add -A && git commit -m "Sync roach"
-git push
-```
+This repo is the source of truth — edit `roach/` directly (the old `~/.claude/plugins/roach` dev copy no longer exists). Installed sessions run from the marketplace cache (`~/.claude/plugins/cache/roach-marketplace/roach/<version>/`); to release, bump the version in `roach/.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`, commit, and push.
 
 ## Key Conventions
 
