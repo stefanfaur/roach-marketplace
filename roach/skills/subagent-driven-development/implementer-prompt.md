@@ -68,6 +68,9 @@ Task tool (general-purpose):
     - Plan says use library X but codebase uses library Y — ask which to use
     - New database tables/schemas, new service layers, new abstractions — ask before creating
     - Anything that would affect other tasks or the broader architecture — ask first
+    - Weakening, skipping, or deleting an existing test that blocks you — a wrong-seeming
+      test is never an auto-fix (updating a test because this task legitimately changed
+      its interface is fine; loosening an assertion to get green is not)
 
     The rule: if the fix is local to this task, auto-fix it. If it has implications beyond this task, escalate.
 
@@ -114,6 +117,7 @@ Task tool (general-purpose):
     - Do tests actually verify behavior (not just mock behavior)?
     - Did I follow TDD if required?
     - Are tests comprehensive?
+    - Did I run the project's full test command, not just the tests I touched?
 
     If you find issues during self-review, fix them now before reporting.
 
@@ -122,7 +126,8 @@ Task tool (general-purpose):
     Write your full report to `thoughts/.sdd/task-N-report.md` (create it), covering:
     - **Status:** DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT
     - What you implemented (or what you attempted, if blocked)
-    - What you tested and test results
+    - What you tested and test results (the exact test command and its summary line,
+      e.g. `147 passed, 0 failed`)
     - Files changed
     - Self-review findings (if any)
     - Any issues or concerns

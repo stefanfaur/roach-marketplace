@@ -182,6 +182,8 @@ Confirm:
 
 **Other tests fail?** Fix now.
 
+**A pre-existing test now fails and looks wrong?** Never weaken, skip, or delete it to get green. Changing what an existing test asserts is a spec change — stop and ask your human partner.
+
 ### REFACTOR - Clean Up
 
 After green only:
@@ -268,12 +270,14 @@ Tests-first force edge case discovery before implementing. Tests-after verify yo
 | "TDD will slow me down" | TDD faster than debugging. Pragmatic = test-first. |
 | "Manual test faster" | Manual doesn't prove edge cases. You'll re-test every change. |
 | "Existing code has no tests" | You're improving it. Add tests for existing code. |
+| "The failing test is wrong, I'll fix the test" | Changing assertions to get green is falsifying evidence. Wrong-looking tests are your human partner's call. |
 
 ## Red Flags - STOP and Start Over
 
 - Code before test
 - Test after implementation
 - Test passes immediately
+- Weakened, skipped, or deleted a test to make the suite pass
 - Can't explain why test failed
 - Tests added "later"
 - Rationalizing "just this once"

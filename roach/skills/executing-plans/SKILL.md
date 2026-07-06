@@ -88,6 +88,7 @@ When executing a plan and reality doesn't match (wrong paths, missing deps, etc.
 - Plan says use library X but codebase uses library Y
 - New database tables/schemas, new service layers, new abstractions
 - Anything that would affect tasks outside the current batch
+- Weakening, skipping, or deleting an existing test to get past a failure
 
 The rule: if the fix is local to the current task, fix it and note it. If it has cross-task implications, stop and ask.
 

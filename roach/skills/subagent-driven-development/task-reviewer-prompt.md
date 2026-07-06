@@ -83,7 +83,9 @@ Task tool (general-purpose):
     without premature abstraction? edge cases handled?
 
     **Tests:** do the new and changed tests verify real behavior, not mocks?
-    are the task's edge cases covered?
+    are the task's edge cases covered? Treat any hunk that loosens, skips, or
+    deletes a pre-existing test as a finding unless the brief explicitly
+    required that change.
 
     **Structure:**
     - Does each file have one clear responsibility with a well-defined interface?

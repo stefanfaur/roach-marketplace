@@ -151,6 +151,8 @@ Implementer subagents report one of four statuses. Handle each appropriately:
 
 ## After All Tasks Complete
 
+Before dispatching the final code reviewer, run the project's full test command yourself once and read the totals — implementer reports are claims until the controller has watched the suite pass in its own transcript at least once per plan.
+
 After the final code reviewer approves, announce completion and ask the user how to proceed.
 
 ## Prompt Templates
@@ -257,6 +259,8 @@ Final reviewer: all requirements met, ready to merge
 - Accept "close enough" on spec compliance (reviewer found spec issues = not done)
 - Skip review loops (reviewer found issues = fix = review again)
 - Let implementer self-review replace actual review (both are needed)
+- Accept a test summary that lacks the exact command and pass/fail counts
+- Treat test weakening or deletion as a deviation — an implementer changing what an existing test asserts is always an escalation
 - Tell a reviewer what not to flag, or pre-rate a finding's severity in the dispatch prompt ("treat it as Minor at most")
 - Move to next task while the review has open Critical/Important issues
 - Re-dispatch a task the ledger already marks complete — check `.tasks.json` and `git log` after any compaction or resume
@@ -295,6 +299,7 @@ Cross-task-impact changes — stop, report, wait for decision:
 - **Architectural alignment** — plan says library X but codebase already uses library Y
 - **Structural changes** — new database tables/schemas, new service layers, new abstraction boundaries
 - **Scope expansion** — anything that would affect other tasks, plans, or the broader architecture
+- **Test changes** — weakening, skipping, or deleting existing tests (interface-driven test updates scoped to this task are auto-fixes; loosened assertions are not)
 
 ### Judging Subagent Behavior
 

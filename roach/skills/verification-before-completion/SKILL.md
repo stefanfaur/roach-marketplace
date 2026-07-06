@@ -56,6 +56,8 @@ Skip any step = lying, not verifying
 - About to commit/push/PR without verification
 - Trusting agent success reports
 - Relying on partial verification
+- Editing or deleting a test to turn a failure into a pass (falsifying evidence, not verifying)
+- Running only the subset you touched, then claiming "tests pass"
 - Thinking "just this once"
 - Tired and wanting work over
 - **ANY wording implying success without having run verification**
@@ -71,6 +73,7 @@ Skip any step = lying, not verifying
 | "Agent said success" | Verify independently |
 | "I'm tired" | Exhaustion ≠ excuse |
 | "Partial check is enough" | Partial proves nothing |
+| "The full suite is too slow" | Slow evidence beats fast fiction. Run it. |
 | "Different words so rule doesn't apply" | Spirit over letter |
 
 ## Key Patterns
@@ -135,5 +138,7 @@ From 24 failure memories:
 **No shortcuts for verification.**
 
 Run the command. Read the output. THEN claim the result.
+
+Finding that the goal is NOT met — and saying so with evidence — is successful verification. The only failing outcome is claiming success the output doesn't show.
 
 This is non-negotiable.
