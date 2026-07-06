@@ -42,7 +42,7 @@ Every project goes through this process. A todo list, a single-function utility,
 You MUST create a task for each of these items and complete them in order:
 
 1. **Explore project context** — check files, docs, recent commits
-2. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
+2. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria (or run the optional grill session instead — see "Optional: Grill Session First")
 3. **Propose 2-3 approaches** — with trade-offs and your recommendation
 4. **Present design** — in sections scaled to their complexity, get user approval after each section
 5. **Write design doc** — save to `thoughts/shared/plans/<domain>/YYYY-MM-DD-<topic>-design.md`
@@ -55,6 +55,8 @@ You MUST create a task for each of these items and complete them in order:
 ```dot
 digraph brainstorming {
     "Explore project context" [shape=box];
+    "Partner has a design in mind or asks to be grilled?" [shape=diamond];
+    "Run grill-me (produces decisions doc)" [shape=box];
     "Ask clarifying questions" [shape=box];
     "Propose 2-3 approaches" [shape=box];
     "Present design sections" [shape=box];
@@ -64,7 +66,10 @@ digraph brainstorming {
     "User reviews spec?" [shape=diamond];
     "Invoke writing-plans skill" [shape=doublecircle];
 
-    "Explore project context" -> "Ask clarifying questions";
+    "Explore project context" -> "Partner has a design in mind or asks to be grilled?";
+    "Partner has a design in mind or asks to be grilled?" -> "Run grill-me (produces decisions doc)" [label="yes"];
+    "Partner has a design in mind or asks to be grilled?" -> "Ask clarifying questions" [label="no"];
+    "Run grill-me (produces decisions doc)" -> "Propose 2-3 approaches";
     "Ask clarifying questions" -> "Propose 2-3 approaches";
     "Propose 2-3 approaches" -> "Present design sections";
     "Present design sections" -> "User approves design?";
@@ -78,6 +83,10 @@ digraph brainstorming {
 ```
 
 **The terminal state is invoking writing-plans.** Do NOT invoke any other implementation skill after brainstorming. The ONLY skill you invoke next is writing-plans.
+
+## Optional: Grill Session First
+
+If your partner already has a design in their head — or asks to be grilled — invoke the grill-me skill (REQUIRED SUB-SKILL: grill-me) in place of the clarifying-questions step. The grill session interrogates and stress-tests their design and always produces a decisions document. Resume here at "Propose 2-3 approaches", building on that document: never re-ask decisions the grill resolved; explore approaches only for what it left open. All later steps (design sections, spec doc, self-review, user gates) still apply.
 
 ## The Process
 

@@ -25,7 +25,7 @@ Access skills with the `Skill` tool — the content is loaded for you to follow 
 
 After invoking, announce **"Using [skill] to [purpose]"** and follow the skill exactly.
 
-If the skill has a checklist, create a **TodoWrite** todo per item.
+If the skill has a checklist, create a task (**TaskCreate**) per item.
 
 ## Skill Priority
 
@@ -47,7 +47,7 @@ These thoughts mean STOP—you're rationalizing:
 
 ## Unified Workflow
 
-- **Research/design**: `brainstorming`, `writing-plans`, `researching-codebase`
+- **Research/design**: `brainstorming` (optionally opened by `grill-me`), `writing-plans`, `researching-codebase`
 - **Execution**: `executing-plans`, `subagent-driven-development` (TDD, debugging, verification auto-activate)
 - **Quality**: `verification-before-completion`, `requesting-code-review`
 - **Continuity**: `create-handoff`, `resuming-handoff`
