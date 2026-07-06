@@ -93,8 +93,9 @@ skills/
 ## SKILL.md Structure
 
 **Frontmatter (YAML):**
-- Only two fields supported: `name` and `description`
-- Max 1024 characters total
+- Required fields: `name` and `description` (the Agent Skills spec baseline)
+- Claude Code supports further optional fields — `context: fork` + `agent`, `argument-hint`, `model`, `effort`, `allowed-tools`, `disable-model-invocation`, `user-invocable` — check the live docs before using them (roach's writing-plans and requesting-code-review use `context: fork`)
+- `description` max 1024 characters
 - `name`: Use letters, numbers, and hyphens only (no parentheses, special chars)
 - `description`: Third-person, describes ONLY when to use (NOT what it does)
   - Start with "Use when..." to focus on triggering conditions
@@ -595,7 +596,7 @@ Deploying untested skills = deploying untested code. It's a violation of quality
 
 ## Skill Creation Checklist (TDD Adapted)
 
-**IMPORTANT: Use TodoWrite to create todos for EACH checklist item below.**
+**IMPORTANT: Use TaskCreate to create a task for EACH checklist item below.**
 
 **RED Phase - Write Failing Test:**
 - [ ] Create pressure scenarios (3+ combined pressures for discipline skills)

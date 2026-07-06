@@ -74,7 +74,7 @@ After saving the file, respond:
 ```
 Handoff created! Resume in a new session with:
 
-/resuming_handoff path/to/handoff.md
+/roach:resuming-handoff path/to/handoff.md
 ```
 
 ## Key Principles

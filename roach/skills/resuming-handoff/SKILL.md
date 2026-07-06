@@ -114,8 +114,8 @@ Then wait for the user's input.
 
 ### Step 3: Create Action Plan
 
-1. **Use TodoWrite to create task list**:
-   - Convert action items from handoff into todos
+1. **Use TaskCreate to create the task list**:
+   - Convert action items from handoff into tasks
    - Add any new tasks discovered during analysis
    - Prioritize based on dependencies and handoff guidance
 
@@ -156,7 +156,7 @@ Then wait for the user's input.
    - Build on discovered solutions
 
 4. **Track Continuity**:
-   - Use TodoWrite to maintain task continuity
+   - Use the task tools (TaskCreate/TaskUpdate) to maintain task continuity
    - Reference the handoff document in commits
    - Document any deviations from original plan
    - Consider creating a new handoff when done
