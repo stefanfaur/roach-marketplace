@@ -26,6 +26,12 @@ The question box (AskUserQuestion) displays only a short question and option lab
 - Approach choice → print the approaches with trade-offs, then ask
 - Spec or file review → print the file path, then ask
 
+<HARD-GATE>
+Required order for EVERY confirmation, no exceptions: (1) write the full section/approach/content as normal message text, (2) in that SAME message, immediately after the text, call AskUserQuestion. Never call AskUserQuestion first, never call it in a message whose text does not already contain the full content it asks about.
+
+Before every AskUserQuestion call, self-check: "Is the complete text this question refers to printed above, in this same message?" If no — or if you are asking about a revision and only the diff/summary is printed, not the full revised text — STOP and print it first. A confirmation question with no visible content preceding it is a defect, not a shortcut.
+</HARD-GATE>
+
 No exceptions:
 - "The user already read it last turn" — they read the old version. Show the current one.
 - "Keeping output minimal" — minimal never means asking about invisible content.
@@ -107,7 +113,7 @@ If your partner already has a design in their head — or asks to be grilled —
 **Presenting the design:**
 - Once you believe you understand what you're building, present the design
 - Break it into sections of 200-300 words
-- Print each section as message text, then ask whether it looks right so far
+- Print the section's full text as message text FIRST, then ask whether it looks right so far — in the same message, never a bare question (see Show, Then Ask hard gate)
 - After a revision, re-print the full revised section before asking again
 - Cover: architecture, components, data flow, error handling, testing
 - Be ready to go back and clarify if something doesn't make sense
