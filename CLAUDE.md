@@ -23,7 +23,8 @@ database-query-profiler/           # Database query profiling (Jeremy Longshore)
 ### roach Internal Structure
 
 - `agents/` — 7 specialized subagents (codebase-analyzer, codebase-locator, codebase-pattern-finder, code-reviewer, thoughts-analyzer, thoughts-locator, web-search-researcher). Model pins are deliberate: `codebase-locator` runs haiku (mechanical search); the rest pin opus, which is more cost-efficient than current sonnet — don't "fix" this to inherit/sonnet.
-- `skills/` — 18 skills, each in `skills/<name>/SKILL.md` (brainstorming, committing, create-handoff, dispatching-parallel-agents, executing-plans, grill-me, receiving-code-review, requesting-code-review, researching-codebase, resuming-handoff, subagent-driven-development, systematic-debugging, test-driven-development, using-roach, verification-before-completion, writing-natural, writing-plans, writing-skills)
+- `skills/` — 19 skills, each in `skills/<name>/SKILL.md` (brainstorming, committing, create-handoff, dispatching-parallel-agents, executing-plans, grill-me, receiving-code-review, requesting-code-review, researching-codebase, resuming-handoff, subagent-driven-development, systematic-debugging, test-driven-development, using-roach, verification-before-completion, writing-natural, writing-plans, writing-simply, writing-skills)
+- Two prose skills are peers over the same scope — any prose written for humans — and differ only in method: `writing-natural` (Elements of Style, keeps voice) and `writing-simply` (ASD-STE100, strips voice, ships `ste-lint.py`). Neither is the niche one. They conflict sentence by sentence, so exactly one applies per document; each SKILL.md carries the comparison table.
 - `hooks/` — hooks.json, session-start.sh (SessionStart, bash)
 - `lib/elements-of-style.md` — Style reference for documentation quality
 - `scripts/spec_metadata.js` — Metadata extraction utility (Node.js, cross-platform)
@@ -56,3 +57,4 @@ The hook no longer probes for these; they are companions you install yourself:
 - `ripgrep` (rg) — file content searching
 - `gh` — GitHub CLI for repo access
 - `agent-browser` (optional) — browser automation
+- `uv` (optional) — runs `writing-simply`'s `ste-lint.py`; without it that skill falls back to its manual self-lint checklist

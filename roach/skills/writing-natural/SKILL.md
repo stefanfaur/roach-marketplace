@@ -27,3 +27,9 @@ Focus on these rules from the Elements of Style:
 No modes. No capture. No finalize. No subagents. No file organization.
 
 Read the style guide. Write. Apply the rules.
+
+## The Other Approach
+
+roach ships two skills for the same job. writing-simply covers the same prose this skill does, using ASD-STE100 Simplified Technical English instead of the Elements of Style. It strips voice for plainness and ships a linter that scores the result.
+
+The two conflict sentence by sentence, so pick one per document. This skill keeps a voice and puts the emphatic word last. Use writing-simply when the text must be plain, uniform, and checkable, or when the user asks for plain language or for AI slop removed.
