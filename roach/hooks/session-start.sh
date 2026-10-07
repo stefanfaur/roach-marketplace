@@ -22,7 +22,7 @@ escape_for_json() {
 }
 
 using_roach_escaped=$(escape_for_json "$using_roach_content")
-session_context="<EXTREMELY_IMPORTANT>\nYou have roach.\n\n**Below is the full content of your 'using-roach' skill — your introduction to using skills and commands. For all other skills, use the 'Skill' tool:**\n\n${using_roach_escaped}\n</EXTREMELY_IMPORTANT>"
+session_context="<roach>\nYou have roach. Below is the full content of your 'using-roach' skill, your introduction to using skills. Load all other skills with the 'Skill' tool.\n\n${using_roach_escaped}\n</roach>"
 
 # printf (not heredoc) to avoid the bash 5.3+ heredoc hang.
 printf '{\n  "hookSpecificOutput": {\n    "hookEventName": "SessionStart",\n    "additionalContext": "%s"\n  }\n}\n' "$session_context"

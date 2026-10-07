@@ -1,37 +1,26 @@
 ---
 name: create-handoff
-description: Use when context is getting long, before pausing or ending a work session, or when transferring ongoing work to a new session. ALWAYS prefer this over auto-compacting — use proactively before context fills up.
+description: Use when context is getting long, before pausing or ending a work session, or when transferring ongoing work to a new session — prefer this over auto-compacting, and write it before context fills up.
 ---
 
 # Create Handoff
 
-## Overview
+Write a document that lets a fresh session pick up exactly where this one stops. A handoff keeps structure and file references that auto-compaction loses, so write one when work is pausing or the session is getting long — not after context has run out.
 
-Creates a structured document to transfer session context. **Prefer this over auto-compacting** — handoffs preserve richer, structured context that a new agent can immediately act on.
+## 1. Path and metadata
 
-**Use proactively.** Don't wait until context is full — create a handoff when you sense work is pausing or the session is getting long.
-
-## When to Use
-
-- Context is growing long (before it forces auto-compaction)
-- Pausing work mid-task
-- Ending a session with unfinished work
-- Handing off to another agent or session
-
-## Process
-
-### 1. Determine filepath & metadata
-
-- Detect domain from task context (e.g., `accrual`, `kpi`, `general`)
+- Domain from the task context (e.g. `accrual`, `kpi`, `general`).
 - Path: `thoughts/shared/handoffs/<domain>/YYYY-MM-DD_HH-MM-SS_description.md`
-- Run to get metadata: `node ${CLAUDE_PLUGIN_ROOT}/scripts/spec_metadata.js`
+- Metadata: `node ${CLAUDE_PLUGIN_ROOT}/scripts/spec_metadata.js` (date, branch, commit, repository).
 
-### 2. Write the document
+## 2. Write the document
+
+If a plan is being executed, its `<plan>.tasks.json` already records task status, commit ranges, rulings and deferred findings. Point to it instead of restating it; the handoff carries what the ledger can't.
 
 ```markdown
 ---
 date: [ISO datetime with timezone]
-researcher: [from thoughts status]
+researcher: [your name or "claude"]
 git_commit: [current commit hash]
 branch: [current branch]
 repository: [repo name]
@@ -45,40 +34,37 @@ type: implementation_strategy
 
 # Handoff: {concise description}
 
-## Task(s)
-{Tasks with status: completed / in progress / planned. Reference plan/research docs if applicable. If on a plan, call out the current phase.}
+## Where Things Stand
+{The goal in a sentence or two. If a plan is running: plan path, `.tasks.json` path,
+the executor in use (executing-plans or subagent-driven-development), the current
+task, and — for subagent-driven work — its fix round. Otherwise: tasks with status.}
 
-## Critical References
-{2-3 most important file paths. Leave blank if none.}
+## In-Flight Work
+{Anything not yet committed or not yet recorded in the ledger: uncommitted edits,
+a half-finished task, a review whose findings aren't addressed yet. Write "none" if clean.}
 
-## Recent Changes
-{Changes made this session in line:file syntax}
+## Open Questions
+{Decisions still waiting on the user, with the options and your recommendation.
+Write "none" if there are none.}
 
 ## Learnings
-{Key patterns, root causes, important context for the next agent. Include explicit file paths.}
+{Root causes, gotchas, patterns that worked or didn't — with file:line references.}
 
-## Artifacts
-{Exhaustive list of produced/updated files and file:line references}
+## Key References
+{Spec, research doc, and the 2-5 files the next session should read first.}
 
-## Action Items & Next Steps
-{What the next agent should do, based on task statuses}
-
-## Other Notes
-{Other useful context — relevant codebase locations, important patterns, anything else worth passing on}
+## Next Steps
+{What to do next, in order.}
 ```
 
-### 3. Confirm
+Prefer `file:line` references over code blocks; include code only for a specific error being debugged.
 
-After saving the file, respond:
+## 3. Confirm
+
+Reply with:
 
 ```
-Handoff created! Resume in a new session with:
+Handoff created. Resume in a new session with:
 
 /roach:resuming-handoff path/to/handoff.md
 ```
-
-## Key Principles
-
-- **More information, not less** — this template is the minimum; always add more if needed
-- **Be thorough and precise** — include both high-level objectives and lower-level details
-- **Prefer file:line references over code snippets** — avoid large code blocks unless debugging a specific error

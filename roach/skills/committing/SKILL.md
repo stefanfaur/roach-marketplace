@@ -12,9 +12,8 @@ You are tasked with creating git commits. You support two modes: explicit file p
 If file paths are provided as arguments:
 
 1. **Read scoped diffs:**
-   - Run `git diff -- <file1> <file2> ...` scoped to ONLY the provided files
-   - Do NOT run blanket `git status`, `git diff`, or `git diff --cached`
-   - Only inspect the files you were given
+   - Run `git diff -- <file1> <file2> ...` scoped to the provided files only
+   - Skip blanket `git status`, `git diff` and `git diff --cached` — the user scoped the commit, and other changes aren't yours to read
 
 2. **Analyze and split intelligently:**
    - Determine whether the files form one logical commit or should be split
@@ -27,9 +26,8 @@ If file paths are provided as arguments:
    - If splitting into multiple commits, explain the reasoning
    - Ask: "I plan to create [N] commit(s) with these changes. Shall I proceed?"
 
-4. **Execute upon confirmation:**
-   - **ALWAYS use direct commit syntax**: `git commit <file1> <file2> ... -m "message"`
-   - **NEVER use** `git add` followed by `git commit -m` (this commits ALL staged files!)
+4. **Execute upon confirmation** (see Commit Syntax):
+   - `git commit <file1> <file2> ... -m "message"`
    - Show the result with `git log --oneline -n [number of commits created]`
 
 ## Mode 2: No Arguments (Auto-Discovery)
@@ -62,17 +60,18 @@ If no file paths are provided:
    Does this grouping look right, or would you like to adjust?
    ```
 
-4. **Wait for user confirmation.** The user may approve as-is or request adjustments (merge commits, exclude files, reword messages, etc.). Do NOT proceed until confirmed.
+4. **Wait for user confirmation.** The user may approve as-is or adjust (merge commits, exclude files, reword messages). Commit only after they confirm.
 
-5. **Execute upon confirmation:**
-   - **ALWAYS use direct commit syntax**: `git commit <file1> <file2> ... -m "message"` per commit
-   - **NEVER use** `git add` followed by `git commit -m`
-   - Create commits in the order proposed
+5. **Execute upon confirmation** (see Commit Syntax):
+   - `git commit <file1> <file2> ... -m "message"` per commit, in the order proposed
    - Show the result with `git log --oneline -n [number of commits created]`
 
-## Important:
-- **NEVER add co-author information or Claude attribution**
-- Commits should be authored solely by the user
-- Do not include any "Generated with Claude" messages
-- Do not add "Co-Authored-By" lines
-- Write commit messages as if the user wrote them
+## Commit Syntax
+
+Always name the files on the commit itself: `git commit <file1> <file2> ... -m "message"`. Never `git add` then a bare `git commit -m` — that commits everything staged, including changes the user parked in other IDE changelists.
+
+`git commit <paths>` only accepts tracked files. For a new, untracked file, `git add <that file>` first; the path-scoped `git commit` still commits only the listed paths.
+
+## Authorship
+
+Commits are authored solely by the user. Don't add Co-Authored-By lines, Claude attribution, or "Generated with Claude" messages; write messages as if the user wrote them.

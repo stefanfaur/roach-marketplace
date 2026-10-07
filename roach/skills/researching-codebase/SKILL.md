@@ -5,200 +5,95 @@ description: Use when documenting codebase as-is through parallel agent research
 
 # Research Codebase
 
-You are tasked with conducting comprehensive research across the codebase to answer user questions by spawning parallel sub-agents and synthesizing their findings.
+Answer a question about how the codebase works today by dispatching research agents and synthesizing what they find.
 
-## CRITICAL: YOUR ONLY JOB IS TO DOCUMENT AND EXPLAIN THE CODEBASE AS IT EXISTS TODAY
-- DO NOT suggest improvements or changes unless the user explicitly asks for them
-- DO NOT perform root cause analysis unless the user explicitly asks for them
-- DO NOT propose future enhancements unless the user explicitly asks for them
-- DO NOT critique the implementation or identify problems
-- DO NOT recommend refactoring, optimization, or architectural changes
-- ONLY describe what exists, where it exists, how it works, and how components interact
-- You are creating a technical map/documentation of the existing system
+Document what exists — where it lives, how it works, how the pieces connect — and leave out critique, improvement ideas, refactoring suggestions and root-cause analysis unless the user asks for them. The output is a map that other work builds on; brainstorming and code review do the evaluating, and opinions mixed into the map make it harder to trust. Tell every agent you dispatch the same: they are documenting, not evaluating.
 
-## Initial Setup
+## Getting the Question
 
-When this skill is invoked, respond with:
+If you were invoked with a research question (for example, from brainstorming), start at step 1. Otherwise reply:
+
 ```
 I'm ready to research the codebase. Please provide your research question or area of interest, and I'll analyze it thoroughly by exploring relevant components and connections.
 ```
 
-Then wait for the user's research query.
+and wait for the question.
 
-## Steps to follow after receiving the research query:
+## Scale to the Question
 
-1. **Read any directly mentioned files first:**
-   - If the user mentions specific files (tickets, docs, JSON), read them FULLY first
-   - **IMPORTANT**: Use the Read tool WITHOUT limit/offset parameters to read entire files
-   - **CRITICAL**: Read these files yourself in the main context before spawning any sub-tasks
-   - This ensures you have full context before decomposing the research
+- **One-area question** ("where is X configured?", "what calls Y?") — one codebase-locator or codebase-pattern-finder dispatch, answer in chat, no document unless asked.
+- **Multi-area question** (how a feature flows end to end, what a change would touch, what exists to reuse) — the full process below, with a research document.
 
-2. **Analyze and decompose the research question:**
-   - Break down the user's query into composable research areas
-   - Take time to ultrathink about the underlying patterns, connections, and architectural implications the user might be seeking
-   - Identify specific components, patterns, or concepts to investigate
-   - Create a research plan using TaskCreate to track all subtasks
-   - Consider which directories, files, or architectural patterns are relevant
+Invocation from brainstorming always gets a document, since writing-plans reads it.
 
-3. **Spawn parallel sub-agent tasks for comprehensive research:**
-   - Create multiple Task agents to research different aspects concurrently
-   - We now have specialized agents that know how to do specific research tasks:
+## Process
 
-   **For codebase research:**
-   - Use the **codebase-locator** agent to find WHERE files and components live
-   - Use the **codebase-analyzer** agent to understand HOW specific code works (without critiquing it)
-   - Use the **codebase-pattern-finder** agent to find examples of existing patterns (without evaluating them)
+1. **Read mentioned files first.** Read any files the user or calling skill named — in full — before dispatching anything, so you can decompose the question with real context.
 
-   **IMPORTANT**: All agents are documentarians, not critics. They will describe what exists without suggesting improvements or identifying issues.
+2. **Decompose.** Split the question into areas that can be researched independently, and track them with TaskCreate. Think through how the areas likely connect so each agent gets a focused question.
 
-   **For thoughts directory:**
-   - Use the **thoughts-locator** agent to discover what documents exist about the topic
-   - Use the **thoughts-analyzer** agent to extract key insights from specific documents (only the most relevant ones)
+3. **Dispatch agents in parallel**, one per area:
+   - **codebase-locator** — where files and components live
+   - **codebase-analyzer** — how specific code works
+   - **codebase-pattern-finder** — existing examples of a pattern, and code that could be reused
+   - **thoughts-locator** / **thoughts-analyzer** — earlier research, plans and decisions in `thoughts/`
+   - **web-search-researcher** — only if the user asks; have it return links and include them
 
-   **For web research (only if user explicitly asks):**
-   - Use the **web-search-researcher** agent for external documentation and resources
-   - IF you use web-research agents, instruct them to return LINKS with their findings, and please INCLUDE those links in your final report
+   Start with locators, then point analyzers at the most promising finds. Tell each agent what to find, not how to search — they know their job.
 
-   The key is to use these agents intelligently:
-   - Start with locator agents to find what exists
-   - Then use analyzer agents on the most promising findings to document how they work
-   - Run multiple agents in parallel when they're searching for different things
-   - Each agent knows its job - just tell it what you're looking for
-   - Don't write detailed prompts about HOW to search - the agents already know
-   - Remind agents they are documenting, not evaluating or improving
+4. **Synthesize** once all agents have returned. Live code is the source of truth; `thoughts/` documents are historical context. Connect findings across components, answer the question with concrete evidence, and cite every claim as `path/to/file.ext:line`.
 
-4. **Wait for all sub-agents to complete and synthesize findings:**
-   - IMPORTANT: Wait for ALL sub-agent tasks to complete before proceeding
-   - Compile all sub-agent results (both codebase and thoughts findings)
-   - Prioritize live codebase findings as primary source of truth
-   - Use thoughts/ findings as supplementary historical context
-   - Connect findings across different components
-   - Include specific file paths and line numbers for reference
-   - Highlight patterns, connections, and architectural decisions
-   - Answer the user's specific questions with concrete evidence
+5. **Check for gaps** (multi-area research only). List what the question asked that the findings don't answer. If anything matters, run one round of targeted agents for those gaps; whatever is still open after that goes under Open Questions.
 
-5. **Determine the domain** from the research context (e.g., accrual, KPI, project-management, SAP, basket, etc.). If unclear, ask the user.
+6. **Write the document** to `thoughts/shared/research/<domain>/YYYY-MM-DD-<kebab-description>.md`. Infer the domain from the question; ask if unclear. Get metadata from `node ${CLAUDE_PLUGIN_ROOT}/scripts/spec_metadata.js` and fill every field — no placeholders.
 
-6. **Gather metadata for the research document:**
-   - Run `node ${CLAUDE_PLUGIN_ROOT}/scripts/spec_metadata.js` to generate all relevant metadata
-   - Filename: `thoughts/shared/research/<domain>/YYYY-MM-DD-description.md`
-     - Format: `YYYY-MM-DD-description.md` where:
-       - YYYY-MM-DD is today's date
-       - description is a brief kebab-case description of the research topic
-     - Examples:
-       - `thoughts/shared/research/accrual/2025-01-08-accrual-period-analysis.md`
-       - `thoughts/shared/research/kpi/2025-01-08-authentication-flow.md`
+7. **Report.** Give a short summary with the key file references. If another skill invoked you, return the document path to it and stop; otherwise ask whether the user has follow-up questions.
 
-7. **Generate research document:**
-   - Use the metadata gathered in the previous step
-   - Structure the document with YAML frontmatter followed by content:
-     ```markdown
-     ---
-     date: [Current date and time with timezone in ISO format]
-     researcher: [Researcher name from thoughts status]
-     git_commit: [Current commit hash]
-     branch: [Current branch name]
-     repository: [Repository name]
-     topic: "[User's Question/Topic]"
-     tags: [research, codebase, relevant-component-names]
-     status: complete
-     last_updated: [Current date in YYYY-MM-DD format]
-     last_updated_by: [Researcher name]
-     ---
+## Document Format
 
-     # Research: [User's Question/Topic]
+```markdown
+---
+date: [ISO date-time with timezone]
+researcher: [git user.name]
+git_commit: [commit hash]
+branch: [branch]
+repository: [repository]
+topic: "[question or topic]"
+tags: [research, codebase, component-names]
+status: complete
+last_updated: [YYYY-MM-DD]
+last_updated_by: [git user.name]
+---
 
-     **Date**: [Current date and time with timezone]
-     **Researcher**: [Researcher name]
-     **Git Commit**: [Current commit hash]
-     **Branch**: [Current branch name]
-     **Repository**: [Repository name]
+# Research: [question or topic]
 
-     ## Research Question
-     [Original user query]
+## Research Question
+[The original question]
 
-     ## Summary
-     [High-level documentation of what was found, answering the user's question by describing what exists]
+## Summary
+[What exists, answering the question]
 
-     ## Detailed Findings
+## Detailed Findings
 
-     ### [Component/Area 1]
-     - Description of what exists ([file.ext:line](link))
-     - How it connects to other components
-     - Current implementation details (without evaluation)
+### [Component or area]
+- What exists and how it works (`file.ext:line`)
+- How it connects to other components
 
-     ### [Component/Area 2]
-     ...
+## Code References
+- `path/to/file.py:123` — what's there
 
-     ## Code References
-     - `path/to/file.py:123` - Description of what's there
-     - `another/file.ts:45-67` - Description of the code block
+## Reusable Code
+[Existing helpers, utilities and patterns relevant to the question, with `file:line` — omit if none]
 
-     ## Architecture Documentation
-     [Current patterns, conventions, and design implementations found in the codebase]
+## Historical Context
+[Relevant thoughts/ documents, with paths]
 
-     ## Historical Context (from thoughts/)
-     [Relevant insights from thoughts/ directory with references]
-     - `thoughts/shared/something.md` - Historical decision about X
-     Note: Paths exclude "searchable/" even if found there
+## Open Questions
+[What the research couldn't answer]
+```
 
-     ## Related Research
-     [Links to other research documents in thoughts/shared/research/]
+Use snake_case for multi-word frontmatter fields; other skills read them.
 
-     ## Open Questions
-     [Any areas that need further investigation]
-     ```
+## Follow-ups
 
-8. **Add GitHub permalinks (if applicable):**
-   - Check if on main branch or if commit is pushed: `git branch --show-current` and `git status`
-   - If on main/master or pushed, generate GitHub permalinks:
-     - Get repo info: `gh repo view --json owner,name`
-     - Create permalinks: `https://github.com/{owner}/{repo}/blob/{commit}/{file}#L{line}`
-   - Replace local file references with permalinks in the document
-
-9. **Sync and present findings:**
-   - Ensure the research file is ALWAYS saved in the repository
-   - Present a concise summary of findings to the user
-   - Include key file references for easy navigation
-   - Ask if they have follow-up questions or need clarification
-
-10. **Handle follow-up questions:**
-   - If the user has follow-up questions, append to the same research document
-   - Update the frontmatter fields `last_updated` and `last_updated_by` to reflect the update
-   - Add `last_updated_note: "Added follow-up research for [brief description]"` to frontmatter
-   - Add a new section: `## Follow-up Research [timestamp]`
-   - Spawn new sub-agents as needed for additional investigation
-   - Continue updating the document and syncing
-
-## Important notes:
-- Always use parallel Task agents to maximize efficiency and minimize context usage
-- Always run fresh codebase research - never rely solely on existing research documents
-- The thoughts/ directory provides historical context to supplement live findings
-- Focus on finding concrete file paths and line numbers for developer reference
-- Research documents should be self-contained with all necessary context
-- Each sub-agent prompt should be specific and focused on read-only documentation operations
-- Document cross-component connections and how systems interact
-- Include temporal context (when the research was conducted)
-- Link to GitHub when possible for permanent references
-- Keep the main agent focused on synthesis, not deep file reading
-- Have sub-agents document examples and usage patterns as they exist
-- Explore all of thoughts/ directory, not just research subdirectory
-- **CRITICAL**: You and all sub-agents are documentarians, not evaluators
-- **REMEMBER**: Document what IS, not what SHOULD BE
-- **NO RECOMMENDATIONS**: Only describe the current state of the codebase
-- **File reading**: Always read mentioned files FULLY (no limit/offset) before spawning sub-tasks
-- **Critical ordering**: Follow the numbered steps exactly
-  - ALWAYS read mentioned files first before spawning sub-tasks (step 1)
-  - ALWAYS wait for all sub-agents to complete before synthesizing (step 4)
-  - ALWAYS gather metadata before writing the document (step 6 before step 7)
-  - NEVER write the research document with placeholder values
-- **Path handling**: The thoughts/searchable/ directory contains hard links for searching
-  - Always document paths by removing ONLY "searchable/" - preserve all other subdirectories
-  - NEVER change directory names - preserve the exact directory structure
-  - This ensures paths are correct for editing and navigation
-- **Frontmatter consistency**:
-  - Always include frontmatter at the beginning of research documents
-  - Keep frontmatter fields consistent across all research documents
-  - Update frontmatter when adding follow-up research
-  - Use snake_case for multi-word field names (e.g., `last_updated`, `git_commit`)
-  - Tags should be relevant to the research topic and components studied
+For follow-up questions, append a `## Follow-up Research [timestamp]` section to the same document, update `last_updated` and `last_updated_by`, add a `last_updated_note`, and dispatch new agents as needed. Always research the live code again rather than relying on an earlier document alone.

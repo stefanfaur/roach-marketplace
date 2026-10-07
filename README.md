@@ -117,10 +117,10 @@ A `SessionStart` hook injects the foundational skill into every session, forcing
 | Skill | What it does |
 |-------|-------------|
 | `using-roach` | Injected at session start. Forces skill lookup before any response |
-| `brainstorming` | Explore intent and design before writing code |
-| `writing-plans` | Break work into 2-5 minute tasks with success criteria |
-| `executing-plans` | Execute plans in batches with review checkpoints |
-| `subagent-driven-development` | One fresh subagent per task, two-stage review (spec compliance + code quality) |
+| `brainstorming` | Explore intent and design before writing code; ceremony scales (spike / bounded / architectural), approval always required |
+| `writing-plans` | Turn a spec into tasks that record decisions (files, signatures, tests), not full code |
+| `executing-plans` | Implement the whole plan inline without check-ins, then one whole-branch review |
+| `subagent-driven-development` | Fresh subagent and reviewer per task, bounded fix loop, whole-branch review; runs without check-ins |
 | `dispatching-parallel-agents` | Run independent investigations concurrently |
 | `test-driven-development` | No production code without a failing test first |
 | `systematic-debugging` | Root cause investigation before proposing fixes |
@@ -129,7 +129,7 @@ A `SessionStart` hook injects the foundational skill into every session, forcing
 | `receiving-code-review` | Evaluate review feedback technically, push back when warranted |
 | `writing-skills` | TDD for skill authoring — pressure-test without the skill, then write it to counter the failure modes |
 | `writing-natural` | Apply Elements of Style principles to any prose output |
-| `committing` | Git commit with user approval; never uses `git add` (preserves IDE changelists) |
+| `committing` | Git commit with user approval; path-scoped `git commit <files>`, `git add` only for new files (preserves IDE changelists) |
 | `researching-codebase` | Document code as-is via parallel agents into `thoughts/shared/research/` |
 | `resuming-handoff` | Resume from a handoff document with context validation and action planning |
 | `create-handoff` | Save context for another session to pick up |

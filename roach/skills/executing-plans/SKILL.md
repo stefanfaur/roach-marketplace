@@ -1,111 +1,92 @@
 ---
 name: executing-plans
-description: Use when you have a written implementation plan to execute in a separate session with review checkpoints
+description: Use when implementing a written plan yourself, task by task, in this session or a new one — the user chose inline execution, or no subagent tool is available
 ---
-
-## CRITICAL CONSTRAINTS
-
-**You MUST NOT call `EnterPlanMode` or `ExitPlanMode` during this skill.** This skill operates in normal mode, executing a plan that already exists on disk. Plan mode is unnecessary and dangerous here — it restricts Write/Edit tools needed for implementation.
 
 # Executing Plans
 
-## Overview
+Implement the plan yourself, first task to last, without pausing for check-ins. Then get one fresh review of the whole branch.
 
-Load plan, review critically, execute tasks in batches, report for review between batches.
-
-**Core principle:** Batch execution with checkpoints for architect review.
+The user picked this mode to get the plan done. A "should I continue?" pause costs them a round-trip and buys nothing: progress lives in `.tasks.json` and git, and the final review is the second pair of eyes.
 
 **Announce at start:** "I'm using the executing-plans skill to implement this plan."
 
-## The Process
+Don't enter plan mode — it blocks the Write/Edit tools this skill needs.
 
-### Step 1: Load and Review Plan
-1. Read plan file
-2. Review critically - identify any questions or concerns about the plan
-3. If concerns: Raise them with your human partner before starting
-4. If no concerns: Create tasks and proceed
+## Keep Going
 
-### Step 1b: Load Persisted Tasks (if available)
+Finish every task before ending your turn. None of these is a reason to stop:
+- A task or milestone is done, or the turn has grown long
+- You want to show progress or ask whether to continue
+- You've decided the next step — run it instead of announcing it
+- A decision that doesn't block the remaining work — make it and record a ruling
 
-1. Check for `<plan-path>.tasks.json` co-located with the plan file
-2. If found AND no native tasks exist: recreate from JSON using TaskCreate, restore blockedBy with TaskUpdate
-3. If native tasks already exist: verify they match plan, resume from first `pending`/`in_progress`
-4. If no .tasks.json: create tasks from plan headers using TaskCreate
-5. **After every task status change:** sync back to `.tasks.json` — read file, update status and `lastUpdated`, write back
+Stop and ask only for:
+- An irreversible or destructive operation outside what the plan specifies
+- A side effect beyond the working tree that people normally ask about first: push to a shared branch, merge, publish, deploy
+- A security-sensitive action the plan doesn't cover
+- A failure whose only way past is weakening, skipping or deleting an existing test
+- A change that would break the plan's Global Constraints
+- A plan so broken that every way forward is a guess
 
-### Step 2: Execute Batch
-**Default: First 3 tasks**
+If one task is blocked, finish every task that doesn't depend on it, then report the block.
 
-For each task:
-1. Mark as in_progress
-2. Follow each step exactly (plan has bite-sized steps)
-3. Run verifications as specified
-4. Mark as completed
+## Setup
 
-### Step 3: Report
-When batch complete:
-- Show what was implemented
-- Show verification output
-- Say: "Ready for feedback."
+1. Never start on main/master without the user's explicit consent.
+2. Read the plan once, and the spec if its header names one. Where they conflict, the spec wins.
+3. Load progress from `<plan-path>.tasks.json`:
+   - **Found:** tasks marked `completed` are done; their commits exist even if you don't remember making them. Reconcile with `git log --oneline` and resume at the first task not completed.
+   - **Missing:** create it from the plan's task headers (format in writing-plans).
+   - Mirror the tasks with TaskCreate (restore `blockedBy`) for a live view. The JSON is the record that survives compaction.
+4. Check the Interfaces blocks once: where a task consumes what an earlier task produces, confirm names and types match. Settle mismatches as rulings before Task 1.
 
-### Step 4: Continue
-Based on feedback:
-- Apply changes if needed
-- Execute next batch
-- Repeat until complete
+## Per Task
 
-### Step 5: Completion
-When all tasks are done, announce completion and ask the user how they'd like to proceed (commit, further testing, etc.).
+1. Mark it `in_progress` in TaskUpdate and `.tasks.json`.
+2. Work the steps in order under test-driven-development: write the test, watch it fail for the expected reason, implement, watch it pass. Plan steps give signatures and assertions; you write the bodies. Use what the task's **Reuse:** line names, and before writing any helper, search for an existing one that does the job. If the plan has you create something that already exists, use the existing code and record a ruling.
+3. Run every command that has an `Expected:` line and compare the real output. On a mismatch:
+   - **Code is wrong** → systematic-debugging. Fix the cause, not the symptom.
+   - **Plan is wrong** (contradicts the spec, interface mismatch, command that can't work) → make the smallest change that satisfies the spec and record a ruling.
+4. Commit as the plan's commit step says.
+5. Mark `completed` only once the task's tests ran and passed in this session and you read the output (verification-before-completion). Update `.tasks.json` (status, `lastUpdated`) in the same step as the commit.
 
-## When to Stop and Ask for Help
+## Rulings
 
-**STOP executing immediately when:**
-- Hit a blocker mid-batch (missing dependency, test fails, instruction unclear)
-- Plan has critical gaps preventing starting
-- You don't understand an instruction
-- Verification fails repeatedly
+Settle conflicts, ambiguities and plan defects yourself, with the spec as the authority. Append each to a `rulings` array in `.tasks.json`, since later tasks and the final message read them from there:
 
-**Ask for clarification rather than guessing.**
+```json
+{"task": 2, "ruling": "use installHook, not install_hook", "why": "matches Task 1 Produces", "costIfWrong": "one rename"}
+```
 
-## When to Revisit Earlier Steps
+Routine fixes — wrong paths or imports, typos, missing dependencies, null checks or error handling needed for correctness — just make; record them only if they change what the plan says. Choosing a different library than the plan names, or adding a table, schema, service layer or abstraction, always gets a ruling: the user will want to see those.
 
-**Return to Review (Step 1) when:**
-- Partner updates the plan based on your feedback
-- Fundamental approach needs rethinking
+## Final Review
 
-**Don't force through blockers** - stop and ask.
+After the last task, invoke requesting-code-review over the whole branch. It reads the diff range from its first two arguments, so pass them explicitly:
 
-## Deviation Rules
+```
+Skill("requesting-code-review", "<BASE> <HEAD> 'what was implemented; rulings are in <plan>.tasks.json' '<plan path> <spec path>'")
+```
 
-When executing a plan and reality doesn't match (wrong paths, missing deps, etc.):
+BASE is where the branch started (`git merge-base main HEAD`); HEAD is `git rev-parse HEAD`.
 
-**Auto-fix (continue, note in batch report):**
-- Wrong import paths, typos, broken references, incorrect file locations
-- Missing error handling, input validation, null checks not in the plan but needed for correctness
-- Missing dependencies, type errors, broken tests from upstream, config adjustments
+Severity labels are advice; grade each finding by what a user of the software would hit if it shipped:
+- **Critical / Important:** fix in one pass. Each fix gets a test that fails first, then the full suite runs green. No re-review.
+- **Minor:** don't fix; list under "Deferred minors".
+- A finding you choose not to fix is a ruling.
 
-**Escalate (stop batch, ask for guidance):**
-- Plan says use library X but codebase uses library Y
-- New database tables/schemas, new service layers, new abstractions
-- Anything that would affect tasks outside the current batch
-- Weakening, skipping, or deleting an existing test to get past a failure
+## Finish
 
-The rule: if the fix is local to the current task, fix it and note it. If it has cross-task implications, stop and ask.
+End with:
+- What was built and the final test-suite result
+- **Rulings I made** — every ruling, with its cost if wrong
+- **Deferred minors**
+- Anything blocked: what you left out and why
 
-When reporting at batch checkpoint, include any deviations:
-- `[AUTO-FIX]` what differed and what you did
-- `[ESCALATED]` what you stopped to ask about
+Then ask whether to push, open a PR, or keep going.
 
 ## Related Skills
 
-- **writing-plans** - Create plans to execute
-- **subagent-driven-development** - Alternative execution approach
-
-## Remember
-- Review plan critically first
-- Follow plan steps exactly
-- Don't skip verifications
-- Reference skills when plan says to
-- Between batches: just report and wait
-- Stop when blocked, don't guess
-- Never start implementation on main/master branch without explicit user consent
+- **writing-plans** — produces the plan and `.tasks.json`
+- **subagent-driven-development** — alternative: fresh subagent and reviewer per task

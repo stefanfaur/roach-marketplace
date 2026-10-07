@@ -1,72 +1,54 @@
 ---
 name: using-roach
-description: Use when starting any conversation - establishes how to find and use skills and commands, requiring Skill tool invocation before ANY response including clarifying questions
+description: Use when starting any conversation — explains how to find and invoke roach skills before responding or acting, including before clarifying questions
 ---
 
 <SUBAGENT-STOP>
 If you were dispatched as a subagent to execute a specific task, ignore this skill.
 </SUBAGENT-STOP>
 
-<EXTREMELY-IMPORTANT>
-If you think there is even a 1% chance a skill might apply to what you are doing, you ABSOLUTELY MUST invoke the skill.
+# Using Roach
 
-IF A SKILL APPLIES TO YOUR TASK, YOU DO NOT HAVE A CHOICE. YOU MUST USE IT.
+Skills carry tested workflows for the work you do here. They shape how you explore, ask and build, so the check comes first.
 
-This is not negotiable. You cannot rationalize your way out of this.
-</EXTREMELY-IMPORTANT>
+**IMPORTANT: Before your first response or action on a task — including clarifying questions and exploring files — invoke any skill that plausibly applies.** Checking costs one call; skipping a workflow that applied costs a redo. If a loaded skill turns out not to fit, set it aside.
 
-## The Rule
+- Invoke skills with the `Skill` tool, which loads the current version. Don't Read skill files.
+- Announce "Using [skill] to [purpose]", then follow it. If it has a checklist, create a task (TaskCreate) per item.
+- Rigid skills (test-driven-development, systematic-debugging, verification-before-completion) are followed exactly; flexible ones are adapted to context. Each skill says which it is.
 
-**Invoke relevant or requested skills BEFORE any response or action** — including clarifying questions, exploring the codebase, or checking files. Even a 1% chance a skill applies means invoke it to check; if it turns out wrong, you don't have to use it.
-
-Access skills with the `Skill` tool — the content is loaded for you to follow directly. Never use the Read tool on skill files.
-
-**Before entering plan mode:** if you haven't already brainstormed, invoke the brainstorming skill first.
-
-After invoking, announce **"Using [skill] to [purpose]"** and follow the skill exactly.
-
-If the skill has a checklist, create a task (**TaskCreate**) per item.
-
-## Skill Priority
-
-When multiple skills apply, process skills (brainstorming, systematic-debugging) come first — they set the approach; implementation skills carry it out.
-
-- "Let's build X" → brainstorming first, then implementation skills.
-- "Fix this bug" → systematic-debugging first, then domain skills.
-
-## Red Flags
-
-These thoughts mean STOP—you're rationalizing:
+Thoughts that mean you're skipping the check:
 
 | Thought | Reality |
-|---------|---------|
+|---|---|
 | "This is just a simple question" | Questions are tasks. Check for skills. |
-| "I need more context first" | Skill check comes BEFORE clarifying questions. |
-| "Let me explore/check files first" | Skills tell you HOW to explore. Check first. |
-| "I remember this skill" | Skills evolve. Invoke the current version. |
+| "I need more context first" | The skill check comes before clarifying questions. |
+| "Let me explore/check files first" | Skills tell you how to explore. Check first. |
+| "I remember this skill" | Skills change. Invoke the current version. |
 
-## Unified Workflow
+## Which Skill First
 
-- **Research/design**: `brainstorming` (optionally opened by `grill-me`), `writing-plans`, `researching-codebase`
-- **Execution**: `executing-plans`, `subagent-driven-development` (TDD, debugging, verification auto-activate)
-- **Quality**: `verification-before-completion`, `requesting-code-review`
-- **Continuity**: `create-handoff`, `resuming-handoff`
+Process skills set the approach; implementation and domain skills carry it out.
+- "Let's build X" or a change in behavior → brainstorming first.
+- "Fix this bug" → systematic-debugging first.
 
-## Skill Types
+The main flow:
+- **Design:** brainstorming (opened by grill-me when the user already has a design in mind) → researching-codebase for architectural changes to existing code → writing-plans
+- **Execution:** subagent-driven-development (fresh subagent and review per task) or executing-plans (inline, one final review); test-driven-development and systematic-debugging apply inside both
+- **Quality:** verification-before-completion, requesting-code-review
+- **Continuity:** create-handoff before context runs out, resuming-handoff to pick up
 
-**Rigid** (TDD, debugging): follow exactly. **Flexible** (patterns): adapt to context. The skill tells you which.
+## Your Instructions Win
 
-## User Instructions
+User instructions — CLAUDE.md and direct requests — take precedence over skills, and skills over default behavior. A request that only says what to do ("add X", "fix Y") doesn't waive a workflow; skip one only when the user says so.
 
-Instructions say WHAT, not HOW. "Add X" or "Fix Y" doesn't mean skip workflows.
+## Plan Mode
 
-## File Organization
+Don't enter plan mode on your own: brainstorming and writing-plans replace it, and plan mode blocks the Write/Edit tools they need. If the user started the session in plan mode, that's their choice — work within it and present the plan with ExitPlanMode as usual.
+
+## Files
 
 - Plans: `thoughts/shared/plans/<domain>/YYYY-MM-DD-description.md`
 - Research: `thoughts/shared/research/<domain>/YYYY-MM-DD-description.md`
 - Handoffs: `thoughts/shared/handoffs/<domain>/YYYY-MM-DD_HH-MM-SS_description.md`
-- Domain is auto-detected from task context; ask user if unclear
-
-## Tool Restrictions
-
-**Never call `EnterPlanMode` or `ExitPlanMode`.** These tools trap the session in plan mode where Write/Edit tools are restricted. Use the brainstorming and writing-plans skills instead — they manage their own structured planning flow.
+- Take the domain from the task context; ask if unclear.

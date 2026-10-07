@@ -7,7 +7,7 @@ the task's diff once and returns two verdicts: spec compliance and code quality.
 more, nothing less) and is well-built (clean, tested, maintainable).
 
 ```
-Task tool (general-purpose):
+Agent (general-purpose):
   description: "Review Task N (spec + quality)"
   model: [MODEL — REQUIRED: choose per SKILL.md Model Selection; an omitted
          model silently inherits the session's most expensive one]
@@ -19,7 +19,7 @@ Task tool (general-purpose):
 
     ## What Was Requested
 
-    Read the task brief: thoughts/.sdd/task-N-brief.md
+    Read the task brief: [BRIEF_FILE]
 
     Global constraints from the spec/design that bind this task:
     [GLOBAL_CONSTRAINTS — copied verbatim from the plan's Global Constraints
@@ -28,11 +28,11 @@ Task tool (general-purpose):
 
     ## What the Implementer Claims They Built
 
-    Read the implementer's report: thoughts/.sdd/task-N-report.md
+    Read the implementer's report: [REPORT_FILE]
 
     ## Diff Under Review
 
-    Read thoughts/.sdd/task-N-review.md once — it contains the commit list, a
+    Read [DIFF_FILE] once — it contains the commit list, a
     stat summary, and the full diff with surrounding context, and it is your
     view of the change. The diff's context lines ARE the changed files: do not
     Read a changed file separately unless a hunk you must judge is cut off
@@ -46,6 +46,13 @@ Task tool (general-purpose):
 
     Your review is read-only on this checkout. Do not mutate the working tree,
     the index, HEAD, or branch state in any way.
+
+    ## You Do Not Dispatch Subagents
+
+    Do all of this review yourself. Never spawn a subagent for part of the
+    diff or a second opinion — this process already provides every review
+    seat the work gets. If the diff feels too large for one pass, review it
+    in passes and say so.
 
     ## Do Not Trust the Report
 
@@ -65,12 +72,21 @@ Task tool (general-purpose):
     here, name the test you would run. Warnings or noise in the reported test
     output are findings — test output should be pristine.
 
+    If the report or its test evidence looks truncated or you can't find
+    the results it claims, re-read the file at its stated path; if it is
+    genuinely missing, report that as a gap. Unreadable evidence is not
+    disproven evidence.
+
     ## Part 1: Spec Compliance
 
     Compare the diff against What Was Requested:
     - **Missing:** requirements they skipped, missed, or claimed without implementing
     - **Extra:** features that weren't requested, over-engineering, unneeded "nice to haves"
     - **Misunderstood:** right feature built the wrong way, or wrong problem solved
+
+    If the brief lists several files each with its own change (a batched
+    dispatch), check the diff file by file: a listed file with no hunk is a
+    Missing finding.
 
     If a requirement cannot be verified from this diff alone (it lives in
     unchanged code or spans tasks), report it as a ⚠️ item instead of
@@ -82,10 +98,22 @@ Task tool (general-purpose):
     **Code quality:** clean separation of concerns? proper error handling? DRY
     without premature abstraction? edge cases handled?
 
+    **Reuse:** for each new function, helper or type, search the codebase
+    for existing code that already does the job (start from the brief's
+    Reuse line). New code that duplicates existing logic is Important.
+
     **Tests:** do the new and changed tests verify real behavior, not mocks?
-    are the task's edge cases covered? Treat any hunk that loosens, skips, or
-    deletes a pre-existing test as a finding unless the brief explicitly
-    required that change.
+    is each branch, boundary and error path of the new behavior covered once?
+    Treat any hunk that loosens, skips, or deletes a pre-existing test as a
+    finding unless the brief explicitly required that change.
+
+    **Test value:** every test the diff adds must be able to catch a realistic
+    bug. Flag as Important, with "delete it" as the fix: tests of getters, field
+    assignments, constants or pass-throughs; tests that fail only when someone
+    deliberately changes a value; tests of what the language or a library
+    already guarantees; direct tests of a helper the public-behavior tests
+    already exercise; tests repeating a branch another test covers. Don't ask
+    for direct tests of code that is already exercised through public behavior.
 
     **Structure:**
     - Does each file have one clear responsibility with a well-defined interface?
@@ -107,7 +135,8 @@ Task tool (general-purpose):
     that assert nothing). "Coverage could be broader" and polish are **Minor**.
     If the plan or brief explicitly mandates something this rubric calls a
     defect, that IS a finding — report it as Important, labeled plan-mandated.
-    The plan's authorship does not grade its own work; the human decides.
+    The plan's authorship does not grade its own work; the controller rules
+    on it.
     Acknowledge what was done well before listing issues.
 
     ## Output Format
@@ -136,8 +165,9 @@ Task tool (general-purpose):
 - `[MODEL]` — REQUIRED: reviewer model per SKILL.md Model Selection
 - `[GLOBAL_CONSTRAINTS]` — the binding requirements copied verbatim from the
   plan's Global Constraints section or the spec (not process rules)
-- The brief, report, and diff files live under `thoughts/.sdd/` — the controller
-  writes them before dispatch (see SKILL.md File Handoffs)
+- `[BRIEF_FILE]`, `[REPORT_FILE]`, `[DIFF_FILE]` — the task's brief, report and
+  review package under `thoughts/.sdd/<plan-basename>/`, written by the controller
+  before dispatch (see SKILL.md, Per Task)
 
 **Reviewer returns:** Spec Compliance verdict (✅/❌/⚠️), Strengths, Issues
 (Critical/Important/Minor), Task quality verdict.

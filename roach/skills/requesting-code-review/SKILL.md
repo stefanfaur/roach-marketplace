@@ -1,6 +1,6 @@
 ---
 name: requesting-code-review
-description: Use when completing tasks, implementing major features, or before merging to verify work meets requirements
+description: "Use when completing tasks, implementing major features, or before merging to verify work meets requirements. Invoke with arguments: BASE_SHA HEAD_SHA 'what was implemented' 'plan path or requirements' — without the two SHAs it reviews the wrong diff."
 context: fork
 agent: Explore
 argument-hint: "BASE_SHA HEAD_SHA 'what was implemented' 'plan path or requirements'"
@@ -70,7 +70,10 @@ the $ARGUMENTS context string.
 3. For each significantly modified file in the diff, read its full current state to understand
    context beyond what the diff shows.
 4. Check all of: code quality, architecture, testing, requirements compliance, production
-   readiness.
+   readiness. For each new function, helper or type, search the codebase for existing code
+   that already does the job; duplicating it is an Important issue. Flag tests the branch
+   adds that no realistic bug could fail (getters, constants, pass-throughs, library
+   behavior, repeats of a covered branch) as Important, with deletion as the fix.
 5. Output the structured review below. Nothing else.
 
 ## Output Format
@@ -84,7 +87,7 @@ the $ARGUMENTS context string.
 [Bugs, security issues, data loss risks, broken functionality]
 
 #### Important (Should Fix)
-[Architecture problems, missing features, poor error handling, test gaps]
+[Architecture problems, duplicated existing logic, missing features, poor error handling, test gaps]
 
 #### Minor (Nice to Have)
 [Code style, optimization opportunities, documentation improvements]
