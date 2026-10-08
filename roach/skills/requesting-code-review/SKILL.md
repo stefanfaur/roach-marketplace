@@ -53,7 +53,7 @@ argument-hint: "BASE_SHA HEAD_SHA 'what was implemented' 'plan path or requireme
 $ARGUMENTS
 
 ## Diff
-!`git diff $(echo "$ARGUMENTS" | awk '{print $1}')..$(echo "$ARGUMENTS" | awk '{print $2}') -- . 2>/dev/null`
+!`git diff $0..$1 -- .`
 
 ---
 
