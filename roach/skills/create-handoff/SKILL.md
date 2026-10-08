@@ -36,8 +36,7 @@ type: implementation_strategy
 
 ## Where Things Stand
 {The goal in a sentence or two. If a plan is running: plan path, `.tasks.json` path,
-the executor in use (executing-plans or subagent-driven-development), the current
-task, and — for subagent-driven work — its fix round. Otherwise: tasks with status.}
+and the current task. Otherwise: tasks with status.}
 
 ## In-Flight Work
 {Anything not yet committed or not yet recorded in the ledger: uncommitted edits,

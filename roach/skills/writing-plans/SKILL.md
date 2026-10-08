@@ -7,9 +7,9 @@ description: Use when you have a spec or requirements for a multi-step task, bef
 
 **Announce at start:** "I'm using writing-plans to create the implementation plan."
 
-Write the plan; don't implement it. Implementation starts after the user reviews the plan and picks how to execute it.
+Write the plan; don't implement it. Implementation starts after the user reviews the plan.
 
-Don't enter plan mode on your own — it blocks Write/Edit and skips the execution choice.
+Don't enter plan mode on your own — it blocks Write/Edit and skips the review handoff.
 
 ## Reader
 
@@ -40,22 +40,16 @@ Fix issues inline; no re-review.
 
 **6. Write `.tasks.json`** (see Task Persistence).
 
-**7. Hand off.** Print the following as message text — the path must be visible, not only inside a question box — then ask for review and the execution choice:
+**7. Hand off.** Print the following as message text — the path must be visible, not only inside a question box — then ask for review:
 
-"Plan saved to `<path>`. Please review it. Two ways to execute:
-
-**1. Subagent-driven** — a fresh subagent implements each task and a fresh reviewer checks it before the next starts. Most thorough; costs a fresh context per task. REQUIRED SUB-SKILL: subagent-driven-development.
-
-**2. Inline** — I implement every task myself without stopping (here, or in a new session if this one's context is getting full), then one fresh review covers the whole branch. Faster and cheaper. REQUIRED SUB-SKILL: executing-plans.
-
-I recommend <1 or 2> because <one sentence: how much tasks depend on each other's interfaces, how many there are, what a shipped mistake would cost>."
+"Plan saved to `<path>`. Please review it. Once approved, I'll implement every task without stopping (here, or in a new session if this one's context is getting full), then one fresh review covers the whole branch. REQUIRED SUB-SKILL: executing-plans."
 
 ## Plan Header
 
 ```markdown
 # [Feature Name] Implementation Plan
 
-> **For Claude:** Execute with subagent-driven-development or executing-plans, as the user chose at handoff. Progress is tracked in `<this file>.tasks.json`.
+> **For Claude:** Execute with executing-plans. Progress is tracked in `<this file>.tasks.json`.
 
 **Goal:** [One sentence]
 
@@ -76,7 +70,7 @@ exact values copied verbatim from the spec.]
 
 ## Task Right-Sizing
 
-A task is the smallest unit that carries its own verification cycle and is worth a fresh reviewer's gate. Fold setup, configuration, scaffolding and docs into the task whose deliverable needs them; split only where a reviewer could reject one task while approving its neighbor. Each task ends with one independently testable deliverable — no mid-task user gates.
+A task is the smallest unit that carries its own verification cycle and commit. Fold setup, configuration, scaffolding and docs into the task whose deliverable needs them; split only where a reviewer could reject one task while approving its neighbor. Each task ends with one independently testable deliverable — no mid-task user gates.
 
 ## Task Structure
 
@@ -91,8 +85,7 @@ A task is the smallest unit that carries its own verification cycle and is worth
 **Interfaces:**
 - Consumes: [what this task uses from earlier tasks — exact signatures]
 - Produces: [exact function/type names with parameter and return types that later
-  tasks rely on. An implementer sees only their own task; this is how they learn
-  what neighbors expose.]
+  tasks rely on.]
 
 **Reuse:** [existing symbols this task must use, as `path:line` — or "none found" after searching]
 

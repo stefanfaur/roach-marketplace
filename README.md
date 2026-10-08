@@ -120,7 +120,6 @@ A `SessionStart` hook injects the foundational skill into every session, forcing
 | `brainstorming` | Explore intent and design before writing code; ceremony scales (spike / bounded / architectural), approval always required |
 | `writing-plans` | Turn a spec into tasks that record decisions (files, signatures, tests), not full code |
 | `executing-plans` | Implement the whole plan inline without check-ins, then one whole-branch review |
-| `subagent-driven-development` | Fresh subagent and reviewer per task, bounded fix loop, whole-branch review; runs without check-ins |
 | `dispatching-parallel-agents` | Run independent investigations concurrently |
 | `test-driven-development` | No production code without a failing test first |
 | `systematic-debugging` | Root cause investigation before proposing fixes |

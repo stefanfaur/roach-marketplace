@@ -11,7 +11,6 @@ argument-hint: "BASE_SHA HEAD_SHA 'what was implemented' 'plan path or requireme
 ## Before Invoking This Skill (runs in main context)
 
 **When to request — mandatory:**
-- After each task in subagent-driven development
 - After completing a major feature
 - Before merge to main
 

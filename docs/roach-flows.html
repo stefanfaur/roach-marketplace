@@ -167,8 +167,7 @@ details.more .body{font-size:.88rem; color:var(--ink-soft); margin-top:10px; lin
 details.more .body b{color:var(--ink)}
 
 /* execution lanes */
-.lanes{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:6px}
-@media(max-width:720px){.lanes{grid-template-columns:1fr}}
+.lanes{display:grid; grid-template-columns:1fr; gap:18px; margin-top:6px}
 .lane{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px; box-shadow:var(--shadow)}
 .lane h4{font-size:1.15rem; margin-bottom:4px}
 .lane .path-lbl{font-family:var(--mono); font-size:.7rem; letter-spacing:.2em; text-transform:uppercase; color:var(--rust-deep); margin-bottom:8px}
@@ -367,42 +366,31 @@ footer .fp b{color:var(--rust-deep)}
             <p class="sk-one">Explores the codebase to pin exact file paths, writes a numbered implementation plan, and runs it through a plan-reviewer loop before returning.</p>
             <div class="meta-row"><span class="k">When</span><span class="v">You have an approved design or clear requirements for a multi-step task.</span></div>
             <div class="meta-row"><span class="k">Output</span><span class="v"><code>plans/&lt;domain&gt;/…md</code> + a co-located <code>.tasks.json</code> for cross-session resume.</span></div>
-            <details class="more"><summary><span class="caret">▸</span>the fork in the road</summary><div class="body">When the plan is done it offers <b>two execution paths</b> — Path A keeps you in this session (subagent-driven), Path B opens a fresh session (executing-plans). You pick one. <b>Combo:</b> run <b>grill-me</b> here to interrogate the plan first.</div></details>
+            <details class="more"><summary><span class="caret">▸</span>the fork in the road</summary><div class="body">When the plan is done it asks you to review it, then hands off to <b>executing-plans</b> — here, or in a fresh session if context is getting full. <b>Combo:</b> run <b>grill-me</b> here to interrogate the plan first.</div></details>
           </div>
         </div>
       </div>
 
       <div class="boundary reveal">
-        <span class="chip"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="var(--pine)" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v16"/></svg><span><b>Choose an execution path.</b> Path A → stay here. Path B → open a <b>new session</b> and run <span class="cmd pine">/roach:executing-plans</span> with a clean context (the <code>.tasks.json</code> carries the state across).</span></span>
+        <span class="chip"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="var(--pine)" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v16"/></svg><span><b>Pick where to execute.</b> Stay here, or open a <b>new session</b> and run <span class="cmd pine">/roach:executing-plans</span> with a clean context (the <code>.tasks.json</code> carries the state across).</span></span>
       </div>
 
       <!-- Phase 3 -->
       <div class="phase reveal">
         <div class="node">3</div>
-        <div class="phase-head"><h3>Execute</h3><span class="tag rust">two lanes</span></div>
-        <p class="phase-note">Build the plan, task by task. Same session or fresh session — the plan is identical, only the isolation model differs.</p>
+        <div class="phase-head"><h3>Execute</h3><span class="tag rust">inline</span></div>
+        <p class="phase-note">Build the plan, task by task. Same session or fresh session — the plan and its <code>.tasks.json</code> carry everything needed.</p>
 
         <div class="lanes">
-          <div class="lane a reveal">
-            <div class="path-lbl">Path A · this session</div>
-            <h4>subagent-driven-development</h4>
-            <p>Dispatches a <b>fresh subagent per task</b>, then runs a two-stage review (spec compliance, then code quality) on each before moving on.</p>
-            <ul>
-              <li>No context switch — you stay put</li>
-              <li>Each subagent starts clean (no context pollution)</li>
-              <li>Reviews run automatically — no human between tasks</li>
-              <li>Fast iteration; best for mostly-independent tasks</li>
-            </ul>
-          </div>
-          <div class="lane b reveal" style="--i:1">
-            <div class="path-lbl">Path B · separate session</div>
+          <div class="lane b reveal">
+            <div class="path-lbl">this session or a new one</div>
             <h4>executing-plans</h4>
-            <p>Loads the plan into a <b>new session</b>, executes in <b>batches of ~3</b>, and stops at a checkpoint after each batch for your review.</p>
+            <p>Implements <b>every task itself</b> under TDD, without check-ins, then gets <b>one fresh review</b> of the whole branch.</p>
             <ul>
+              <li>No pause between tasks — progress lives in <code>.tasks.json</code> and git</li>
+              <li>Stops only for destructive, out-of-plan or security-sensitive actions</li>
+              <li>Settles plan defects itself and records them as rulings</li>
               <li>Fresh session = clean context by construction</li>
-              <li>Human checkpoint after every batch</li>
-              <li>Stops immediately on a blocker — never guesses</li>
-              <li>Auto-fixes typos/paths; escalates scope changes</li>
             </ul>
           </div>
         </div>
@@ -468,7 +456,7 @@ footer .fp b{color:var(--rust-deep)}
             <div class="sk-name">requesting-code-review</div>
             <div class="sk-role">Ask for the review</div>
             <p class="sk-one">Dispatches a senior review against the requirements, returning strengths and issues bucketed Critical / Important / Minor with a go/no-go verdict.</p>
-            <div class="meta-row"><span class="k">When</span><span class="v">After each task in Path A, after major features, before merging.</span></div>
+            <div class="meta-row"><span class="k">When</span><span class="v">After major features, before merging.</span></div>
             <div class="meta-row"><span class="k">Output</span><span class="v">A structured review report.</span></div>
           </div>
           <div class="card pine reveal" style="--i:1">
@@ -581,8 +569,8 @@ footer .fp b{color:var(--rust-deep)}
       </div>
       <div class="combo reveal" style="--i:0">
         <span class="badge">built-in chain</span>
-        <div class="eq"><b>writing-plans</b> <span class="op">→</span> <b>A</b> / <b>B</b></div>
-        <p>The plan offers exactly two exits: subagent-driven (this session) or executing-plans (a new one).</p>
+        <div class="eq"><b>writing-plans</b> <span class="op">→</span> <b>executing-plans</b></div>
+        <p>The plan hands off to executing-plans, in this session or a new one.</p>
       </div>
       <div class="combo opt reveal" style="--i:1">
         <span class="badge">apply after any work</span>
@@ -623,17 +611,17 @@ footer .fp b{color:var(--rust-deep)}
       <p class="sub">No roach skill literally prints <em>/clear</em>. Instead it keeps context clean four different ways. Knowing which one is in play tells you whether <em>you</em> need to reset, or whether roach already handled it.</p>
 
       <div class="mechanisms">
-        <div class="mech"><div class="n">Mechanism 01</div><h5>New session</h5><p>You open a fresh window. The big one — Path B execution and resuming a handoff both start clean here.</p></div>
+        <div class="mech"><div class="n">Mechanism 01</div><h5>New session</h5><p>You open a fresh window. The big one — executing a plan in a new session and resuming a handoff both start clean here.</p></div>
         <div class="mech"><div class="n">Mechanism 02</div><h5>Forked context</h5><p>writing-plans &amp; requesting-code-review run in an isolated <span class="mono">Explore</span> fork, then return just the result.</p></div>
-        <div class="mech"><div class="n">Mechanism 03</div><h5>Subagent isolation</h5><p>Path A spawns a fresh subagent per task — it inherits nothing but the brief you hand it.</p></div>
+        <div class="mech"><div class="n">Mechanism 03</div><h5>Subagent isolation</h5><p>Research and parallel-investigation agents start fresh — they inherit nothing but the brief you hand them.</p></div>
         <div class="mech"><div class="n">Mechanism 04</div><h5>Handoff doc</h5><p>create-handoff serialises rich state to disk so a new session rebuilds context from a file, not scrollback.</p></div>
       </div>
 
       <div class="steps">
         <div class="step reveal"><div class="num">1</div><div class="when">After research / brainstorm</div><div class="act"><b>Optional</b> <span class="cmd clear">/clear</span> before planning. Usually unnecessary — brainstorming forwards to writing-plans, which forks its own context anyway.</div></div>
         <div class="step reveal" style="--i:1"><div class="num">2</div><div class="when">Planning</div><div class="act"><b>Automatic.</b> writing-plans runs in a fork. Nothing for you to do — your main context stays untouched.</div></div>
-        <div class="step reveal" style="--i:2"><div class="num">3</div><div class="when">Before Path B execution</div><div class="act"><b>Do this.</b> Open a <b>new session</b> and run <span class="cmd pine">/roach:executing-plans</span>. Clean context by construction; the <span class="mono" style="color:var(--highlight)">.tasks.json</span> carries state across.</div></div>
-        <div class="step reveal" style="--i:3"><div class="num">4</div><div class="when">Path A execution &amp; review</div><div class="act"><b>Automatic.</b> Each task's subagent and each review fork are already isolated — no reset needed between tasks.</div></div>
+        <div class="step reveal" style="--i:2"><div class="num">3</div><div class="when">Before execution</div><div class="act"><b>Optional.</b> Open a <b>new session</b> and run <span class="cmd pine">/roach:executing-plans</span>. Clean context by construction; the <span class="mono" style="color:var(--highlight)">.tasks.json</span> carries state across.</div></div>
+        <div class="step reveal" style="--i:3"><div class="num">4</div><div class="when">Final review</div><div class="act"><b>Automatic.</b> The review runs in its own fork — no reset needed.</div></div>
         <div class="step reveal" style="--i:4"><div class="num">5</div><div class="when">Context running long, mid-task</div><div class="act">Run <span class="cmd">/roach:create-handoff</span>, then <span class="cmd clear">/clear</span> (or a new session) and <span class="cmd pine">/roach:resuming-handoff &lt;path&gt;</span>. Beats letting the session auto-compact.</div></div>
       </div>
     </div>
@@ -676,7 +664,7 @@ footer .fp b{color:var(--rust-deep)}
         <ul>
           <li><span class="lead">1 · understand</span><span class="cmd">/roach:brainstorming</span> — or just describe the feature</li>
           <li><span class="lead">2 · plan</span><span class="cmd">/roach:writing-plans</span> (forks automatically)</li>
-          <li><span class="lead">3 · execute</span>Pick Path A (here) or Path B (<span class="cmd pine">/clear</span> → new session)</li>
+          <li><span class="lead">3 · execute</span><span class="cmd pine">/roach:executing-plans</span> — here, or <span class="cmd pine">/clear</span> → new session</li>
           <li><span class="lead">4 · verify → review → commit</span>Then continuity if needed</li>
         </ul>
       </div>

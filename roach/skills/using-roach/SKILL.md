@@ -34,7 +34,7 @@ Process skills set the approach; implementation and domain skills carry it out.
 
 The main flow:
 - **Design:** brainstorming (opened by grill-me when the user already has a design in mind) → researching-codebase for architectural changes to existing code → writing-plans
-- **Execution:** subagent-driven-development (fresh subagent and review per task) or executing-plans (inline, one final review); test-driven-development and systematic-debugging apply inside both
+- **Execution:** executing-plans (inline, one final review); test-driven-development and systematic-debugging apply inside it
 - **Quality:** verification-before-completion, requesting-code-review
 - **Continuity:** create-handoff before context runs out, resuming-handoff to pick up
 

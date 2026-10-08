@@ -1,6 +1,6 @@
 ---
 name: executing-plans
-description: Use when implementing a written plan yourself, task by task, in this session or a new one — the user chose inline execution, or no subagent tool is available
+description: Use when implementing a written plan task by task, in this session or a new one
 ---
 
 # Executing Plans
@@ -89,4 +89,3 @@ Then ask whether to push, open a PR, or keep going.
 ## Related Skills
 
 - **writing-plans** — produces the plan and `.tasks.json`
-- **subagent-driven-development** — alternative: fresh subagent and reviewer per task

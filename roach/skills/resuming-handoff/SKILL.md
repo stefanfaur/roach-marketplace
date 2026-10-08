@@ -26,7 +26,7 @@ Read yourself, in full: the handoff, then the plan, spec and research documents 
 
 ## 4. Continue
 
-**A plan is mid-execution and the check is clean:** resume it with the executor the user already chose (executing-plans or subagent-driven-development), at the first task not completed — or, for subagent-driven work, at the recorded fix round. Don't ask again; the user made that choice when execution started. Say in one line where you're resuming, then work.
+**A plan is mid-execution and the check is clean:** resume it with executing-plans at the first task not completed. Don't ask again; the user approved execution when it started. Say in one line where you're resuming, then work.
 
 **Otherwise,** present a short summary — where things stand, what changed since the handoff, the next steps you'll take — and ask before starting only if:
 - the handoff lists open questions that block the next step,
